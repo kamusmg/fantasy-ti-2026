@@ -46,3 +46,20 @@ As qualidades amplificam o benefício concedido pelo atributo base do emblema:
 - **VAMPÍRICO:** Concede +50% ao valor do atributo deste emblema, em troca de -10% ao valor do atributo dos emblemas adjacentes.
 - **ÚNICO:** Concede +30% ao valor do atributo caso este seja o único emblema "Único" no estandarte.
 - **AMIGÁVEL:** Concede +50% ao valor do atributo caso haja ao menos 3 emblemas "Amigáveis" no estandarte.
+
+---
+
+## Recompensas por Desempenho (Percentil)
+Ao término das partidas de um período, a pontuação da sua Escalação dos Sonhos é comparada com a de todos os outros participantes. Ganhe pontos de Compêndio de acordo com o seu desempenho:
+
+| Percentil | Pontos |
+| :--- | :--- |
+| **100º** | 12.000 💰 |
+| **99º** | 11.400 💰 |
+| **95º** | 10.000 💰 |
+| **90º** | 8.400 💰 |
+| **80º** | 5.800 💰 |
+| **60º** | 3.300 💰 |
+| **40º** | 1.700 💰 |
+| **20º** | 400 💰 |
+| **10º** | 200 💰 |

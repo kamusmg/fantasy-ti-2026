@@ -2,19 +2,35 @@ import { useEffect, useState } from 'react';
 import { BroadcastFrame } from './ui/BroadcastFrame';
 import { DreamScene } from './features/dream/DreamScene';
 import { PredictionsScene } from './features/predictions/PredictionsScene';
+import { GuideScene } from './features/guide/GuideScene';
 import { LangProvider, useLang } from './i18n/LangContext';
 import type { Lang } from './i18n/strings';
 import './ui/theme.css';
 
-type Scene = 'dream' | 'predictions';
+type Scene = 'dream' | 'predictions' | 'guide';
+
+/**
+ * Cena inicial pela URL: `#guia`, `#palpites`, `#sonhos`.
+ *
+ * Serve pro OBS: uma fonte de navegador por cena, cada uma abrindo ja na tela
+ * certa, sem ninguem ter que apertar tecla no ar.
+ */
+const SCENE_BY_HASH: Readonly<Record<string, Scene>> = {
+  '#sonhos': 'dream', '#dream': 'dream',
+  '#palpites': 'predictions', '#predictions': 'predictions',
+  '#guia': 'guide', '#guide': 'guide',
+};
 
 function Shell() {
-  const [scene, setScene] = useState<Scene>('dream');
+  const [scene, setScene] = useState<Scene>(() => SCENE_BY_HASH[window.location.hash] ?? 'dream');
   const { lang, setLang, t } = useLang();
 
   const scenes: readonly { readonly id: Scene; readonly key: string; readonly label: string }[] = [
     { id: 'dream', key: '1', label: t.dreamTitle },
     { id: 'predictions', key: '2', label: t.predictionsTitle },
+    // Tecla G, nao 3: os numeros de 3 pra cima ja trocam de AUTOR dentro das
+    // duas outras cenas, entao "3" mudaria de cena e de autor no mesmo aperto.
+    { id: 'guide', key: 'G', label: t.guideTitle },
   ];
 
   // Troca de cena por tecla: numa live, mexer o mouse na tela e sujeira.
@@ -22,6 +38,7 @@ function Shell() {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === '1') setScene('dream');
       if (e.key === '2') setScene('predictions');
+      if (e.key.toLowerCase() === 'g') setScene('guide');
       if (e.key.toLowerCase() === 'l') setLang(lang === 'pt' ? 'en' : 'pt');
     };
     window.addEventListener('keydown', onKey);
@@ -30,7 +47,9 @@ function Shell() {
 
   return (
     <BroadcastFrame>
-      {scene === 'dream' ? <DreamScene /> : <PredictionsScene />}
+      {scene === 'dream' && <DreamScene />}
+      {scene === 'predictions' && <PredictionsScene />}
+      {scene === 'guide' && <GuideScene />}
 
       {/*
         Abas no TOPO, centralizadas. No rodape ficavam na borda do palco e sumiam

@@ -60,6 +60,19 @@ interface Strings {
   readonly tiersRepeated: string;
   readonly eachEmblem: string;
   readonly bucketSubtitle: Readonly<Record<Bucket, string>>;
+
+  // ---------- tela do Guia ----------
+  readonly guideTitle: string;
+  readonly guideSubtitle: string;
+  readonly tierTop: string;
+  readonly tierMid: string;
+  readonly tierBad: string;
+  readonly overallRank: string;
+  readonly bannerOrder: string;
+  readonly guideNoteCoreBlue: string;
+  readonly guideNoteSupportRed: string;
+  readonly guideFooterLead: string;
+  readonly guideFooterBody: string;
 }
 
 const PT: Strings = {
@@ -116,6 +129,19 @@ const PT: Strings = {
     '1-4': 'Duas equipes com uma vitoria e quatro derrotas.',
     '0-4': 'Uma equipe sem vitorias.',
   },
+
+  guideTitle: 'GUIA DE ATRIBUTOS',
+  guideSubtitle: 'o que vale a pena em cada cor, por funcao',
+  tierTop: 'TOP',
+  tierMid: 'MEDIO',
+  tierBad: 'RUIM',
+  overallRank: 'RANKING GERAL',
+  bannerOrder: 'ORDEM DO ESTANDARTE',
+  guideNoteCoreBlue: 'Quase irrelevante pro Principal — o estandarte dele nao tem emblema azul.',
+  guideNoteSupportRed: 'Geralmente ruim pro Suporte — o estandarte dele nao tem emblema vermelho.',
+  guideFooterLead: 'A cor vem TRAVADA pela funcao.',
+  guideFooterBody:
+    'Voce nao escolhe a cor do emblema nem a stat que cai nele: o ranking acima serve pra decidir o que MANTER e o que rerolar. Stat so tem conserto direto no emblema VERDE.',
 };
 
 const EN: Strings = {
@@ -172,6 +198,19 @@ const EN: Strings = {
     '1-4': 'Two teams with one win and four losses.',
     '0-4': 'One team without a win.',
   },
+
+  guideTitle: 'STAT GUIDE',
+  guideSubtitle: 'what each colour is worth, per role',
+  tierTop: 'TOP',
+  tierMid: 'MID',
+  tierBad: 'BAD',
+  overallRank: 'OVERALL RANKING',
+  bannerOrder: 'BANNER ORDER',
+  guideNoteCoreBlue: 'Almost irrelevant for Core — its banner has no blue emblem.',
+  guideNoteSupportRed: 'Usually bad for Support — its banner has no red emblem.',
+  guideFooterLead: 'The colour is LOCKED by the role.',
+  guideFooterBody:
+    'You pick neither the emblem colour nor the stat that lands on it: the ranking above is for deciding what to KEEP and what to reroll. Stats can only be targeted directly on a GREEN emblem.',
 };
 
 export const STRINGS: Readonly<Record<Lang, Strings>> = { pt: PT, en: EN };

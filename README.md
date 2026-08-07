@@ -143,7 +143,7 @@ Benevolente pode piorar os vizinhos (quebra o degrau do Amigável).
 
 ```bash
 npm install
-npm run dev          # tela cheia, tecla 1 e 2 trocam de cena
+npm run dev          # tela cheia; teclas 1, 2 e G trocam de cena, L troca o idioma
 npm test             # 44 testes
 
 npx vite-node scripts/cola.ts       # a cola no terminal
