@@ -16,18 +16,24 @@ const LOCK_AT = Date.parse('2026-08-13T02:00:00Z');
 /**
  * Ritmo vertical do palco de 1080px, somado a mao em vez de chutado.
  *
- * O card mais alto e o do MEIO: retrato solo maior (176) e TRES cores de emblema
+ * DUAS faixas de botao no topo, como na tela de Palpites:
+ *   18   abas de cena + idioma (nivel do App, centralizadas)
+ *   64   titulo + seletor de autor
+ *  108   os cards
+ *
+ * O card mais alto e o do MEIO: retrato solo maior e TRES cores de emblema
  * contra duas das outras funcoes.
- *   20 padding + 28 rotulo + 26 regua + 60 logo/nome + 223 retrato
- *   + 43 rotulo do estandarte + 154 tres caixas + 25 rodape + 20 padding = 599
- * 610 deixa folga. A versao anterior fixava 540 e o conteudo vazava pra fora.
+ *   20 padding + 28 rotulo + 26 regua + 60 logo/nome + 190 retrato
+ *   + 43 rotulo + 154 tres caixas + 68 alvo de roll + 20 padding = 609
+ * 634 deixa folga. A versao anterior fixava 610 SEM contar o alvo de roll, que
+ * eu tinha acabado de adicionar — e o Meio vazou.
  */
-const CARD_Y = 96;
-const CARD_H = 610;
-const BAND_Y = CARD_Y + CARD_H + 16;
-const BAND_H = 168;
-const RULES_Y = BAND_Y + BAND_H + 14;
-const RULES_H = 100;
+const CARD_Y = 108;
+const CARD_H = 634;
+const BAND_Y = CARD_Y + CARD_H + 14;
+const BAND_H = 160;
+const RULES_Y = BAND_Y + BAND_H + 12;
+const RULES_H = 92;
 
 function useCountdown(): string {
   const [now, setNow] = useState(() => Date.now());
@@ -64,7 +70,7 @@ function RoleCard({
   const team = data.teams.get(leader.teamId);
   const unit = data.roleUnits.get(`${leader.teamId}:${slot}`);
   const roster = (unit?.playerIds ?? []).map((id) => ({ id, nick: data.players.get(id)?.nick ?? id }));
-  const portraitSize = roster.length > 1 ? 138 : 176;
+  const portraitSize = roster.length > 1 ? 128 : 156;
 
   return (
     <div
@@ -219,8 +225,13 @@ export function DreamScene() {
 
   return (
     <>
-      <div style={{ position: 'absolute', top: 32, left: 60, right: 60, display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-        <span className="display" style={{ fontSize: 22, letterSpacing: '0.18em', color: 'var(--gold-bright)' }}>
+      {/*
+        Linha 2. As abas de cena e idioma vivem no nivel do App, centralizadas em
+        y=18 — pela SEGUNDA vez eu pus outra fileira de botao na mesma faixa e
+        eles se cobriram. Aqui embaixo nao ha colisao possivel.
+      */}
+      <div style={{ position: 'absolute', top: 64, left: 60, right: 60, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span className="display" style={{ fontSize: 19, letterSpacing: '0.18em', color: 'var(--gold-bright)' }}>
           {t.dreamTitle}
         </span>
 
@@ -246,8 +257,8 @@ export function DreamScene() {
               </button>
             ))}
         </div>
-        <span style={{ fontSize: 16, letterSpacing: '0.1em', color: 'var(--text-dim)' }}>
-          FECHA EM <span className="numeral" style={{ color: 'var(--warn)', fontSize: 26, letterSpacing: 0 }}>{countdown}</span>
+        <span style={{ fontSize: 14, letterSpacing: '0.1em', color: 'var(--text-dim)', whiteSpace: 'nowrap' }}>
+          {t.locksIn} <span className="numeral" style={{ color: 'var(--warn)', fontSize: 22, letterSpacing: 0 }}>{countdown}</span>
         </span>
       </div>
 

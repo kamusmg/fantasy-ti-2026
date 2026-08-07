@@ -46,7 +46,7 @@
     },
     {
       "id": "gemini",
-      "name": "Gemini 2.5",
+      "name": "Gemini 3.1 Pro",
       "source": "analise em EQUIPE_DOS_SONHOS_2026.md",
       "capturedAt": "2026-08-07",
       "core": "yandex",

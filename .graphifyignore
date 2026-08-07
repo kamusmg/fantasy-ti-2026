@@ -1,0 +1,15 @@
+# graphify excludes
+.claude/
+graphify-out/obsidian/
+*.log
+*_log.txt
+*_output.txt
+*_test_results.txt
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.bak
+eventos_claude.txt
+.rtk-fidelidade.txt
