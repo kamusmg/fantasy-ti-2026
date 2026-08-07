@@ -81,6 +81,37 @@ describe('atribuicao dos palpites', () => {
    * depois ficaria sem candidato bom pros baldes vizinhos; o hungaro otimiza o
    * total. Se este teste falhar, o algoritmo esta errado.
    */
+  /**
+   * A prova forte de otimalidade: numa atribuicao otima NAO EXISTE troca de par
+   * que melhore. Se existisse, bastaria fazer a troca e ficar melhor.
+   *
+   * Este teste nasceu de uma suspeita real: comparando com a ordem padrao do
+   * cliente, ela colocava Yandex em 4-0 e VISION em 4-1, e nos o inverso — e a
+   * dela parecia render 0,2 ponto a mais. Se o husgaro estivesse errado, a tela
+   * inteira de Palpites estaria subotima.
+   */
+  it('nenhuma troca de par melhora a atribuicao', () => {
+    const teamIds = Object.keys(picks);
+    let bestImprovement = 0;
+    let culprit = '';
+
+    for (let i = 0; i < teamIds.length; i += 1) {
+      for (let j = i + 1; j < teamIds.length; j += 1) {
+        const a = teamIds[i];
+        const b = teamIds[j];
+        if (picks[a] === picks[b]) continue;
+        const current = sim.bucketProbability[a][picks[a]] + sim.bucketProbability[b][picks[b]];
+        const swapped = sim.bucketProbability[a][picks[b]] + sim.bucketProbability[b][picks[a]];
+        if (swapped - current > bestImprovement) {
+          bestImprovement = swapped - current;
+          culprit = `${a}<->${b}: ${current.toFixed(4)} -> ${swapped.toFixed(4)}`;
+        }
+      }
+    }
+
+    expect(bestImprovement, `troca que melhora: ${culprit}`).toBeLessThan(1e-9);
+  });
+
   it('nao perde pro guloso', () => {
     const hungarianHits = Object.entries(picks)
       .reduce((acc, [id, bucket]) => acc + sim.bucketProbability[id][bucket], 0);

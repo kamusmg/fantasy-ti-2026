@@ -1,6 +1,8 @@
 # Cola do Fantasy — The International 2026
 
-**[fantasyti.pages.dev](https://fantasyti.pages.dev)** · calculadora aberta do Dota dos Sonhos e dos Palpites do TI 2026.
+**[dota2fantasy.pages.dev](https://dota2fantasy.pages.dev)** · calculadora aberta do Dota dos Sonhos e dos Palpites do TI 2026.
+
+*[Read in English](README.en.md)*
 
 Feita para a live do [KamusMG](https://twitch.tv/kamusmg). Os dados e o motor estão
 todos aqui — use, copie, discorde, abra issue.

@@ -148,6 +148,24 @@ export function DreamScene() {
     .sort((a, b) => teamRanking[b].rerollPayoff - teamRanking[a].rerollPayoff);
   const bestReroll = payoffOrder[0];
 
+  /**
+   * A cor mais DESIGUAL da funcao onde a ficha rende mais.
+   *
+   * E o motivo por tras do "gaste no Meio": nao e que o Meio valha mais pontos,
+   * e que la a distancia entre a melhor e a segunda melhor stat de uma cor e
+   * enorme — entao o resultado do sorteio decide muito, e ficha compra muito.
+   * Onde as opcoes sao parecidas, a sorte quase nao pesa e a ficha compra pouco.
+   */
+  const sharpest = teamRanking[bestReroll].teams[0].rerollTargets
+    .map((color) => ({
+      color: color.color,
+      topStat: color.targets[0].statId,
+      timesSecond: color.targets[1] && color.targets[1].value > 0
+        ? color.targets[0].value / color.targets[1].value
+        : 1,
+    }))
+    .sort((a, b) => b.timesSecond - a.timesSecond)[0];
+
   return (
     <>
       <div style={{ position: 'absolute', top: 32, left: 60, right: 60, display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
@@ -203,12 +221,26 @@ export function DreamScene() {
         }}
       >
         <div style={{ fontSize: 14, letterSpacing: '0.14em', color: 'var(--gold)' }}>{t.tokensTitle}</div>
-        <div className="display" style={{ fontSize: 48, color: 'var(--gold-bright)', marginTop: 10, lineHeight: 1 }}>
+        <div className="display" style={{ fontSize: 42, color: 'var(--gold-bright)', marginTop: 8, lineHeight: 1 }}>
           {t.spendOn} {label.role(bestReroll, lang)}
         </div>
-        <div style={{ marginTop: 14, fontSize: 19, color: 'var(--text)', lineHeight: 1.4 }}>
+        <div style={{ marginTop: 10, fontSize: 17, color: 'var(--gold)', fontWeight: 600 }}>
           {t.tokensYield((teamRanking[bestReroll].rerollPayoff * 100).toFixed(0))}
         </div>
+        {/*
+          O MOTIVO. Sem ele o card dizia "gaste no Meio" e ninguem — nem o Kamus —
+          entendia por que. Ficha rende onde a SORTE PESA, e no azul do Meio ela
+          pesa mais do que em qualquer outro lugar do torneio.
+        */}
+        {sharpest && (
+          <div style={{ marginTop: 10, fontSize: 15, color: 'var(--text)', lineHeight: 1.4 }}>
+            {t.tokensWhy(
+              label.color(sharpest.color, lang).toLowerCase(),
+              label.stat(sharpest.topStat, lang),
+              sharpest.timesSecond.toFixed(1),
+            )}
+          </div>
+        )}
       </div>
 
       {/* AS DUAS REGRAS QUE MAIS SALVAM FICHA */}

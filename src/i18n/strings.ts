@@ -29,6 +29,8 @@ interface Strings {
   readonly tokensTitle: string;
   readonly spendOn: string;
   readonly tokensYield: (pct: string) => string;
+  readonly tokensWhy: (color: string, stat: string, times: string) => string;
+  readonly tokensWhyFlat: (color: string, role: string) => string;
   readonly greenRule: (green: string, red: string, blue: string) => string;
   readonly fractalWarnLead: string;
   readonly fractalWarnBody: string;
@@ -62,6 +64,10 @@ const PT: Strings = {
   tokensTitle: 'AS 40 FICHAS',
   spendOn: 'Gaste no',
   tokensYield: (pct) => `Rende +${pct}%, o dobro das outras duas funcoes.`,
+  tokensWhy: (color, stat, times) =>
+    `Porque no ${color} do Meio a sorte PESA: ${stat} vale ${times}x a segunda melhor. Tirou outra coisa, aquele emblema quase nao pontua.`,
+  tokensWhyFlat: (color, role) =>
+    `Ja no ${color} do ${role}, quatro das seis opcoes sao boas — rolar mal quase nao doi, entao ficha ali compra pouco.`,
   greenRule: (green, red, blue) =>
     `Stat ruim so tem conserto direto em emblema ${green}. No ${red} voce so mira qualidade, no ${blue} so traco.`,
   fractalWarnLead: 'Cuidado com o FRACTAL:',
@@ -103,6 +109,10 @@ const EN: Strings = {
   tokensTitle: 'YOUR 40 TOKENS',
   spendOn: 'Spend on',
   tokensYield: (pct) => `Worth +${pct}%, double the other two roles.`,
+  tokensWhy: (color, stat, times) =>
+    `Because on Mid's ${color} luck MATTERS: ${stat} is worth ${times}× the next best. Roll anything else and that emblem barely scores.`,
+  tokensWhyFlat: (color, role) =>
+    `On ${role}'s ${color}, four of the six options are good — a bad roll barely hurts, so tokens buy little there.`,
   greenRule: (green, red, blue) =>
     `A bad stat can only be fixed directly on a ${green} emblem. On ${red} you can only target quality, on ${blue} only the trait.`,
   fractalWarnLead: 'Watch out for FRACTAL:',
