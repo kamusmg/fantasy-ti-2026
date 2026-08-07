@@ -23,7 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 
-# Fotos e logos baixados do CDN da Valve (71 MB).
-# Nao versionados: scripts/fetch-portraits.mjs os rebaixa e E a fonte da verdade.
-public/players/
-public/teams/
+# As fotos e logos SAO versionados (1,7 MB depois do optimize-images.mjs).
+# O original baixado do CDN da Valve tem 71 MB e esse nao entra:
+#   fetch-portraits.mjs baixa  ->  optimize-images.mjs reduz  ->  commita
+public/players/*.png
+public/teams/*.png

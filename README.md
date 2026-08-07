@@ -1,111 +1,158 @@
-# Fantasy TI 2026 — calculadora de escalação
+# Cola do Fantasy — The International 2026
 
-Programa de tela cheia (1920×1080) para a live do KamusMG que calcula a escalação
-ótima do Dota dos Sonhos do The International 2026.
+**[fantasyti.pages.dev](https://fantasyti.pages.dev)** · calculadora aberta do Dota dos Sonhos e dos Palpites do TI 2026.
 
-```bash
-npm run dev          # tela cheia em http://localhost:5173 — tecla 1 e 2 trocam de cena
-npm test             # 37 testes do motor
+Feita para a live do [KamusMG](https://twitch.tv/kamusmg). Os dados e o motor estão
+todos aqui — use, copie, discorde, abra issue.
 
-npx vite-node scripts/cola.ts       # A COLA: o que digitar no cliente
-npx vite-node scripts/palpites.ts   # os 16 palpites, com estabilidade
-npx vite-node scripts/gen-swiss.ts  # regera a simulacao pre-computada
-```
+---
 
-## São dois jogos diferentes
+## A resposta curta
 
-| | O que é | O que decide |
+| | Time | |
 |---|---|---|
-| **Dota dos Sonhos** | 3 times + estandartes + título | escolha de time, título e 40 fichas de reroll |
-| **Palpites** | encaixar os 16 times em 4-0 / 4-1 / eliminatória / 1-4 / 0-4 | simulação do Suíço |
+| **SUPORTE** (pos 4+5) | **LGD Gaming** — Thiolicor + KJ | 13% à frente do 2º |
+| **MEIO** (pos 2) | **Team Falcons** — Malr1ne | empate técnico com Liquid |
+| **PRINCIPAL** (pos 1+3) | **LGD Gaming** — Yuma + Wisper | empate técnico com VISION |
+| **TREINADOR** | **Cerúleo · o Decisivo** | +11% herói azul, +16% última partida |
 
-## O que o programa faz
+**Gaste as 40 fichas no MEIO.** Rende +47%, o dobro das outras duas funções — porque
+Runas vale 3× a segunda melhor stat azul, enquanto o azul do Suporte é achatado.
 
-Enumera **9.216 escalações** (16 times × todas as atribuições de stat válidas por
-estandarte) × **64 títulos de treinador**, e devolve a melhor. Roda em ~200 ms.
+**Só existe conserto direto de *stat* em emblema VERDE.** No vermelho você só mira
+qualidade, no azul só traço. Subir qualidade de uma stat ruim é polir lixo.
 
-## Como o TI 2026 funciona de verdade
+⚠️ **Com Fractal no estandarte, SUBIR uma qualidade pode BAIXAR sua nota.** Ele só
+paga se as três qualidades forem diferentes. Nenhuma calculadora pública avisa disso.
 
-Você faz **3 escolhas de time**, não 9 escolhas de stat:
+---
 
-| Fatia | O que você leva |
-|---|---|
-| Principal | posições 1 **e** 3 daquele time |
-| Meio | posição 2 |
-| Suporte | posições 4 **e** 5 |
+## O que quase todo mundo modela errado
 
-Depois monta os **Estandartes de Guerra**, com cor fixa por função (Fase de Grupos:
-Principal V‑Vd‑V, Meio V‑A‑Vd, Suporte A‑Vd‑A). Cada emblema leva uma stat daquela
-cor, uma qualidade (I..V = +10/30/60/100/150%) e um traço. Mais um **Título de
-Treinador** (prefixo + sufixo) valendo para os 5 jogadores.
+**Você não escolhe as stats.** Glossário do jogo: *"Rerolling the stat of an emblem will
+guarantee a new stat."* Stat, qualidade e traço vêm **sorteados**. As únicas decisões
+livres são o **time por função** e o **título** — e as duas são de graça e ilimitadas até
+o fechamento. Por isso a cola são três nomes de time, não um "build de 9 stats".
 
-**A nota de uma função é a MÉDIA dos jogadores nela**, nunca a soma. Contam as
-**2 melhores partidas** de cada série e a **melhor série** do período.
+**A nota de uma função é a MÉDIA dos jogadores**, não a soma. Core e Suporte são duplas.
 
-## As decisões que definem o resultado
+**Conta a MELHOR série do período**, e dentro dela as **2 melhores partidas**. Isso tem
+duas consequências que ninguém precifica:
 
-**Estatística de ordem.** As regras têm dois operadores de seleção, e `E[max] ≠ max[E]`.
-Somar médias subestima o período em ~30% e — pior — inverte o ranking entre stats de
-alta e baixa variância. O motor propaga `(média, desvio)` por `2‑melhores‑de‑N` e
-`melhor‑de‑K`. O battlepass.ru não faz isso.
+1. Somar médias subestima o período em **~30%**, e — pior — inverte o ranking entre
+   stats de alta e baixa variância. `E[max] ≠ max[E]`.
+2. Jogar **mais séries é opção grátis**. Um time que faz 4-0 joga 4 séries; quem cai na
+   eliminatória joga 6. Time mediano pode valer mais que favorito.
 
-**A curva de prêmio é côncava em pontos.** Ela é convexa em *percentil*, mas percentil
-é eixo comprimido: subir do percentil 80 ao 90 rende ~5.900 pts por unidade de z; do 95
-ao 100, ~1.500. Logo o objetivo padrão é a média, com p10/p90 sempre na tela.
+---
 
-**Nível do battlepass, delta de time do Reddit.** `estimativa = médiaDaLiga + w · k · deltaDoTime`,
-com `w = n/(n+n₀)` empírico‑Bayes. Efeito colateral bom: a prosa do Maroomm (que ranqueia
-Roshan acima de Teamfight, contra as próprias tabelas dele) nunca entra em número nenhum.
+## Os dados
+
+Tudo em [`src/data/raw/`](src/data/raw), cru e com procedência.
+
+| Arquivo | O que tem | Fonte |
+|---|---|---|
+| `reddit.roleStats.json` | valor de cada stat para as 16 duplas Core, 16 mids, 16 duplas Sup | [guia do u/Maroomm](https://www.reddit.com/r/DotA2/comments/1vble84/fantasy_league_2026_guide/) — 13 torneios, 1.601 partidas |
+| `battlepass.leagueStats.json` | valor por stat por função, nível de liga | [battlepass.ru](https://battlepass.ru/en/ti2026/fantasy-calc) — 2.888 replays |
+| `battlepass.topRoles.json` | notas do top-8 por função + mapas observados | idem |
+| `prefixFrequency.json` | frequência de cor de herói dos 80 jogadores | Reddit, mesma base |
+| `teamStrength.json` | força de time para simular o Suíço | odds do Polymarket + Elo da OpenDota |
+| `teams.json` | os 16 elencos com posição | Liquipedia ×3 fontes |
+
+**As linhas de Core e Suporte do Reddit são SOMAS da dupla** — a nota da função é a
+média, então dividimos por 2 em `data/load.ts`. O arquivo cru fica intocado.
+
+### Duas armadilhas de nome que custam caro
+
+**A Valve faz orgs patrocinadas por casa de aposta jogarem sob apelido no TI:**
+TEAM VISION = **PariVision**, BoomBoys = **BetBoom**, Iron Wing = **1w Team**,
+HULIGANI = **L1GA**. Eu errei essa e tratei a campeã do EWC 2026 como desconhecida.
+
+**Rating de organização mente sobre o elenco atual.** O Elo 1430 do Team Liquid vem de
+**3.132 partidas de histórico da org**, não dos cinco que vão jogar. O Iron Wing marca
+1280 com 30 jogos, mas os *jogadores* são a ex-Tundra que ganhou Birmingham e a DL29.
+E a "Tundra Esports" hoje tem Topson e RAMZES666 — cinco pessoas diferentes. Por isso a
+fonte primária é o **mercado de apostas**, que precifica quem entra em quadra.
+
+---
+
+## Como o motor decide
+
+**Nível do battlepass, delta de time do Reddit.** `estimativa = médiaDaLiga + w·k·deltaDoTime`,
+com `w = n/(n+n₀)` empírico-Bayes. O fator de escala medido dá **1,02** nas três funções,
+o que confirma a divisão por dupla com fonte independente.
 
 **Amostra estimada, não chutada.** Para os times sem contagem publicada, o tamanho de
-amostra vem da razão `topo/média` da tabela do Reddit — `E[máximo de n]` cresce com `n`.
-Calibrado contra os times com contagem conhecida: r = 0,69 / 0,68 / 0,52.
+amostra sai da razão `topo/média` da tabela do Reddit — `E[máximo de n]` cresce com `n`.
+Calibrado contra quem tem contagem conhecida: **r = 0,69 / 0,68 / 0,52**.
 
-**Correção de força de tabela.** Mediu-se, por stat, o z médio dos times que entraram no
-top‑8 TI‑relevante menos o dos que ficaram de fora. Poucas Mortes no Meio dá **−0,60**;
-Tormentor no Principal, **−0,98**. Ou seja: morrer pouco e pegar objetivo de graça são
-marcas de oposição fraca. A correção é **assimétrica** — só penaliza, nunca premia —
-porque a direção positiva está confundida com o estandarte de referência do battlepass.
+**Correção de força de tabela.** Mediu-se, por stat, o z médio de quem entrou no top-8
+TI-relevante menos o de quem ficou de fora. Poucas Mortes no Meio dá **−0,60**; Tormentor
+no Principal, **−0,98**. Morrer pouco e pegar objetivo de graça são marcas de oposição
+fraca. A correção é **assimétrica** (só penaliza) porque a direção positiva está
+confundida com o estandarte de referência do battlepass.
+
+**Recomendação no p75, não na média nem no melhor caso.** O "melhor estandarte" é um
+máximo sobre ~200 atribuições ruidosas — quem vence tende a ser quem carrega o maior erro
+de estimativa. Medido: OG no Meio vai de 16º na média a 4º no máximo **sem subir no meio
+do caminho**. Maldição do vencedor clássica, e foi cortado.
+
+**Otimizador exato.** 9.216 candidatos × 64 títulos em ~200 ms. As funções não são
+independentes porque o título vale para os 5 jogadores, mas com o título *fixado* elas
+voltam a ser separáveis — então é laço externo nos títulos, e cada função escolhe seu
+próprio máximo. Sem poda, sem heurística.
+
+---
 
 ## Verificação
 
-O teste-oráculo reproduz os **4 ganhos de título publicados pelo battlepass.ru** dentro
-de 2% com uma única constante, validando de uma vez unidades, mistura de fontes, modelo
-de treinador e a regra da média. A validação cruzada mais forte: a taxa de herói azul
-implicada pelo ganho do Cerúleo (battlepass, 0,3234) bate com a média da nossa tabela de
-frequência (Reddit, 0,3153) — **2,5% de diferença entre fontes que não se falam**.
+O teste-oráculo reproduz os **4 ganhos de título publicados pelo battlepass.ru** dentro de
+2%, validando de uma vez unidades, mistura de fontes, modelo de treinador e a regra da
+média. A validação cruzada mais forte: a taxa de herói azul implicada pelo ganho do Cerúleo
+(battlepass, 0,3234) bate com a média da nossa tabela do Reddit (0,3153) — **2,5% entre
+fontes que não se falam**.
 
-Outros travamentos: fator de escala por função em [0,80; 1,30] (mede 1,02, confirmando a
-divisão por dupla); exatidão do otimizador contra força bruta do produto completo; guarda
-de NaN na enumeração inteira; saída determinística bit a bit; `Math.random` e `Date.now`
-proibidos em `engine/`.
+37 testes. Guarda de NaN na enumeração inteira, saída determinística bit a bit,
+`Math.random` e `Date.now` proibidos em `engine/`.
 
-Duas armadilhas do jogo foram descobertas por teste de propriedade e estão fixadas:
-**subir uma qualidade pode PIORAR** o estandarte (quebra a condição do Fractal), e
-**trocar um traço por Benevolente pode piorar os vizinhos** (quebra o degrau do Amigável).
+Duas armadilhas do jogo foram **descobertas por teste de propriedade** e estão fixadas:
+subir uma qualidade pode piorar o estandarte (quebra o Fractal), e trocar um traço por
+Benevolente pode piorar os vizinhos (quebra o degrau do Amigável).
 
-## As 4 perguntas em aberto
+---
 
-Só o cliente do Dota responde. Estão como flag em `src/domain/rules.ts`.
+## O que eu NÃO garanto
 
-| # | Pergunta | Impacto |
-|---|---|---|
-| 1 | O período soma as séries ou pega a melhor? | ±30% em todo total |
-| 2 | Um emblema aceita qualquer stat da sua cor? | muda o espaço de busca |
-| 3 | Dois emblemas podem levar a mesma stat? | "GPM dobrado" pode ser ótimo |
-| 4 | Clutch é sempre o jogo 3 ou o decisivo? | ~±300 pts |
+- **Os coeficientes de variação por stat e a correlação de 0,55 dentro das duplas são
+  suposições minhas.** Ninguém publicou isso. É delas que sai a conclusão de que o Meio
+  pontua mais que o Principal.
+- **Nenhuma probabilidade de reroll é publicada por ninguém.** Por isso a orientação de
+  fichas vem das *regras*, não de um modelo de EV inventado.
+- **Os Palpites acertam ~5 de 16**, contra 3,75 de quem chuta. Não é o modelo sendo ruim:
+  dez dos 16 times caem na eliminatória, onde ganhar ou perder é cara-ou-coroa.
 
-## Estrutura
+---
 
+## Rodando
+
+```bash
+npm install
+npm run dev          # tela cheia, tecla 1 e 2 trocam de cena
+npm test             # 37 testes
+
+npx vite-node scripts/cola.ts       # a cola no terminal
+npx vite-node scripts/palpites.ts   # os 16 palpites com estabilidade
+npx vite-node scripts/report.ts     # auditoria dos dados
+node scripts/fetch-portraits.mjs    # rebaixa fotos do CDN da Valve
+node scripts/optimize-images.mjs    # reduz 71 MB -> 1,4 MB
 ```
-src/domain/    tipos e constantes; toda suposição não verificada em rules.ts
-src/engine/    puro, total, determinístico — nenhuma aleatoriedade sem semente
-src/data/      JSON cru intocado + Zod na fronteira + mistura + auditoria
-src/features/  telas
-src/ui/        tema TI e moldura de transmissão 1920×1080
-scripts/       relatórios de terminal (answer, report, censor-check, schedule-bias)
-```
 
-Fontes: [guia do u/Maroomm](https://www.reddit.com/r/DotA2/comments/1vble84/fantasy_league_2026_guide/)
-(13 torneios, 1.601 partidas) · [battlepass.ru](https://battlepass.ru/en/ti2026/fantasy-calc)
-(2.888 replays, 03/08/2026) · Liquipedia · transcrição do painel "Como Jogar" do cliente.
+Fotos e logos são os oficiais da Valve:
+`cdn.cloudflare.steamstatic.com/apps/dota2/players/{account_id}.png` e o `logo_url` da
+OpenDota. Dois caminhos parecidos **não** servem: `images/players/` só tem 19 dos 80, e
+`images/team_logos/` só responde para as orgs antigas.
+
+## Licença
+
+MIT no código. Os dados são agregados de fontes públicas, creditadas acima — se você usar,
+credite elas também.
