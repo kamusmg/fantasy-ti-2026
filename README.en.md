@@ -15,8 +15,8 @@ use it, copy it, disagree with it, open an issue.
 | | Team | |
 |---|---|---|
 | **SUPPORT** (pos 4+5) | **LGD Gaming** — Thiolicor + KJ | 13% clear of second |
-| **MID** (pos 2) | **Team Falcons** — Malr1ne | technical tie with Liquid |
-| **CORE** (pos 1+3) | **LGD Gaming** — Yuma + Wisper | technical tie with VISION |
+| **MID** (pos 2) | **Team Falcons** — Malr1ne | technical tie with BoomBoys |
+| **CORE** (pos 1+3) | **TEAM VISION** — Satanic + Noticed | tied with LGD, broken by market odds |
 | **COACH TITLE** | **Cerulean · the Clutch** | +11% blue hero, +16% last possible match |
 
 **Spend your 40 tokens on MID.** Worth +47%, double the other two roles — because Runes is
@@ -115,8 +115,13 @@ strongest cross-check: the blue-hero rate implied by the Cerulean gain (battlepa
 matches the mean of our Reddit frequency table (0.3153) — **2.5% apart, between sources that
 never talk to each other**.
 
-37 tests. NaN guard across the full enumeration, bit-identical deterministic output,
+44 tests. NaN guard across the full enumeration, bit-identical deterministic output,
 `Math.random` and `Date.now` banned inside `engine/`.
+
+The strongest validation came from outside: a real player's banner screenshot reproduces
+all **nine percentages** exactly, including the same Fractal trait worth +80% on one
+banner and +20% on another — because on one the three tiers are distinct and on the
+other they are not.
 
 Two in-game traps were **found by property testing** and are now pinned: raising a quality can
 lower the banner (it breaks Fractal), and swapping a trait for Benevolent can hurt neighbours
@@ -142,7 +147,7 @@ lower the banner (it breaks Fractal), and swapping a trait for Benevolent can hu
 ```bash
 npm install
 npm run dev          # full screen; keys 1 and 2 switch scenes, L switches language
-npm test             # 37 tests
+npm test             # 44 tests
 
 npx vite-node scripts/cola.ts       # the cheat sheet, in the terminal
 npx vite-node scripts/palpites.ts   # the 16 predictions with stability

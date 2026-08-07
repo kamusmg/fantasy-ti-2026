@@ -14,8 +14,8 @@ todos aqui — use, copie, discorde, abra issue.
 | | Time | |
 |---|---|---|
 | **SUPORTE** (pos 4+5) | **LGD Gaming** — Thiolicor + KJ | 13% à frente do 2º |
-| **MEIO** (pos 2) | **Team Falcons** — Malr1ne | empate técnico com Liquid |
-| **PRINCIPAL** (pos 1+3) | **LGD Gaming** — Yuma + Wisper | empate técnico com VISION |
+| **MEIO** (pos 2) | **Team Falcons** — Malr1ne | empate técnico com BoomBoys |
+| **PRINCIPAL** (pos 1+3) | **TEAM VISION** — Satanic + Noticed | empate com LGD, desempatado pelas odds |
 | **TREINADOR** | **Cerúleo · o Decisivo** | +11% herói azul, +16% última partida |
 
 **Gaste as 40 fichas no MEIO.** Rende +47%, o dobro das outras duas funções — porque
@@ -114,8 +114,12 @@ média. A validação cruzada mais forte: a taxa de herói azul implicada pelo g
 (battlepass, 0,3234) bate com a média da nossa tabela do Reddit (0,3153) — **2,5% entre
 fontes que não se falam**.
 
-37 testes. Guarda de NaN na enumeração inteira, saída determinística bit a bit,
+44 testes. Guarda de NaN na enumeração inteira, saída determinística bit a bit,
 `Math.random` e `Date.now` proibidos em `engine/`.
+
+A validacao mais forte veio de fora: o print do estandarte real de um jogador reproduz
+as **nove porcentagens** exatamente, incluindo o mesmo traco Fractal valendo +80% num
+estandarte e +20% noutro — porque num os tres niveis sao distintos e no outro nao.
 
 Duas armadilhas do jogo foram **descobertas por teste de propriedade** e estão fixadas:
 subir uma qualidade pode piorar o estandarte (quebra o Fractal), e trocar um traço por
@@ -140,7 +144,7 @@ Benevolente pode piorar os vizinhos (quebra o degrau do Amigável).
 ```bash
 npm install
 npm run dev          # tela cheia, tecla 1 e 2 trocam de cena
-npm test             # 37 testes
+npm test             # 44 testes
 
 npx vite-node scripts/cola.ts       # a cola no terminal
 npx vite-node scripts/palpites.ts   # os 16 palpites com estabilidade
