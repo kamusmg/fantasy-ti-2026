@@ -82,6 +82,26 @@ function Shell() {
           </button>
         ))}
       </div>
+
+      {/*
+        Credito discreto no canto. Nivel do App pra aparecer nas duas cenas.
+        Baixo contraste de proposito: quem procura acha, quem esta lendo a cola
+        nao e interrompido.
+      */}
+      <a
+        href="https://twitch.tv/kamusmg"
+        target="_blank"
+        rel="noreferrer"
+        style={{
+          position: 'absolute', right: 26, bottom: 18, zIndex: 10,
+          display: 'flex', alignItems: 'center', gap: 7,
+          fontSize: 13, letterSpacing: '0.06em',
+          color: 'var(--text-faint)', textDecoration: 'none',
+        }}
+      >
+        <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#9146FF', display: 'inline-block' }} />
+        twitch.tv/kamusmg
+      </a>
     </BroadcastFrame>
   );
 }
