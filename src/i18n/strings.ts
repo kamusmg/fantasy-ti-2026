@@ -90,6 +90,10 @@ interface Strings {
   readonly bannerTotalNote: string;
   readonly onItself: string;
   readonly onNeighbours: string;
+  readonly bannerConditions: string;
+  readonly condFractal: (tiers: string) => string;
+  readonly condUnique: (n: number) => string;
+  readonly condFriendly: (n: number) => string;
 }
 
 const PT: Strings = {
@@ -171,9 +175,13 @@ const PT: Strings = {
   simTitle: 'MONTE O ESTANDARTE QUE SAIU',
   simHowTo: 'Escolha o nível e o traço de cada emblema, do jeito que caíram no seu jogo. A porcentagem sai na hora, pela mesma conta do cliente — e serve pra testar um roll ANTES de gastar a ficha.',
   bannerTotal: 'SOMA DOS TRÊS',
+  bannerConditions: 'CONDIÇÕES DO ESTANDARTE',
+  condFractal: (tiers) => `Fractal — níveis ${tiers}`,
+  condUnique: (n) => `Único — ${n} no estandarte`,
+  condFriendly: (n) => `Amigável — ${n} de 3`,
   onItself: 'no próprio emblema',
   onNeighbours: 'nos vizinhos',
-  bannerTotalNote: 'Serve pra comparar dois estandartes entre si. Não é a sua pontuação: cada emblema multiplica um atributo diferente.',
+  bannerTotalNote: 'Só serve pra comparar estandartes entre si — não é a sua pontuação.',
 };
 
 const EN: Strings = {
@@ -255,9 +263,13 @@ const EN: Strings = {
   simTitle: 'BUILD THE BANNER YOU ROLLED',
   simHowTo: 'Pick the tier and trait of each emblem, exactly as they came up in your game. The percentage updates live, using the same maths as the client — so you can test a roll BEFORE spending the token.',
   bannerTotal: 'SUM OF THE THREE',
+  bannerConditions: 'BANNER-WIDE CONDITIONS',
+  condFractal: (tiers) => `Fractal — tiers ${tiers}`,
+  condUnique: (n) => `Unique — ${n} on the banner`,
+  condFriendly: (n) => `Friendly — ${n} of 3`,
   onItself: 'on itself',
   onNeighbours: 'on neighbours',
-  bannerTotalNote: 'Use it to compare two banners against each other. It is not your score: each emblem multiplies a different stat.',
+  bannerTotalNote: 'Only useful to compare banners against each other — it is not your score.',
 };
 
 export const STRINGS: Readonly<Record<Lang, Strings>> = { pt: PT, en: EN };

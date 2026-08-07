@@ -19,13 +19,16 @@ import { useLang } from '../../i18n/LangContext';
  *
  * Ritmo vertical, somado:
  *    64  titulo
- *   108  simulador        (h 420)  -> 528
- *   544  os cinco tracos  (h 420)  -> 964
+ *   108  simulador        (h 470)  -> 578
+ *   594  os cinco tracos  (h 400)  -> 994
+ *
+ * O simulador cresceu de 420 pra 470 quando entrou o painel de condicoes: a
+ * coluna da esquerda passou a somar 425px de conteudo e vazava por baixo.
  */
 const SIM_Y = 108;
-const SIM_H = 420;
+const SIM_H = 470;
 const REF_Y = SIM_Y + SIM_H + 16;
-const REF_H = 420;
+const REF_H = 400;
 
 const REF_W = 348;
 const REF_GAP = 16;
@@ -248,6 +251,16 @@ export function TraitsScene() {
   const total = emblemBonuses(toEmblems(slots), DEFAULT_RULES)
     .reduce((acc, b) => acc + b.multiplier, 0);
 
+  const tiers = slots.map((s) => QUALITY_LABEL[s.quality]).join(' / ');
+  const distinct = new Set(slots.map((s) => s.quality)).size === slots.length;
+  const uniques = slots.filter((s) => s.trait === 'unique').length;
+  const friendlies = slots.filter((s) => s.trait === 'friendly').length;
+  const conditions = [
+    { on: distinct, label: t.condFractal(tiers) },
+    { on: uniques === 1, label: t.condUnique(uniques) },
+    { on: friendlies >= 3, label: t.condFriendly(friendlies) },
+  ];
+
   return (
     <>
       <div style={{ position: 'absolute', top: 64, left: 60, right: 60, display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
@@ -275,6 +288,22 @@ export function TraitsScene() {
             </div>
             <div style={{ fontSize: 15, color: 'var(--text)', marginTop: 12, lineHeight: 1.5 }}>
               {t.simHowTo}
+            </div>
+
+            {/*
+              Estado das condicoes que valem pro ESTANDARTE INTEIRO.
+              Sem isto, ver "+60 Fractal" em cada emblema levanta a duvida certa:
+              ele esta pagando porque os niveis sao diferentes, ou porque o codigo
+              esqueceu de conferir? A tela agora responde antes de perguntarem.
+            */}
+            <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <div style={{ fontSize: 11, letterSpacing: '0.14em', color: 'var(--gold)' }}>{t.bannerConditions}</div>
+              {conditions.map((c) => (
+                <div key={c.label} style={{ display: 'flex', gap: 8, alignItems: 'baseline', fontSize: 13 }}>
+                  <span style={{ color: c.on ? '#8fd46e' : 'var(--text-faint)', fontWeight: 700 }}>{c.on ? 'ON' : 'OFF'}</span>
+                  <span style={{ color: 'var(--text-dim)' }}>{c.label}</span>
+                </div>
+              ))}
             </div>
 
             <div style={{ marginTop: 'auto' }}>
