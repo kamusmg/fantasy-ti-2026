@@ -50,8 +50,6 @@ interface Strings {
   readonly badgeGuess: string;
   readonly whosePicks: string;
   readonly ourModelName: string;
-  readonly untouchedName: string;
-  readonly untouchedSource: string;
   readonly modelSource: string;
   readonly weSay: string;
   readonly sameAsUs: string;
@@ -96,8 +94,6 @@ const PT: Strings = {
   badgeGuess: 'CHUTE',
   whosePicks: 'PALPITE DE',
   ourModelName: 'Claude Opus',
-  untouchedName: 'Padrao do jogo',
-  untouchedSource: 'a ordem que o cliente do Dota ja vem preenchido — o palpite de quem abre e nao arrasta nenhum time',
   modelSource: '50.000 simulacoes do Suico com forca de time do mercado de apostas',
   weSay: 'Claude',
   sameAsUs: 'igual ao nosso',
@@ -149,8 +145,6 @@ const EN: Strings = {
   badgeGuess: 'GUESS',
   whosePicks: 'PICKS BY',
   ourModelName: 'Claude Opus',
-  untouchedName: 'Game default',
-  untouchedSource: "the order the Dota client comes pre-filled with — what you submit if you never drag a team",
   modelSource: '50,000 Swiss simulations with team strength from the betting market',
   weSay: 'Claude',
   sameAsUs: 'same as ours',
@@ -218,8 +212,15 @@ const SUFFIX_CONDITION_EN: Readonly<Record<SuffixId, string>> = {
   cruel: 'a player is killed in their own fountain',
 };
 
+/** Versao curta pro selo dentro do card — "Vencedora da Eliminatoria" nao cabe em 206px. */
+const BUCKET_SHORT: Readonly<Record<Lang, Readonly<Record<Bucket, string>>>> = {
+  pt: { '4-0': '4-0', '4-1': '4-1', elimWin: 'Vence elim.', elimLose: 'Perde elim.', '1-4': '1-4', '0-4': '0-4' },
+  en: { '4-0': '4-0', '4-1': '4-1', elimWin: 'Elim. win', elimLose: 'Elim. loss', '1-4': '1-4', '0-4': '0-4' },
+};
+
 export const label = {
   role: (slot: RoleSlot, lang: Lang) => (lang === 'pt' ? ROLE_LABEL_PT_BR[slot] : ROLE_LABEL_EN[slot]),
+  bucketShort: (b: Bucket, lang: Lang) => BUCKET_SHORT[lang][b],
   color: (color: EmblemColor, lang: Lang) => (lang === 'pt' ? COLOR_LABEL_PT_BR[color] : COLOR_LABEL_EN[color]),
   stat: (id: StatId, lang: Lang) => (lang === 'pt' ? STAT_DEFINITIONS[id].labelPtBr : STAT_DEFINITIONS[id].labelEn),
   bucket: (b: Bucket, lang: Lang) => (lang === 'pt' ? BUCKET_LABEL_PT_BR[b] : BUCKET_LABEL_EN[b]),

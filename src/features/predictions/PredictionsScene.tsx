@@ -8,7 +8,6 @@ import { TeamLogo } from '../../ui/Portrait';
 import { useLang } from '../../i18n/LangContext';
 import { label } from '../../i18n/strings';
 import { loadProPicks } from '../../data/proPicks';
-import { UNTOUCHED_PICKS } from '../../data/baselinePicks';
 
 const ourPicks = swiss.picks as Record<string, Bucket>;
 const stability = swiss.stability as Record<string, number>;
@@ -102,7 +101,7 @@ function TeamCard({ teamId, bucket, name, x, y, author, ourBucket, overlay }: {
             background: 'var(--warn)', border: '1px solid var(--warn)', color: '#1b1006',
           }}
         >
-          {t.weSay}: {label.bucket(ourBucket, lang)}
+          {t.weSay}: {label.bucketShort(ourBucket, lang)}
         </div>
       ) : (
         <div style={{ height: 24 }} />
@@ -161,7 +160,6 @@ function buildAuthors(t: ReturnType<typeof useLang>['t']): readonly Author[] {
     ...loadProPicks().map((pro) => ({
       id: pro.id, name: pro.name, source: pro.source, picks: pro.picks, isModel: false,
     })),
-    { id: 'untouched', name: t.untouchedName, source: t.untouchedSource, picks: UNTOUCHED_PICKS, isModel: false },
   ];
 }
 

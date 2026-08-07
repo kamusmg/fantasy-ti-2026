@@ -2,14 +2,15 @@
   "_meta": {
     "proposito": "Palpites de jogadores profissionais, pra comparar com os nossos na tela. Vira o melhor momento da live: onde a conta discorda de quem joga.",
     "REGRA_INVIOLAVEL": "So entra palpite que foi REALMENTE VISTO — print da tela dele, post, ou clipe. NUNCA extrapolado, NUNCA 'o que ele provavelmente escolheria'. Atribuir palpite inventado a uma pessoa real, em portugues e em tela cheia, e mentira sobre alguem que existe.",
-    "REGRA_DO_ROTULO": "Se a tela ainda estava na ordem padrao, o campo `source` TEM que dizer isso. Mostrar como 'a escolha dele' o que ele so nao mexeu seria verdade pela metade — e meia verdade em tela cheia e mentira.",
+    "REGRA_DO_ROTULO": "O campo `source` TEM que dizer de onde veio e quando. Ele vai pra tela junto com os palpites.",
+    "ERRO_QUE_EU_COMETI": "Eu tinha deduzido que a tela do cliente vinha PRE-PREENCHIDA, porque a ordem no print do Topson era identica a do print do Kamus. A deducao era razoavel e a premissa era falsa: a tela vem VAZIA, e o print do Kamus era ele COPIANDO o Topson. Licao: duas telas iguais tem mais de uma explicacao, e eu escolhi a errada sem perguntar.",
     "comoPreencher": "Copie um bloco, preencha `picks` com teamId -> balde. Os teamId sao os de teams.json; os baldes sao 4-0, 4-1, elimWin, elimLose, 1-4, 0-4. As contagens precisam bater com as vagas (1/2/5/5/2/1) — o loader recusa entrada incompleta, porque palpite pela metade na tela pareceria que a pessoa escolheu o que nao escolheu."
   },
   "pros": [
     {
       "id": "topson",
       "name": "Topson",
-      "source": "tela dele na live de 06/08 — ainda na ordem padrao do cliente, sem ter arrastado nenhum time",
+      "source": "palpites dele na live de 06/08",
       "capturedAt": "2026-08-06",
       "picks": {
         "yandex": "4-0",
