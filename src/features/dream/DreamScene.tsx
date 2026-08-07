@@ -11,6 +11,22 @@ import type { LoadedData } from '../../data/load';
 
 const LOCK_AT = Date.parse('2026-08-13T02:00:00Z');
 
+/**
+ * Ritmo vertical do palco de 1080px, somado a mao em vez de chutado.
+ *
+ * O card mais alto e o do MEIO: retrato solo maior (176) e TRES cores de emblema
+ * contra duas das outras funcoes.
+ *   20 padding + 28 rotulo + 26 regua + 60 logo/nome + 223 retrato
+ *   + 43 rotulo do estandarte + 154 tres caixas + 25 rodape + 20 padding = 599
+ * 610 deixa folga. A versao anterior fixava 540 e o conteudo vazava pra fora.
+ */
+const CARD_Y = 96;
+const CARD_H = 610;
+const BAND_Y = CARD_Y + CARD_H + 16;
+const BAND_H = 168;
+const RULES_Y = BAND_Y + BAND_H + 14;
+const RULES_H = 100;
+
 function useCountdown(): string {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
@@ -43,19 +59,22 @@ function RoleCard({
   const team = data.teams.get(leader.teamId);
   const unit = data.roleUnits.get(`${leader.teamId}:${slot}`);
   const roster = (unit?.playerIds ?? []).map((id) => ({ id, nick: data.players.get(id)?.nick ?? id }));
-  const portraitSize = roster.length > 1 ? 150 : 190;
+  const portraitSize = roster.length > 1 ? 138 : 176;
 
   return (
     <div
       className="panel"
       style={{
-        position: 'absolute', left: x, top: y, width: w, height: 540,
-        padding: '22px 26px', display: 'flex', flexDirection: 'column',
+        position: 'absolute', left: x, top: y, width: w, height: CARD_H,
+        padding: '20px 24px', display: 'flex', flexDirection: 'column',
+        // Corta o que vazar em vez de deixar escapar por cima do painel de baixo.
+        // Com o ritmo vertical abaixo nada deveria vazar; isto e a rede.
+        overflow: 'hidden',
         background: 'linear-gradient(180deg, var(--bg-panel-hi) 0%, var(--bg-panel) 100%)',
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-        <span className="display" style={{ fontSize: 26, fontWeight: 700, color: 'var(--gold-bright)' }}>
+        <span className="display" style={{ fontSize: 25, fontWeight: 700, color: 'var(--gold-bright)' }}>
           {ROLE_LABEL_PT_BR[slot]}
         </span>
         <span style={{ fontSize: 14, color: 'var(--text-dim)', letterSpacing: '0.08em' }}>
@@ -63,45 +82,53 @@ function RoleCard({
         </span>
       </div>
 
-      <GoldRule style={{ margin: '12px 0 16px' }} />
+      <GoldRule style={{ margin: '11px 0 14px' }} />
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-        <TeamLogo teamId={leader.teamId} size={64} />
-        <div style={{ fontFamily: 'var(--font-display)', fontSize: 46, fontWeight: 700, color: 'var(--gold-bright)', lineHeight: 1.0 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14, minHeight: 60 }}>
+        <TeamLogo teamId={leader.teamId} size={58} />
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: 42, fontWeight: 700, color: 'var(--gold-bright)', lineHeight: 1.0 }}>
           {team?.name}
         </div>
       </div>
 
       {/* as caras — e assim que a pessoa reconhece o time no cliente */}
-      <div style={{ marginTop: 18, display: 'flex', gap: 18, justifyContent: 'center' }}>
+      <div style={{ marginTop: 16, display: 'flex', gap: 16, justifyContent: 'center' }}>
         {roster.map((p) => (
           <PlayerPortrait key={p.id} playerId={p.id} nick={p.nick} size={portraitSize} />
         ))}
       </div>
 
-      <div style={{ marginTop: 'auto' }}>
-        <div style={{ fontSize: 14, letterSpacing: '0.12em', color: 'var(--gold)', marginBottom: 12 }}>
+      <div style={{ marginTop: 20 }}>
+        <div style={{ fontSize: 13, letterSpacing: '0.12em', color: 'var(--gold)', marginBottom: 10 }}>
           NO ESTANDARTE, FIQUE COM
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {leader.rerollTargets.map((color) => {
-            const keep = color.targets.filter((t) => t.verdict !== 'rerolar');
+            // No maximo tres: a quarta opcao ja e marginal e era o que fazia a
+            // caixa quebrar em duas linhas e estourar o card.
+            const keep = color.targets.filter((t) => t.verdict !== 'rerolar').slice(0, 3);
             return (
-              <div className="emblem" key={color.color} data-color={color.color} style={{ padding: '11px 15px', gap: 13, alignItems: 'flex-start' }}>
-                <div style={{ width: 82, flexShrink: 0, fontSize: 13, letterSpacing: '0.05em', color: 'var(--text-dim)', paddingTop: 3 }}>
+              <div
+                className="emblem"
+                key={color.color}
+                data-color={color.color}
+                style={{ padding: '9px 13px', gap: 11, alignItems: 'center', minHeight: 46 }}
+              >
+                <div style={{ width: 76, flexShrink: 0, fontSize: 12, letterSpacing: '0.04em', color: 'var(--text-dim)' }}>
                   {COLOR_LABEL_PT_BR[color.color].toUpperCase()}
                   {color.emblemCount > 1 && <span style={{ color: 'var(--gold)' }}> ×{color.emblemCount}</span>}
                 </div>
-                <div style={{ flex: 1, minWidth: 0, fontSize: 19, color: 'var(--text)', fontWeight: 600, lineHeight: 1.35 }}>
+                <div style={{ flex: 1, minWidth: 0, fontSize: 17, color: 'var(--text)', fontWeight: 600, lineHeight: 1.3 }}>
                   {keep.map((t) => t.labelPtBr).join(', ')}
                 </div>
               </div>
             );
           })}
         </div>
-        <div style={{ marginTop: 10, fontSize: 13, color: 'var(--text-faint)' }}>
-          qualquer outra stat nessa cor: rerole
-        </div>
+      </div>
+
+      <div style={{ marginTop: 'auto', paddingTop: 10, fontSize: 12, color: 'var(--text-faint)' }}>
+        qualquer outra stat nessa cor: rerole
       </div>
     </div>
   );
@@ -120,9 +147,9 @@ export function DreamScene() {
 
   return (
     <>
-      <div style={{ position: 'absolute', top: 34, left: 60, right: 60, display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-        <span className="display" style={{ fontSize: 26, letterSpacing: '0.24em', color: 'var(--gold-bright)' }}>
-          DOTA DOS SONHOS &nbsp;·&nbsp; FASE DE GRUPOS
+      <div style={{ position: 'absolute', top: 32, left: 60, right: 60, display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+        <span className="display" style={{ fontSize: 24, letterSpacing: '0.2em', color: 'var(--gold-bright)' }}>
+          DOTA DOS SONHOS
         </span>
         <span style={{ fontSize: 16, letterSpacing: '0.1em', color: 'var(--text-dim)' }}>
           FECHA EM <span className="numeral" style={{ color: 'var(--warn)', fontSize: 26, letterSpacing: 0 }}>{countdown}</span>
@@ -130,15 +157,15 @@ export function DreamScene() {
       </div>
 
       {/* PRINCIPAL, MEIO, SUPORTE — na ordem do cliente, pra bater com o que a pessoa ve la */}
-      <RoleCard slot="core" ranking={teamRanking.core} data={data} x={60} y={98} w={588} />
-      <RoleCard slot="mid" ranking={teamRanking.mid} data={data} x={666} y={98} w={588} />
-      <RoleCard slot="support" ranking={teamRanking.support} data={data} x={1272} y={98} w={588} />
+      <RoleCard slot="core" ranking={teamRanking.core} data={data} x={60} y={CARD_Y} w={588} />
+      <RoleCard slot="mid" ranking={teamRanking.mid} data={data} x={666} y={CARD_Y} w={588} />
+      <RoleCard slot="support" ranking={teamRanking.support} data={data} x={1272} y={CARD_Y} w={588} />
 
       {/* TREINADOR */}
       <div
         className="panel"
         style={{
-          position: 'absolute', left: 60, top: 664, width: 1194, height: 190, padding: '22px 30px',
+          position: 'absolute', left: 60, top: BAND_Y, width: 1194, height: BAND_H, padding: '20px 28px',
           background: 'linear-gradient(180deg, var(--bg-panel-hi) 0%, var(--bg-panel) 100%)',
         }}
       >
@@ -156,7 +183,7 @@ export function DreamScene() {
       <div
         className="panel"
         style={{
-          position: 'absolute', left: 1272, top: 664, width: 588, height: 190, padding: '22px 28px',
+          position: 'absolute', left: 1272, top: BAND_Y, width: 588, height: BAND_H, padding: '20px 26px',
           background: 'linear-gradient(180deg, var(--bg-panel-hi) 0%, var(--bg-panel) 100%)',
         }}
       >
@@ -174,8 +201,8 @@ export function DreamScene() {
       <div
         className="panel"
         style={{
-          position: 'absolute', left: 60, top: 872, width: 1800, height: 128, padding: '20px 30px',
-          display: 'flex', gap: 34, alignItems: 'center',
+          position: 'absolute', left: 60, top: RULES_Y, width: 1800, height: RULES_H, padding: '16px 28px',
+          display: 'flex', gap: 30, alignItems: 'center',
           background: 'linear-gradient(180deg, var(--bg-panel-hi) 0%, var(--bg-panel) 100%)',
         }}
       >

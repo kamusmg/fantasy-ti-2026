@@ -49,14 +49,21 @@ export function PlayerPortrait({
           </span>
         )}
       </div>
+      {/*
+        Uma linha so, com reticencias. Apelido quebrando em duas linhas empurrava
+        o resto do card pra baixo e fazia as caixas de emblema vazarem.
+      */}
       <span
         style={{
-          fontSize: Math.max(13, size * 0.17),
+          fontSize: Math.max(14, size * 0.16),
           color: 'var(--text)',
           fontWeight: 600,
           textAlign: 'center',
-          lineHeight: 1.15,
-          maxWidth: size + 10,
+          lineHeight: 1.2,
+          width: size,
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
         }}
       >
         {nick}

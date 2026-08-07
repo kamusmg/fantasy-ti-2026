@@ -28,8 +28,12 @@ export default function App() {
     <BroadcastFrame>
       {scene === 'dream' ? <DreamScene /> : <PredictionsScene />}
 
-      {/* Abas bem visiveis: na versao anterior a segunda cena era invisivel e ninguem sabia que existia. */}
-      <div style={{ position: 'absolute', bottom: 16, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 10 }}>
+      {/*
+        Abas no TOPO, centralizadas. No rodape elas ficavam na borda do palco e
+        sumiam quando a janela nao era 16:9 — e a segunda cena so existe se
+        alguem souber que ela existe.
+      */}
+      <div style={{ position: 'absolute', top: 26, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 10, zIndex: 10 }}>
         {SCENES.map((s) => (
           <button
             key={s.id}
