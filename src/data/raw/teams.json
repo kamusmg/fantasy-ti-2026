@@ -2,7 +2,9 @@
   "_meta": {
     "source": "Liquipedia The_International/2026 (wikitext via action=parse) + roster JSON embutido do battlepass.ru + seeds/player_roster.csv de github.com/saalocin/dotaTI2026",
     "verifiedAt": "2026-08-06",
-    "note": "As tres fontes concordam em todos os 80 jogadores e posicoes. Duas armadilhas de nome: BoomBoys ainda aparece como 'BetBoom Team' na Liquipedia, e Iron Wing E o elenco da ex-Tundra (foi pra 1w Team em junho/2026) — todo board zerou o rating dela no rebranding. TEAM VISION nao e PARIVISION: orgs diferentes, casamento aproximado de nome erra."
+    "note": "As tres fontes concordam em todos os 80 jogadores e posicoes.",
+    "APELIDOS": "CORRECAO 07/08 — a Valve faz orgs patrocinadas por casa de aposta jogarem sob APELIDO no TI. Sao a MESMA organizacao, e a Liquipedia redireciona: TEAM VISION = PARIVISION, BoomBoys = BetBoom Team, Iron Wing = 1w Team, HULIGANI = L1GA TEAM. Eu tinha registrado aqui que VISION e PariVision eram orgs diferentes — estava ERRADO, e o erro importava: a PariVision ganhou o EWC 2026 e a DreamLeague 29, e uma das duas favoritas do mercado. Nenhum board 'zerou rating no rebranding' como eu supunha; basta procurar pela org de origem.",
+    "ARMADILHA_IRON_WING": "O elenco ex-Tundra (Pure, bzm, 33, Ari, Whitemon) foi pra 1w Team em 01/06/2026 e joga o TI como Iron Wing. Tres ciladas: (1) a org 'Tundra Esports' HOJE tem outro elenco (Topson + RAMZES666) — quem seguir o nome Tundra segue o time errado; (2) o id 10182357 da OpenDota tem so 30 jogos, entao o Elo dele e prior, nao evidencia; (3) existe um 'Iron Wing' decoy na OpenDota (id 10150413) sem sobreposicao de elenco, anterior a transferencia."
   },
   "teams": [
     {
