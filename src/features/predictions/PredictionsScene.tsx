@@ -1,6 +1,6 @@
 import swiss from '../../data/generated/swiss.json';
 import { loadDataset } from '../../data/load';
-import { BUCKET_LABEL_PT_BR, BUCKET_SLOTS } from '../../engine/swiss';
+import { BUCKET_LABEL_PT_BR, BUCKET_ORDER, BUCKET_SLOTS } from '../../engine/swiss';
 import type { Bucket } from '../../engine/swiss';
 import { GoldRule } from '../../ui/primitives';
 import { TeamLogo } from '../../ui/Portrait';
@@ -118,6 +118,17 @@ export function PredictionsScene() {
     .reduce((acc, [id, bucket]) => acc + probability[id][bucket], 0);
   const firm = Object.values(stability).filter((s) => s === swiss.maxStability).length;
 
+  /**
+   * Quanto acerta quem sorteia os 16 times nas 16 vagas.
+   *
+   * Numa permutacao ao acaso, a chance de um time cair no balde certo e
+   * vagas(b)/16, e ha vagas(b) times naquele balde — entao o total e a soma de
+   * vagas(b)^2 / 16 = (1+4+25+25+4+1)/16 = 3,75. E a regua honesta: sem ela o
+   * "5,1 de 16" parece derrota quando na verdade e 36% acima do acaso.
+   */
+  const randomBaseline = BUCKET_ORDER
+    .reduce((acc, b) => acc + BUCKET_SLOTS[b] ** 2, 0) / 16;
+
   let x = 60;
   const topPositions = TOP_ROW.map((g) => {
     const pos = x;
@@ -149,41 +160,70 @@ export function PredictionsScene() {
         <BucketGroup key={g.bucket} group={g} teams={byBucket(g.bucket)} x={bottomPositions[i]} y={452} names={names} />
       ))}
 
-      {/* rodape de honestidade — o valor aqui e admitir o que e chute */}
-      <div className="panel" style={{ position: 'absolute', left: 60, top: 826, width: 1800, height: 172, padding: '20px 28px' }}>
-        <div style={{ display: 'flex', gap: 40, alignItems: 'flex-start' }}>
-          <div style={{ textAlign: 'center', minWidth: 190 }}>
-            <div className="numeral" style={{ fontSize: 64, color: 'var(--gold-bright)', lineHeight: 0.9 }}>
-              {expectedHits.toFixed(1)}
-            </div>
-            <div style={{ fontSize: 12, letterSpacing: '0.14em', color: 'var(--text-faint)', marginTop: 4 }}>
-              ACERTOS ESPERADOS DE 16
-            </div>
+      {/*
+        O numero de acertos esperados sozinho parece derrota. O que da sentido a
+        ele e a COMPARACAO com o chute: quem sorteia os 16 times nas 16 vagas
+        acerta 3,75 (soma de vagas ao quadrado / 16). Mostrar so o 5,1 escondia
+        justamente a informacao que prova que ele e bom.
+      */}
+      <div
+        className="panel"
+        style={{
+          position: 'absolute', left: 60, top: 820, width: 1800, height: 180, padding: '20px 30px',
+          display: 'flex', gap: 26, alignItems: 'stretch',
+          background: 'linear-gradient(180deg, var(--bg-panel-hi) 0%, var(--bg-panel) 100%)',
+        }}
+      >
+        <div
+          style={{
+            width: 300, borderRadius: 3, border: '2px solid var(--ok)',
+            background: 'rgba(108,187,85,0.12)', padding: '14px 20px',
+            display: 'flex', flexDirection: 'column', justifyContent: 'center',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
+            <span className="numeral" style={{ fontSize: 76, color: 'var(--ok)', lineHeight: 0.85 }}>{firm}</span>
+            <span className="numeral" style={{ fontSize: 32, color: 'var(--text-dim)' }}>de 16</span>
           </div>
-          <div style={{ width: 1, alignSelf: 'stretch', background: 'var(--gold-line)' }} />
-          <div style={{ textAlign: 'center', minWidth: 190 }}>
-            <div className="numeral" style={{ fontSize: 64, color: 'var(--ok)', lineHeight: 0.9 }}>
-              {firm}
-            </div>
-            <div style={{ fontSize: 12, letterSpacing: '0.14em', color: 'var(--text-faint)', marginTop: 4 }}>
-              PALPITES FIRMES
-            </div>
+          <div style={{ fontSize: 17, color: 'var(--text)', marginTop: 8, fontWeight: 600 }}>
+            palpites FIRMES
           </div>
-          <div style={{ width: 1, alignSelf: 'stretch', background: 'var(--gold-line)' }} />
-          <div style={{ flex: 1, fontSize: 15, color: 'var(--text-dim)', lineHeight: 1.5 }}>
-            Cinco de 16 nao e o modelo sendo ruim — e o formato. <b style={{ color: 'var(--text)' }}>Dez dos
-            16 times caem na rodada eliminatoria</b>, e vencer ou perder la e quase cara-ou-coroa, entao
-            esses dez baldes valem pouco por mais que se calcule.
-            <br />
-            <span style={{ color: 'var(--warn)' }}>
-              O 4-0 e o 4-1 sao os menos confiaveis: mudando a calibracao da simulacao eles trocam de dono.
-            </span>{' '}
-            <b style={{ color: 'var(--ok)' }}>FIRME</b> = o palpite aguenta as cinco calibracoes testadas.
+          <div style={{ fontSize: 13, color: 'var(--text-dim)', marginTop: 3 }}>
+            nao mudam por mais que eu mexa no modelo
           </div>
         </div>
-        <div style={{ marginTop: 14, fontSize: 11, color: 'var(--text-faint)' }}>
-          forca de time pelas odds do Polymarket (precificam o ELENCO que vai jogar, nao o historico da organizacao)
-          &nbsp;·&nbsp; atribuicao otima por algoritmo hungaro &nbsp;·&nbsp; semente fixa, mesmo resultado toda vez
+
+        <div
+          style={{
+            width: 340, borderRadius: 3, border: '1px solid var(--gold-line)',
+            background: 'rgba(0,0,0,0.22)', padding: '14px 20px',
+            display: 'flex', flexDirection: 'column', justifyContent: 'center',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 14 }}>
+            <span className="numeral" style={{ fontSize: 62, color: 'var(--gold-bright)', lineHeight: 0.85 }}>
+              {expectedHits.toFixed(1)}
+            </span>
+            <span style={{ fontSize: 22, color: 'var(--text-dim)' }}>
+              contra <b className="numeral" style={{ color: 'var(--text)' }}>{randomBaseline.toFixed(1)}</b> no chute
+            </span>
+          </div>
+          <div style={{ fontSize: 17, color: 'var(--text)', marginTop: 8, fontWeight: 600 }}>
+            acertos esperados
+          </div>
+          <div style={{ fontSize: 13, color: 'var(--text-dim)', marginTop: 3 }}>
+            {((expectedHits / randomBaseline - 1) * 100).toFixed(0)}% acima de sortear os 16 times nas vagas
+          </div>
+        </div>
+
+        <div style={{ flex: 1, fontSize: 18, color: 'var(--text)', lineHeight: 1.5, alignSelf: 'center' }}>
+          <b style={{ color: 'var(--gold-bright)' }}>Por que o teto e baixo:</b> dez dos 16 times caem na
+          rodada eliminatoria, e ganhar ou perder la e quase cara-ou-coroa. Essas dez vagas nao rendem
+          por mais que se calcule — nem pra mim, nem pra ninguem.
+          <div style={{ marginTop: 9, fontSize: 16, color: 'var(--warn)' }}>
+            O <b>4-0</b> e o <b>4-1</b> sao os mais fracos: mexendo na calibracao eles trocam de dono.
+            Por isso vao marcados como CHUTE.
+          </div>
         </div>
       </div>
     </>
