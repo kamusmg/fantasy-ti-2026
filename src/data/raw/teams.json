@@ -1,0 +1,172 @@
+{
+  "_meta": {
+    "source": "Liquipedia The_International/2026 (wikitext via action=parse) + roster JSON embutido do battlepass.ru + seeds/player_roster.csv de github.com/saalocin/dotaTI2026",
+    "verifiedAt": "2026-08-06",
+    "note": "As tres fontes concordam em todos os 80 jogadores e posicoes. Duas armadilhas de nome: BoomBoys ainda aparece como 'BetBoom Team' na Liquipedia, e Iron Wing E o elenco da ex-Tundra (foi pra 1w Team em junho/2026) — todo board zerou o rating dela no rebranding. TEAM VISION nao e PARIVISION: orgs diferentes, casamento aproximado de nome erra."
+  },
+  "teams": [
+    {
+      "id": "aurora", "name": "Aurora Gaming", "tag": "AUR", "region": "convite",
+      "players": [
+        { "id": "nightfall", "nick": "Nightfall", "position": 1 },
+        { "id": "mikoto", "nick": "Mikoto", "position": 2 },
+        { "id": "ws", "nick": "Ws`", "position": 3 },
+        { "id": "mira", "nick": "Mira", "position": 4 },
+        { "id": "kaori", "nick": "kaori", "position": 5 }
+      ]
+    },
+    {
+      "id": "boomboys", "name": "BoomBoys", "tag": "BB", "region": "convite",
+      "aliases": ["BetBoom Team"],
+      "players": [
+        { "id": "kiritych", "nick": "Kiritych~", "position": 1 },
+        { "id": "gpk", "nick": "gpk~", "position": 2 },
+        { "id": "miero", "nick": "MieRo", "position": 3 },
+        { "id": "save", "nick": "Save-", "position": 4 },
+        { "id": "kataomi", "nick": "Kataomi`", "position": 5 }
+      ]
+    },
+    {
+      "id": "ironwing", "name": "Iron Wing", "tag": "IW", "region": "convite",
+      "aliases": ["Tundra Esports", "1w Team"],
+      "players": [
+        { "id": "pure", "nick": "Pure", "position": 1 },
+        { "id": "bzm", "nick": "bzm", "position": 2 },
+        { "id": "p33", "nick": "33", "position": 3 },
+        { "id": "ari", "nick": "Ari", "position": 4 },
+        { "id": "whitemon", "nick": "Whitemon", "position": 5 }
+      ]
+    },
+    {
+      "id": "falcons", "name": "Team Falcons", "tag": "TF", "region": "convite",
+      "players": [
+        { "id": "skiter", "nick": "skiter", "position": 1 },
+        { "id": "malr1ne", "nick": "Malr1ne", "position": 2 },
+        { "id": "atf", "nick": "ATF", "position": 3 },
+        { "id": "crit", "nick": "Cr1t-", "position": 4 },
+        { "id": "sneyking", "nick": "Sneyking", "position": 5 }
+      ]
+    },
+    {
+      "id": "liquid", "name": "Team Liquid", "tag": "TL", "region": "convite",
+      "players": [
+        { "id": "micke", "nick": "m1CKe", "position": 1 },
+        { "id": "nisha", "nick": "Nisha", "position": 2 },
+        { "id": "ace", "nick": "Ace", "position": 3 },
+        { "id": "boxi", "nick": "Boxi", "position": 4 },
+        { "id": "tofu", "nick": "tOfu", "position": 5 }
+      ]
+    },
+    {
+      "id": "yandex", "name": "Team Yandex", "tag": "TY", "region": "convite",
+      "players": [
+        { "id": "watson", "nick": "watson", "position": 1 },
+        { "id": "chirajunior", "nick": "CHIRA_JUNIOR", "position": 2 },
+        { "id": "dm", "nick": "DM", "position": 3 },
+        { "id": "saksa", "nick": "Saksa", "position": 4 },
+        { "id": "malady", "nick": "Malady", "position": 5 }
+      ]
+    },
+    {
+      "id": "xtreme", "name": "Xtreme Gaming", "tag": "XG", "region": "convite",
+      "players": [
+        { "id": "ame", "nick": "Ame", "position": 1 },
+        { "id": "nothingtosay", "nick": "NothingToSay", "position": 2 },
+        { "id": "xxs", "nick": "Xxs", "position": 3 },
+        { "id": "fy", "nick": "fy", "position": 4 },
+        { "id": "xnova", "nick": "xNova", "position": 5 }
+      ]
+    },
+    {
+      "id": "spirit", "name": "Team Spirit", "tag": "TS", "region": "EU 1-2",
+      "players": [
+        { "id": "yatoro", "nick": "Yatoro", "position": 1 },
+        { "id": "larl", "nick": "Larl", "position": 2 },
+        { "id": "collapse", "nick": "Collapse", "position": 3 },
+        { "id": "notme", "nick": "not me", "position": 4 },
+        { "id": "rue", "nick": "rue", "position": 5 }
+      ]
+    },
+    {
+      "id": "vision", "name": "TEAM VISION", "tag": "TV", "region": "EU 1-2",
+      "players": [
+        { "id": "satanic", "nick": "Satanic", "position": 1 },
+        { "id": "noone", "nick": "No[o]ne-", "position": 2 },
+        { "id": "noticed", "nick": "Noticed", "position": 3 },
+        { "id": "9class", "nick": "9Class", "position": 4 },
+        { "id": "dukalis", "nick": "Dukalis", "position": 5 }
+      ]
+    },
+    {
+      "id": "nigma", "name": "Nigma Galaxy", "tag": "NGX", "region": "EU 3-4",
+      "players": [
+        { "id": "sumail", "nick": "SumaiL", "position": 1 },
+        { "id": "lorenof", "nick": "lorenof", "position": 2 },
+        { "id": "davai", "nick": "Davai", "position": 3 },
+        { "id": "omar", "nick": "OmaR", "position": 4 },
+        { "id": "gh", "nick": "GH", "position": 5 }
+      ]
+    },
+    {
+      "id": "huligani", "name": "HULIGANI", "tag": "HUL", "region": "EU 3-4",
+      "aliases": ["L1GA TEAM"],
+      "players": [
+        { "id": "ssnovv1", "nick": "ssnovv1", "position": 1 },
+        { "id": "mirage", "nick": "Mirage`", "position": 2 },
+        { "id": "corrupted", "nick": "Corrupted", "position": 3 },
+        { "id": "sayuw", "nick": "sayuw", "position": 4 },
+        { "id": "respect", "nick": "RESPECT", "position": 5 }
+      ]
+    },
+    {
+      "id": "resilience", "name": "Team Resilience", "tag": "TR", "region": "CN 1",
+      "players": [
+        { "id": "ysr04e", "nick": "YSR-04E", "position": 1 },
+        { "id": "echozz", "nick": "Echozz", "position": 2 },
+        { "id": "niu", "nick": "niu", "position": 3 },
+        { "id": "planet", "nick": "planet", "position": 4 },
+        { "id": "zzq", "nick": "zzq", "position": 5 }
+      ]
+    },
+    {
+      "id": "vici", "name": "Vici Gaming", "tag": "VG", "region": "CN 2",
+      "players": [
+        { "id": "shiro", "nick": "shiro", "position": 1 },
+        { "id": "xm", "nick": "Xm", "position": 2 },
+        { "id": "bach", "nick": "Bach", "position": 3 },
+        { "id": "xinq", "nick": "XinQ", "position": 4 },
+        { "id": "ybackt", "nick": "y`", "position": 5 }
+      ]
+    },
+    {
+      "id": "og", "name": "OG", "tag": "OG", "region": "SEA 1",
+      "players": [
+        { "id": "natsumi", "nick": "Natsumi", "position": 1 },
+        { "id": "yopaj", "nick": "Yopaj-", "position": 2 },
+        { "id": "raven", "nick": "Raven", "position": 3 },
+        { "id": "tims", "nick": "TIMS", "position": 4 },
+        { "id": "skem", "nick": "skem", "position": 5 }
+      ]
+    },
+    {
+      "id": "gamerlegion", "name": "GamerLegion", "tag": "GL", "region": "NA 1",
+      "players": [
+        { "id": "ghost", "nick": "Ghost", "position": 1 },
+        { "id": "rcy", "nick": "RCY", "position": 2 },
+        { "id": "fayde", "nick": "Fayde", "position": 3 },
+        { "id": "bignum", "nick": "Bignum", "position": 4 },
+        { "id": "speeed", "nick": "Speeed", "position": 5 }
+      ]
+    },
+    {
+      "id": "lgd", "name": "LGD Gaming", "tag": "LGD", "region": "SA 1",
+      "players": [
+        { "id": "yuma", "nick": "Yuma", "position": 1 },
+        { "id": "tailung", "nick": "TaiLung", "position": 2 },
+        { "id": "wisper", "nick": "Wisper", "position": 3 },
+        { "id": "thiolicor", "nick": "Thiolicor", "position": 4 },
+        { "id": "kj", "nick": "KJ", "position": 5 }
+      ]
+    }
+  ]
+}

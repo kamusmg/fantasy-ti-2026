@@ -1,0 +1,47 @@
+{
+  "_meta": {
+    "source": "https://battlepass.ru/en/ti2026/fantasy-calc",
+    "dataset": "2.888 replays analisados, 14 ligas",
+    "generatedAt": "2026-08-03T19:39:00Z",
+    "fetchedAt": "2026-08-06",
+    "UNIDADES": "Valor base em pontos POR MAPA, na escala da FUNCAO (dupla ja mediada). Media da temporada pra escalacao inteira = 20158, ou seja 20158/3 = 6719,33 por funcao.",
+    "papelNoModelo": "O battlepass da o NIVEL (media de liga bem medida, 2.888 replays TI-relevantes). O Reddit da o DELTA DE TIME. Ver data/blend.ts — assim a prosa do Maroomm nunca entra em numero nenhum.",
+    "limitacaoDeles": "O modelo do battlepass NAO tem estatistica de ordem: eles usam 2 mapas x nota media, sem premio de 2-melhores-de-3 nem melhor-de-K. Nosso motor e estritamente melhor. Isso saiu da engenharia reversa em data/oracle.ts.",
+    "seasonAverageRosterTotal": 20158
+  },
+  "leagueStatValues": {
+    "core": {
+      "creepScore": 1311, "gpm": 1296, "deaths": 1203, "madstone": 733, "kills": 717, "towerKills": 687,
+      "campsStacked": 674, "runes": 426, "lotuses": 350, "watchers": 247, "smokes": 30, "wardsPlaced": 20,
+      "teamfight": 1315, "tormentor": 684, "roshan": 528, "stuns": 298, "firstBlood": 199, "courier": 175
+    },
+    "mid": {
+      "deaths": 1225, "gpm": 1220, "creepScore": 1193, "kills": 787, "madstone": 494, "towerKills": 387,
+      "runes": 1434, "campsStacked": 465, "lotuses": 212, "watchers": 178, "wardsPlaced": 175, "smokes": 14,
+      "teamfight": 1484, "tormentor": 464, "stuns": 348, "roshan": 289, "courier": 206, "firstBlood": 115
+    },
+    "support": {
+      "deaths": 681, "gpm": 669, "kills": 312, "creepScore": 258, "towerKills": 96, "madstone": 82,
+      "wardsPlaced": 1049, "smokes": 942, "campsStacked": 893, "watchers": 872, "lotuses": 629, "runes": 419,
+      "teamfight": 1410, "tormentor": 428, "stuns": 407, "courier": 299, "firstBlood": 222, "roshan": 55
+    }
+  },
+  "publishedTitleGains": {
+    "_note": "Os 4 ganhos que o battlepass publica. Sao o ORACULO: encaixam exatamente em ganho = bonus x (2 x 6719,33) x P, com quatro restricoes independentes e zero parametro livre. 1071/0,16 = 6693,75 vs 20158/3 = 6719,33 -> 0,4% de erro. Ver src/data/oracle.ts.",
+    "baselineTotal": 19087,
+    "gains": [
+      { "titleId": "clutch", "battlepassKey": "kingmaker", "bonus": 0.16, "total": 20158, "gain": 1071, "impliedProbability": 0.500 },
+      { "titleId": "underdog", "battlepassKey": "underdog", "bonus": 0.06, "total": 19509, "gain": 421, "impliedProbability": 0.524 },
+      { "titleId": "lucky", "battlepassKey": "lucky", "bonus": 0.21, "total": 19363, "gain": 276, "impliedProbability": 0.098 },
+      { "titleId": "cerulean", "battlepassKey": "azure", "bonus": 0.11, "total": 19566, "gain": 478, "impliedProbability": 0.325 }
+    ]
+  },
+  "defaultPreviewBanner": {
+    "_note": "Estandarte de referencia que o battlepass usa pra calcular os role scores do topRoles: todos os emblemas Tier III (+60%), sem tracos.",
+    "allQualityTier": 3,
+    "noTraits": true,
+    "core": ["creepScore", "teamfight", "gpm"],
+    "mid": ["kills", "runes", "teamfight"],
+    "support": ["wardsPlaced", "teamfight", "campsStacked"]
+  }
+}

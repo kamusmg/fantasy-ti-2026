@@ -1,0 +1,40 @@
+{
+  "_meta": {
+    "source": "https://battlepass.ru/en/ti2026/fantasy-calc",
+    "fetchedAt": "2026-08-06",
+    "UNIDADES": "Nota da FUNCAO ja mediada (dupla dividida por 2), calculada contra o defaultPreviewBanner de battlepass.leagueStats.json (tudo Tier III = x1,6, sem tracos).",
+    "limitacao": "O servidor deles so entrega os 8 melhores candidatos por funcao. Nao existe endpoint publico com a tabela completa — tentado /api/ti2026/fantasy, /fantasy-calc.json e o payload SSR do SvelteKit. Nao existe mecanica de preco/salario neste formato: escolhe-se TIME, nao orcamento.",
+    "usoNoMotor": "Serve de CONFERENCIA CRUZADA, nao de fonte primaria. Um role score aqui deve bater com 1,6 x (soma das 3 stats do defaultPreviewBanner daquele time). Divergencia grande = erro de unidade ou de mistura. Ver data/audit.ts.",
+    "armadilhaDeAmostra": "OG lidera o Core com 21 MAPAS compartilhados; LGD, Iron Wing e Xtreme tem 100-150. O encolhimento empirico-Bayes em blend.ts transforma esse aviso em numero (peso w), em vez de emblema decorativo."
+  },
+  "core": [
+    { "teamId": "og", "roleScore": 7080, "sharedMaps": 21, "players": [{ "id": "natsumi", "score": 7440, "games": 89 }, { "id": "raven", "score": 6319, "games": 21 }] },
+    { "teamId": "nigma", "roleScore": 7056, "sharedMaps": 22, "players": [{ "id": "sumail", "score": 6869, "games": 35 }, { "id": "davai", "score": 5919, "games": 51 }] },
+    { "teamId": "lgd", "roleScore": 7014, "sharedMaps": 103, "players": [{ "id": "yuma", "score": 7189, "games": 117 }, { "id": "wisper", "score": 6738, "games": 103 }] },
+    { "teamId": "huligani", "roleScore": 6902, "sharedMaps": 24, "players": [{ "id": "ssnovv1", "score": 7580, "games": 24 }, { "id": "corrupted", "score": 6085, "games": 42 }] },
+    { "teamId": "vision", "roleScore": 6858, "sharedMaps": 74, "players": [{ "id": "satanic", "score": 7479, "games": 154 }, { "id": "noticed", "score": 5995, "games": 133 }] },
+    { "teamId": "yandex", "roleScore": 6852, "sharedMaps": 71, "players": [{ "id": "watson", "score": 7290, "games": 143 }, { "id": "dm", "score": 6131, "games": 71 }] },
+    { "teamId": "ironwing", "roleScore": 6833, "sharedMaps": 132, "players": [{ "id": "pure", "score": 7471, "games": 132 }, { "id": "p33", "score": 6108, "games": 163 }] },
+    { "teamId": "xtreme", "roleScore": 6790, "sharedMaps": 147, "players": [{ "id": "ame", "score": 7362, "games": 147 }, { "id": "xxs", "score": 6219, "games": 147 }] }
+  ],
+  "mid": [
+    { "teamId": "liquid", "roleScore": 6760, "sharedMaps": 173, "players": [{ "id": "nisha", "score": 6760, "games": 173 }] },
+    { "teamId": "aurora", "roleScore": 6485, "sharedMaps": 128, "players": [{ "id": "mikoto", "score": 6485, "games": 128 }] },
+    { "teamId": "falcons", "roleScore": 6471, "sharedMaps": 134, "players": [{ "id": "malr1ne", "score": 6471, "games": 134 }] },
+    { "teamId": "huligani", "roleScore": 6404, "sharedMaps": 24, "players": [{ "id": "mirage", "score": 6404, "games": 24 }] },
+    { "teamId": "og", "roleScore": 6403, "sharedMaps": 89, "players": [{ "id": "yopaj", "score": 6403, "games": 89 }] },
+    { "teamId": "spirit", "roleScore": 6376, "sharedMaps": 119, "players": [{ "id": "larl", "score": 6376, "games": 119 }] },
+    { "teamId": "boomboys", "roleScore": 6325, "sharedMaps": 163, "players": [{ "id": "gpk", "score": 6325, "games": 163 }] },
+    { "teamId": "ironwing", "roleScore": 6300, "sharedMaps": 163, "players": [{ "id": "bzm", "score": 6300, "games": 163 }] }
+  ],
+  "support": [
+    { "teamId": "og", "roleScore": 6318, "sharedMaps": 89, "players": [{ "id": "skem", "score": 7046, "games": null }, { "id": "tims", "score": 5591, "games": null }] },
+    { "teamId": "lgd", "roleScore": 6175, "sharedMaps": 117, "players": [{ "id": "kj", "score": 6962, "games": null }, { "id": "thiolicor", "score": 5389, "games": null }] },
+    { "teamId": "xtreme", "roleScore": 5953, "sharedMaps": 147, "players": [{ "id": "xnova", "score": 6331, "games": null }, { "id": "fy", "score": 5576, "games": null }] },
+    { "teamId": "yandex", "roleScore": 5854, "sharedMaps": 143, "players": [{ "id": "saksa", "score": 6373, "games": null }, { "id": "malady", "score": 5335, "games": null }] },
+    { "teamId": "ironwing", "roleScore": 5788, "sharedMaps": 163, "players": [{ "id": "whitemon", "score": 6510, "games": null }, { "id": "ari", "score": 5067, "games": null }] },
+    { "teamId": "spirit", "roleScore": 5720, "sharedMaps": 63, "players": [{ "id": "notme", "score": 6210, "games": 63 }, { "id": "rue", "score": 5575, "games": 160 }] },
+    { "teamId": "falcons", "roleScore": 5705, "sharedMaps": 151, "players": [{ "id": "crit", "score": 5807, "games": null }, { "id": "sneyking", "score": 5604, "games": null }] },
+    { "teamId": "liquid", "roleScore": 5664, "sharedMaps": 153, "players": [{ "id": "tofu", "score": 5768, "games": 173 }, { "id": "boxi", "score": 5610, "games": 153 }] }
+  ]
+}
