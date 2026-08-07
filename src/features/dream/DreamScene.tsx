@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useEngine } from '../../state/useEngine';
 import { GoldRule } from '../../ui/primitives';
+import { PlayerPortrait, TeamLogo } from '../../ui/Portrait';
 import { ROLE_LABEL_PT_BR, ROLE_POSITIONS } from '../../domain/roles';
 import type { RoleSlot } from '../../domain/roles';
 import { COLOR_LABEL_PT_BR } from '../../domain/stats';
@@ -41,33 +42,41 @@ function RoleCard({
   const leader = ranking.teams[0];
   const team = data.teams.get(leader.teamId);
   const unit = data.roleUnits.get(`${leader.teamId}:${slot}`);
-  const nicks = (unit?.playerIds ?? []).map((id) => data.players.get(id)?.nick ?? id);
+  const roster = (unit?.playerIds ?? []).map((id) => ({ id, nick: data.players.get(id)?.nick ?? id }));
+  const portraitSize = roster.length > 1 ? 150 : 190;
 
   return (
     <div
       className="panel"
       style={{
         position: 'absolute', left: x, top: y, width: w, height: 540,
-        padding: '26px 28px', display: 'flex', flexDirection: 'column',
+        padding: '22px 26px', display: 'flex', flexDirection: 'column',
         background: 'linear-gradient(180deg, var(--bg-panel-hi) 0%, var(--bg-panel) 100%)',
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-        <span className="display" style={{ fontSize: 28, fontWeight: 700, color: 'var(--gold-bright)' }}>
+        <span className="display" style={{ fontSize: 26, fontWeight: 700, color: 'var(--gold-bright)' }}>
           {ROLE_LABEL_PT_BR[slot]}
         </span>
-        <span style={{ fontSize: 15, color: 'var(--text-dim)', letterSpacing: '0.08em' }}>
+        <span style={{ fontSize: 14, color: 'var(--text-dim)', letterSpacing: '0.08em' }}>
           POS {ROLE_POSITIONS[slot].join(' + ')}
         </span>
       </div>
 
-      <GoldRule style={{ margin: '16px 0 22px' }} />
+      <GoldRule style={{ margin: '12px 0 16px' }} />
 
-      <div style={{ fontFamily: 'var(--font-display)', fontSize: 62, fontWeight: 700, color: 'var(--gold-bright)', lineHeight: 1.0 }}>
-        {team?.name}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+        <TeamLogo teamId={leader.teamId} size={64} />
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: 46, fontWeight: 700, color: 'var(--gold-bright)', lineHeight: 1.0 }}>
+          {team?.name}
+        </div>
       </div>
-      <div style={{ marginTop: 14, fontSize: 26, color: 'var(--text)' }}>
-        {nicks.join('   ·   ')}
+
+      {/* as caras — e assim que a pessoa reconhece o time no cliente */}
+      <div style={{ marginTop: 18, display: 'flex', gap: 18, justifyContent: 'center' }}>
+        {roster.map((p) => (
+          <PlayerPortrait key={p.id} playerId={p.id} nick={p.nick} size={portraitSize} />
+        ))}
       </div>
 
       <div style={{ marginTop: 'auto' }}>

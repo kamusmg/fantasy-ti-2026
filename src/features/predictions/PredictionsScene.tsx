@@ -3,6 +3,7 @@ import { loadDataset } from '../../data/load';
 import { BUCKET_LABEL_PT_BR, BUCKET_SLOTS } from '../../engine/swiss';
 import type { Bucket } from '../../engine/swiss';
 import { GoldRule } from '../../ui/primitives';
+import { TeamLogo } from '../../ui/Portrait';
 import { useMemo } from 'react';
 
 const picks = swiss.picks as Record<string, Bucket>;
@@ -27,7 +28,7 @@ const BOTTOM_ROW: readonly Group[] = [
 ];
 
 const CARD_W = 206;
-const CARD_H = 244;
+const CARD_H = 268;
 const GAP = 12;
 
 function TeamCard({ teamId, bucket, name, x, y }: {
@@ -63,12 +64,14 @@ function TeamCard({ teamId, bucket, name, x, y }: {
         {stable ? 'FIRME' : shaky ? 'CHUTE' : 'PROVAVEL'}
       </div>
 
-      <div style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700, color: 'var(--gold-bright)', lineHeight: 1.12 }}>
+      <TeamLogo teamId={teamId} size={74} />
+
+      <div style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 700, color: 'var(--gold-bright)', lineHeight: 1.12 }}>
         {name}
       </div>
 
-      <div className="numeral" style={{ fontSize: 46, color: 'var(--text)', lineHeight: 0.9 }}>
-        {(p * 100).toFixed(0)}<span style={{ fontSize: 22, color: 'var(--text-dim)' }}>%</span>
+      <div className="numeral" style={{ fontSize: 38, color: 'var(--text)', lineHeight: 0.9 }}>
+        {(p * 100).toFixed(0)}<span style={{ fontSize: 19, color: 'var(--text-dim)' }}>%</span>
       </div>
     </div>
   );

@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Fotos e logos baixados do CDN da Valve (71 MB).
+# Nao versionados: scripts/fetch-portraits.mjs os rebaixa e E a fonte da verdade.
+public/players/
+public/teams/
