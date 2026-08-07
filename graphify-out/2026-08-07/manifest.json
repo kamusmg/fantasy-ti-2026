@@ -20,8 +20,8 @@
     "semantic_hash": ""
   },
   "scripts/cola.ts": {
-    "mtime": 1786121709.359377,
-    "ast_hash": "fcaa3cf404194f9d9935c14c991e64a1",
+    "mtime": 1786101730.49925,
+    "ast_hash": "324d79b627ac26a278803f0514e9fade",
     "semantic_hash": ""
   },
   "scripts/fetch-portraits.mjs": {
@@ -75,8 +75,8 @@
     "semantic_hash": ""
   },
   "scripts/series-sensitivity.ts": {
-    "mtime": 1786121608.1406374,
-    "ast_hash": "5f39a11cf43361f4cb0b667ca26c14c4",
+    "mtime": 1786101661.4172645,
+    "ast_hash": "c6fb1a241870e28b033e664f41b16588",
     "semantic_hash": ""
   },
   "scripts/team-ranking.ts": {
@@ -85,8 +85,8 @@
     "semantic_hash": ""
   },
   "scripts/trait-optimum.ts": {
-    "mtime": 1786121608.1411395,
-    "ast_hash": "931e6e679f1e7d08eaf49f26aea911c6",
+    "mtime": 1786119167.497022,
+    "ast_hash": "8c56f7a67530c8b38d079c30a5a1a3be",
     "semantic_hash": ""
   },
   "src/App.tsx": {
@@ -150,8 +150,8 @@
     "semantic_hash": ""
   },
   "src/data/raw/dreamTeams.json": {
-    "mtime": 1786122070.989478,
-    "ast_hash": "a8899c5cbcf9e41d84216b7026358ff5",
+    "mtime": 1786120584.3165913,
+    "ast_hash": "edcd476234935a9ff8dc0ef767a51cb2",
     "semantic_hash": ""
   },
   "src/data/raw/prefixFrequency.json": {
@@ -230,8 +230,8 @@
     "semantic_hash": ""
   },
   "src/engine/clientBanner.test.ts": {
-    "mtime": 1786122154.895303,
-    "ast_hash": "7260e3a803c973584b38410f6b153804",
+    "mtime": 1786120303.643844,
+    "ast_hash": "dc1b7ba2e3cab3e2fdbf1b3bb3887224",
     "semantic_hash": ""
   },
   "src/engine/coach.ts": {
@@ -310,18 +310,18 @@
     "semantic_hash": ""
   },
   "src/engine/teamRanking.ts": {
-    "mtime": 1786122154.8948026,
-    "ast_hash": "4607246263d0d7a87361410ad7f420b2",
+    "mtime": 1786119264.2495978,
+    "ast_hash": "a0e65becb9e1a624ca3c42409e264e1d",
     "semantic_hash": ""
   },
   "src/engine/traitPlan.ts": {
-    "mtime": 1786122130.4928195,
-    "ast_hash": "3903008e2778fdbfffe5051108151d76",
+    "mtime": 1786119252.674001,
+    "ast_hash": "a6e8dbc8247e523daa599a7303423380",
     "semantic_hash": ""
   },
   "src/features/dream/DreamScene.tsx": {
-    "mtime": 1786122197.9671407,
-    "ast_hash": "03f6b8b8cc7f9973c8ca323e2d25c8d6",
+    "mtime": 1786120571.7655635,
+    "ast_hash": "64a1f541d1f7765c02ec3af6ffa24653",
     "semantic_hash": ""
   },
   "src/features/predictions/PredictionsScene.tsx": {
@@ -335,8 +335,8 @@
     "semantic_hash": ""
   },
   "src/i18n/strings.ts": {
-    "mtime": 1786122205.5737042,
-    "ast_hash": "07f058f1a9617e6010994a85c80350ac",
+    "mtime": 1786119314.9514897,
+    "ast_hash": "4c0925fb1d68bd0aa99f06d58a784d29",
     "semantic_hash": ""
   },
   "src/main.tsx": {
@@ -345,8 +345,8 @@
     "semantic_hash": ""
   },
   "src/state/useEngine.ts": {
-    "mtime": 1786121521.5244217,
-    "ast_hash": "be91a65544707b1b4fd83d8dcf0ac434",
+    "mtime": 1786120190.5121112,
+    "ast_hash": "65c7a0288631a3417b850bcb126f8a68",
     "semantic_hash": ""
   },
   "src/ui/BroadcastFrame.tsx": {
@@ -420,17 +420,17 @@
     "semantic_hash": ""
   },
   "README.en.md": {
-    "mtime": 1786122512.4181573,
-    "ast_hash": "916b2562ff973b6b16f947801f03ac0c",
+    "mtime": 1786107813.5995128,
+    "ast_hash": "6e7d9647d13aaab8c221d7738b051d64",
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1786122512.416153,
-    "ast_hash": "f2ee2913335b9feb68ba04bafdaa5ef5",
+    "mtime": 1786107813.5970016,
+    "ast_hash": "ee728afb4dfb34784293654130594bbf",
     "semantic_hash": ""
   },
   "REDDIT_POST.md": {
-    "mtime": 1786122512.4186616,
+    "mtime": 1786109337.8096335,
     "ast_hash": "c34d49195664018eca1f3bdae5444012",
     "semantic_hash": ""
   },
@@ -440,18 +440,8 @@
     "semantic_hash": ""
   },
   "public/favicon.svg": {
-    "mtime": 1786121853.5455525,
+    "mtime": 1786107096.617823,
     "ast_hash": "8a6b5c702c7ed8cbee8bb30f8a531a6f",
-    "semantic_hash": ""
-  },
-  "scripts/fractal-check.ts": {
-    "mtime": 1786121944.0645041,
-    "ast_hash": "10b30f88a7f23c634b3a54e526b6fdd5",
-    "semantic_hash": ""
-  },
-  "scripts/lgd-review.ts": {
-    "mtime": 1786121521.5254202,
-    "ast_hash": "bcc5c15751fd05d1cc92bcfe7cba2dd3",
     "semantic_hash": ""
   }
 }
