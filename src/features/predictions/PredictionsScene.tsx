@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from 'react';
 import swiss from '../../data/generated/swiss.json';
 import { loadDataset } from '../../data/load';
 import { BUCKET_ORDER, BUCKET_SLOTS } from '../../engine/swiss';
@@ -6,11 +7,10 @@ import { GoldRule } from '../../ui/primitives';
 import { TeamLogo } from '../../ui/Portrait';
 import { useLang } from '../../i18n/LangContext';
 import { label } from '../../i18n/strings';
-import { compareWithPro, loadProPicks } from '../../data/proPicks';
+import { loadProPicks } from '../../data/proPicks';
 import { UNTOUCHED_PICKS } from '../../data/baselinePicks';
-import { useEffect, useMemo, useState } from 'react';
 
-const picks = swiss.picks as Record<string, Bucket>;
+const ourPicks = swiss.picks as Record<string, Bucket>;
 const stability = swiss.stability as Record<string, number>;
 const probability = swiss.bucketProbability as Record<string, Record<Bucket, number>>;
 
@@ -22,74 +22,96 @@ const CARD_W = 206;
 const CARD_H = 268;
 const GAP = 12;
 
-function TeamCard({ teamId, bucket, name, x, y, disagreesWith }: {
+/**
+ * Um autor de palpite: nos, um profissional, ou "quem nao mexeu".
+ *
+ * A tela e uma APRESENTACAO: clica no nome e a grade inteira vira o palpite
+ * daquela pessoa. Nao e sobreposicao de comparacao — e trocar de quadro, pra
+ * poder dizer no ar "esse aqui e o do Claude, e esse aqui e o do Topson".
+ */
+interface Author {
+  readonly id: string;
+  readonly name: string;
+  readonly source: string;
+  readonly picks: Readonly<Record<string, Bucket>>;
+  /** So o nosso tem selo de estabilidade — ele mede o NOSSO modelo, nao a pessoa. */
+  readonly isModel: boolean;
+}
+
+function TeamCard({ teamId, bucket, name, x, y, author, ourBucket, overlay }: {
   readonly teamId: string; readonly bucket: Bucket; readonly name: string;
   readonly x: number; readonly y: number;
-  /** Quem palpitou DIFERENTE neste time, e onde ele pos. Vazio = todo mundo concorda. */
-  readonly disagreesWith?: { readonly who: string; readonly theirs: Bucket };
+  readonly author: Author;
+  readonly ourBucket: Bucket | undefined;
+  readonly overlay: boolean;
 }) {
   const { lang, t } = useLang();
-  const p = probability[teamId][bucket];
-  const stable = stability[teamId] === swiss.maxStability;
-  const shaky = stability[teamId] <= 1;
+  const p = probability[teamId]?.[bucket] ?? 0;
+
+  const stable = author.isModel && stability[teamId] === swiss.maxStability;
+  const shaky = author.isModel && stability[teamId] <= 1;
+  const differs = overlay && !author.isModel && ourBucket !== undefined && ourBucket !== bucket;
+
+  const accent = stable ? 'var(--ok)' : shaky || differs ? 'var(--warn)' : 'var(--gold-line)';
 
   return (
     <div
       className="panel"
       style={{
         position: 'absolute', left: x, top: y, width: CARD_W, height: CARD_H,
-        padding: '16px 12px', display: 'flex', flexDirection: 'column',
+        padding: '14px 12px', display: 'flex', flexDirection: 'column',
         justifyContent: 'space-between', alignItems: 'center', textAlign: 'center',
-        borderColor: stable ? 'var(--gold-bright)' : shaky ? 'var(--warn)' : 'var(--gold-line)',
-        borderWidth: stable ? 2 : 1,
+        borderColor: stable || differs ? accent : 'var(--gold-line)',
+        borderWidth: stable || differs ? 2 : 1,
         background: stable
           ? 'linear-gradient(180deg, var(--bg-panel-hi) 0%, var(--bg-panel) 100%)'
           : 'linear-gradient(180deg, var(--bg-panel) 0%, var(--bg-mid) 100%)',
       }}
     >
-      <div
-        style={{
-          fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', padding: '4px 12px', borderRadius: 2,
-          background: stable ? 'var(--ok)' : shaky ? 'var(--warn)' : 'transparent',
-          border: `1px solid ${stable ? 'var(--ok)' : shaky ? 'var(--warn)' : 'var(--gold-dim)'}`,
-          color: stable || shaky ? '#1b1006' : 'var(--gold)',
-        }}
-      >
-        {stable ? t.badgeFirm : shaky ? t.badgeGuess : t.badgeLikely}
-      </div>
+      {author.isModel ? (
+        <div
+          style={{
+            fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', padding: '4px 12px', borderRadius: 2,
+            background: stable ? 'var(--ok)' : shaky ? 'var(--warn)' : 'transparent',
+            border: `1px solid ${stable ? 'var(--ok)' : shaky ? 'var(--warn)' : 'var(--gold-dim)'}`,
+            color: stable || shaky ? '#1b1006' : 'var(--gold)',
+          }}
+        >
+          {stable ? t.badgeFirm : shaky ? t.badgeGuess : t.badgeLikely}
+        </div>
+      ) : overlay ? (
+        <div
+          style={{
+            fontSize: 11, fontWeight: 700, letterSpacing: '0.05em', padding: '4px 9px', borderRadius: 2,
+            maxWidth: CARD_W - 24, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+            background: differs ? 'var(--warn)' : 'transparent',
+            border: `1px solid ${differs ? 'var(--warn)' : 'var(--ok)'}`,
+            color: differs ? '#1b1006' : 'var(--ok)',
+          }}
+        >
+          {differs && ourBucket ? `${t.weSay}: ${label.bucket(ourBucket, lang)}` : t.sameAsUs}
+        </div>
+      ) : (
+        <div style={{ height: 22 }} />
+      )}
 
-      <TeamLogo teamId={teamId} size={74} />
+      <TeamLogo teamId={teamId} size={70} />
 
-      <div style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 700, color: 'var(--gold-bright)', lineHeight: 1.12 }}>
+      <div style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 700, color: 'var(--gold-bright)', lineHeight: 1.1 }}>
         {name}
       </div>
 
-      <div className="numeral" style={{ fontSize: 38, color: 'var(--text)', lineHeight: 0.9 }}>
-        {(p * 100).toFixed(0)}<span style={{ fontSize: 19, color: 'var(--text-dim)' }}>%</span>
+      <div className="numeral" style={{ fontSize: 34, color: 'var(--text)', lineHeight: 0.9 }}>
+        {(p * 100).toFixed(0)}<span style={{ fontSize: 18, color: 'var(--text-dim)' }}>%</span>
       </div>
-
-      {/* Discordancia: so aparece quando alguem de verdade palpitou diferente. */}
-      {disagreesWith && (
-        <div
-          style={{
-            position: 'absolute', left: -2, right: -2, bottom: -14,
-            background: 'var(--warn)', color: '#1b1006', borderRadius: 2,
-            fontSize: 11, fontWeight: 700, letterSpacing: '0.03em',
-            padding: '3px 6px', textAlign: 'center', whiteSpace: 'nowrap',
-            overflow: 'hidden', textOverflow: 'ellipsis',
-          }}
-        >
-          {disagreesWith.who}: {label.bucket(disagreesWith.theirs, lang)}
-        </div>
-      )}
     </div>
   );
 }
 
-function BucketGroup({ bucket, teams, x, y, names, disagreements }: {
+function BucketGroup({ bucket, teams, x, y, names, author, overlay }: {
   readonly bucket: Bucket; readonly teams: readonly string[];
   readonly x: number; readonly y: number; readonly names: ReadonlyMap<string, string>;
-  readonly disagreements: ReadonlyMap<string, { readonly who: string; readonly theirs: Bucket }>;
+  readonly author: Author; readonly overlay: boolean;
 }) {
   const { lang, t } = useLang();
   const width = BUCKET_SLOTS[bucket] * CARD_W + (BUCKET_SLOTS[bucket] - 1) * GAP;
@@ -111,11 +133,23 @@ function BucketGroup({ bucket, teams, x, y, names, disagreements }: {
           name={names.get(teamId) ?? teamId}
           x={x + i * (CARD_W + GAP)}
           y={y + 56}
-          disagreesWith={disagreements.get(teamId)}
+          author={author}
+          ourBucket={ourPicks[teamId]}
+          overlay={overlay}
         />
       ))}
     </>
   );
+}
+
+function buildAuthors(t: ReturnType<typeof useLang>['t']): readonly Author[] {
+  return [
+    { id: 'model', name: t.ourModelName, source: t.modelSource, picks: ourPicks, isModel: true },
+    ...loadProPicks().map((pro) => ({
+      id: pro.id, name: pro.name, source: pro.source, picks: pro.picks, isModel: false,
+    })),
+    { id: 'untouched', name: t.untouchedName, source: t.untouchedSource, picks: UNTOUCHED_PICKS, isModel: false },
+  ];
 }
 
 export function PredictionsScene() {
@@ -125,75 +159,40 @@ export function PredictionsScene() {
     return new Map([...data.teams].map(([id, team]) => [id, team.name]));
   }, []);
 
-  const byBucket = (bucket: Bucket) => Object.keys(picks).filter((id) => picks[id] === bucket);
+  const authors = useMemo(() => buildAuthors(t), [t]);
+  const [authorIndex, setAuthorIndex] = useState(0);
+  /** Sobreposicao de comparacao: marca onde o autor discorda de nos. */
+  const [overlay, setOverlay] = useState(true);
+  const author = authors[Math.min(authorIndex, authors.length - 1)];
 
-  const expectedHits = Object.entries(picks)
-    .reduce((acc, [id, bucket]) => acc + probability[id][bucket], 0);
-  const firm = Object.values(stability).filter((s) => s === swiss.maxStability).length;
-
-  /**
-   * Quanto acerta quem sorteia os 16 times nas 16 vagas.
-   *
-   * Numa permutacao ao acaso, a chance de um time cair no balde certo e
-   * vagas(b)/16, e ha vagas(b) times naquele balde — entao o total e a soma de
-   * vagas(b)^2 / 16 = (1+4+25+25+4+1)/16 = 3,75. E a regua honesta: sem ela o
-   * "5,1 de 16" parece derrota quando na verdade e 36% acima do acaso.
-   */
-  const randomBaseline = BUCKET_ORDER
-    .reduce((acc, b) => acc + BUCKET_SLOTS[b] ** 2, 0) / 16;
-
-  /**
-   * Comparacao com palpite de profissional.
-   *
-   * So aparece quando ha dado REAL em proPicks.json. Enquanto ninguem tiver
-   * publicado, a tela nao muda em nada — melhor ausencia que invencao.
-   */
-  const pros = useMemo(() => loadProPicks(), []);
-
-  /**
-   * Adversarios da comparacao.
-   *
-   * O primeiro sempre existe: "quem nao mexeu", a ordem que o cliente ja vem
-   * preenchido. Os profissionais entram depois, quando publicarem de verdade.
-   */
-  const opponents = useMemo(() => {
-    const base = {
-      id: 'untouched',
-      name: lang === 'pt' ? 'Quem nao mexeu' : 'Not touching it',
-      source: lang === 'pt'
-        ? 'ordem que o cliente ja vem preenchido'
-        : "the client's pre-filled order",
-      capturedAt: '2026-08-07',
-      picks: UNTOUCHED_PICKS,
-    };
-    return [base, ...pros];
-  }, [lang, pros]);
-
-  const [opponentIndex, setOpponentIndex] = useState(0);
-  const [comparing, setComparing] = useState(false);
-
-  // Tecla 3 liga/desliga a comparacao; 4 troca de adversario quando houver mais de um.
+  // Numeros 3, 4, 5... trocam de autor; C liga/desliga a comparacao.
+  // Na live, mouse na tela e sujeira.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === '3') setComparing((v) => !v);
-      if (e.key === '4') setOpponentIndex((i) => (i + 1) % opponents.length);
+      const n = Number(e.key);
+      if (Number.isInteger(n) && n >= 3 && n - 3 < authors.length) setAuthorIndex(n - 3);
+      if (e.key.toLowerCase() === 'c') setOverlay((v) => !v);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [opponents.length]);
+  }, [authors.length]);
 
-  const active = opponents[Math.min(opponentIndex, opponents.length - 1)];
-  const comparison = useMemo(() => compareWithPro(picks, active), [active]);
+  const byBucket = (bucket: Bucket) =>
+    Object.keys(author.picks).filter((id) => author.picks[id] === bucket);
 
-  const disagreements = useMemo(() => {
-    if (!comparing) return new Map<string, { who: string; theirs: Bucket }>();
-    return new Map(
-      comparison.disagreements.map((d) => [d.teamId, { who: active.name, theirs: d.theirs }]),
-    );
-  }, [comparing, comparison, active.name]);
+  const expectedHits = Object.entries(author.picks)
+    .reduce((acc, [id, bucket]) => acc + (probability[id]?.[bucket] ?? 0), 0);
+  const ourHits = Object.entries(ourPicks)
+    .reduce((acc, [id, bucket]) => acc + (probability[id]?.[bucket] ?? 0), 0);
+  const firm = Object.values(stability).filter((s) => s === swiss.maxStability).length;
+  const agreements = Object.entries(author.picks)
+    .filter(([id, b]) => ourPicks[id] === b).length;
 
-  const opponentHits = Object.entries(active.picks)
-    .reduce((acc, [id, b]) => acc + (probability[id]?.[b] ?? 0), 0);
+  /**
+   * Quanto acerta quem sorteia os 16 times nas 16 vagas: soma de vagas^2 / 16 =
+   * (1+4+25+25+4+1)/16 = 3,75. Sem essa regua, "5,1 de 16" parece derrota.
+   */
+  const randomBaseline = BUCKET_ORDER.reduce((acc, b) => acc + BUCKET_SLOTS[b] ** 2, 0) / 16;
 
   let x = 60;
   const topPositions = TOP_ROW.map((g) => {
@@ -210,131 +209,125 @@ export function PredictionsScene() {
 
   return (
     <>
-      <div style={{ position: 'absolute', top: 26, left: 60, right: 60, display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-        <span className="display" style={{ fontSize: 22, letterSpacing: '0.24em', color: 'var(--gold-bright)' }}>
+      <div style={{ position: 'absolute', top: 24, left: 60, right: 60, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span className="display" style={{ fontSize: 20, letterSpacing: '0.2em', color: 'var(--gold-bright)' }}>
           {t.predictionsTitle} &nbsp;·&nbsp; {t.groupStage}
         </span>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <button
-            type="button"
-            onClick={() => setComparing((v) => !v)}
-            style={{
-              font: 'inherit', cursor: 'pointer', fontSize: 14, letterSpacing: '0.08em',
-              padding: '7px 16px', borderRadius: 3,
-              border: `2px solid ${comparing ? 'var(--warn)' : 'var(--gold-line)'}`,
-              color: comparing ? '#1b1006' : 'var(--gold)',
-              background: comparing ? 'var(--warn)' : 'rgba(0,0,0,0.30)',
-              fontWeight: comparing ? 700 : 500,
-            }}
-          >
-            3 · {lang === 'pt' ? 'COMPARAR COM' : 'COMPARE VS'} {active.name.toUpperCase()}
-          </button>
-          {comparing && opponents.length > 1 && (
+
+        {/* O SELETOR DE AUTOR: o coracao da apresentacao. */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+          <span style={{ fontSize: 12, letterSpacing: '0.14em', color: 'var(--text-dim)' }}>{t.whosePicks}</span>
+          {authors.map((a, i) => (
             <button
+              key={a.id}
               type="button"
-              onClick={() => setOpponentIndex((i) => (i + 1) % opponents.length)}
+              onClick={() => setAuthorIndex(i)}
               style={{
-                font: 'inherit', cursor: 'pointer', fontSize: 14, padding: '7px 14px',
-                borderRadius: 3, border: '2px solid var(--gold-line)',
-                color: 'var(--gold)', background: 'rgba(0,0,0,0.30)',
+                font: 'inherit', cursor: 'pointer', fontSize: 15, letterSpacing: '0.06em',
+                padding: '8px 18px', borderRadius: 3,
+                border: `2px solid ${author.id === a.id ? 'var(--gold-bright)' : 'var(--gold-line)'}`,
+                color: author.id === a.id ? 'var(--bg-deep)' : 'var(--gold)',
+                background: author.id === a.id ? 'var(--gold-bright)' : 'rgba(0,0,0,0.30)',
+                fontWeight: author.id === a.id ? 700 : 500,
               }}
             >
-              4 · {lang === 'pt' ? 'TROCAR' : 'SWITCH'}
+              {i + 3} · {a.name.toUpperCase()}
+            </button>
+          ))}
+
+          {!author.isModel && (
+            <button
+              type="button"
+              onClick={() => setOverlay((v) => !v)}
+              style={{
+                font: 'inherit', cursor: 'pointer', fontSize: 14, letterSpacing: '0.06em',
+                padding: '8px 14px', borderRadius: 3, marginLeft: 6,
+                border: `2px solid ${overlay ? 'var(--warn)' : 'var(--gold-line)'}`,
+                color: overlay ? '#1b1006' : 'var(--gold)',
+                background: overlay ? 'var(--warn)' : 'rgba(0,0,0,0.30)',
+                fontWeight: overlay ? 700 : 500,
+              }}
+            >
+              C · {lang === 'pt' ? 'COMPARAR' : 'COMPARE'}
             </button>
           )}
-          <span style={{ fontSize: 14, color: 'var(--text-dim)' }}>
-            {t.simulations(swiss._meta.iterations.toLocaleString(lang === 'pt' ? 'pt-BR' : 'en-US'))}
-          </span>
         </div>
       </div>
 
       {TOP_ROW.map((b, i) => (
-        <BucketGroup key={b} bucket={b} teams={byBucket(b)} x={topPositions[i]} y={78} names={names} disagreements={disagreements} />
+        <BucketGroup key={b} bucket={b} teams={byBucket(b)} x={topPositions[i]} y={78} names={names} author={author} overlay={overlay} />
       ))}
       {BOTTOM_ROW.map((b, i) => (
-        <BucketGroup key={b} bucket={b} teams={byBucket(b)} x={bottomPositions[i]} y={452} names={names} disagreements={disagreements} />
+        <BucketGroup key={b} bucket={b} teams={byBucket(b)} x={bottomPositions[i]} y={452} names={names} author={author} overlay={overlay} />
       ))}
 
-      {/*
-        O numero de acertos esperados sozinho parece derrota. O que da sentido a
-        ele e a COMPARACAO com o chute: quem sorteia os 16 times nas 16 vagas
-        acerta 3,75 (soma de vagas ao quadrado / 16). Mostrar so o 5,1 escondia
-        justamente a informacao que prova que ele e bom.
-      */}
       <div
         className="panel"
         style={{
-          position: 'absolute', left: 60, top: 820, width: 1800, height: 180, padding: '20px 30px',
-          display: 'flex', gap: 26, alignItems: 'stretch',
+          position: 'absolute', left: 60, top: 820, width: 1800, height: 180, padding: '18px 28px',
+          display: 'flex', gap: 24, alignItems: 'stretch',
           background: 'linear-gradient(180deg, var(--bg-panel-hi) 0%, var(--bg-panel) 100%)',
         }}
       >
         <div
           style={{
-            width: 300, borderRadius: 3, border: '2px solid var(--ok)',
-            background: 'rgba(108,187,85,0.12)', padding: '14px 20px',
+            width: 330, borderRadius: 3, border: '2px solid var(--gold-bright)',
+            background: 'rgba(224,184,106,0.12)', padding: '12px 20px',
             display: 'flex', flexDirection: 'column', justifyContent: 'center',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
-            <span className="numeral" style={{ fontSize: 76, color: 'var(--ok)', lineHeight: 0.85 }}>{firm}</span>
-            <span className="numeral" style={{ fontSize: 32, color: 'var(--text-dim)' }}>{t.outOf16}</span>
+          <div style={{ fontSize: 12, letterSpacing: '0.14em', color: 'var(--gold)' }}>{t.whosePicks}</div>
+          <div className="display" style={{ fontSize: 34, color: 'var(--gold-bright)', lineHeight: 1.05, marginTop: 4 }}>
+            {author.name}
           </div>
-          <div style={{ fontSize: 17, color: 'var(--text)', marginTop: 8, fontWeight: 600 }}>
-            {t.firmPicks}
-          </div>
-          <div style={{ fontSize: 13, color: 'var(--text-dim)', marginTop: 3 }}>
-            {t.firmSubtitle}
+          <div style={{ fontSize: 12, color: 'var(--text-dim)', marginTop: 6, lineHeight: 1.35 }}>
+            {author.source}
           </div>
         </div>
 
         <div
           style={{
-            width: 340, borderRadius: 3, border: '1px solid var(--gold-line)',
-            background: 'rgba(0,0,0,0.22)', padding: '14px 20px',
+            width: 330, borderRadius: 3, border: '1px solid var(--gold-line)',
+            background: 'rgba(0,0,0,0.22)', padding: '12px 20px',
             display: 'flex', flexDirection: 'column', justifyContent: 'center',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 14 }}>
-            <span className="numeral" style={{ fontSize: 62, color: 'var(--gold-bright)', lineHeight: 0.85 }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
+            <span className="numeral" style={{ fontSize: 58, color: 'var(--gold-bright)', lineHeight: 0.85 }}>
               {expectedHits.toFixed(1)}
             </span>
-            <span style={{ fontSize: 22, color: 'var(--text-dim)' }}>
+            <span style={{ fontSize: 20, color: 'var(--text-dim)' }}>
               {t.vsRandom(randomBaseline.toFixed(1))}
             </span>
           </div>
-          <div style={{ fontSize: 17, color: 'var(--text)', marginTop: 8, fontWeight: 600 }}>
-            {t.expectedHits}
-          </div>
+          <div style={{ fontSize: 16, color: 'var(--text)', marginTop: 7, fontWeight: 600 }}>{t.expectedHits}</div>
           <div style={{ fontSize: 13, color: 'var(--text-dim)', marginTop: 3 }}>
-            {t.aboveRandom(((expectedHits / randomBaseline - 1) * 100).toFixed(0))}
+            {author.isModel
+              ? `${firm} ${t.outOf16} ${t.firmPicks}`
+              : t.agreesWithUs(agreements)}
           </div>
         </div>
 
-        <div style={{ flex: 1, fontSize: 18, color: 'var(--text)', lineHeight: 1.5, alignSelf: 'center' }}>
-          <b style={{ color: 'var(--gold-bright)' }}>{t.ceilingLead}</b> {t.ceilingBody}
-          <div style={{ marginTop: 9, fontSize: 16, color: 'var(--warn)' }}>
-            <b>4-0</b> / <b>4-1</b> {t.weakestLead} {t.weakestBody}
-          </div>
-
-          {/* Confronto: so aparece com o modo ligado, e sempre com a fonte junto. */}
-          {comparing && (
-            <div
-              style={{
-                marginTop: 11, padding: '9px 13px', borderRadius: 3,
-                border: '1px solid var(--warn)', background: 'rgba(217,138,58,0.12)',
-                fontSize: 16, color: 'var(--text)',
-              }}
-            >
-              <b style={{ color: 'var(--gold-bright)' }}>{active.name}</b>
-              {' '}<span className="numeral" style={{ fontSize: 20 }}>{opponentHits.toFixed(1)}</span>
-              {' '}{lang === 'pt' ? 'contra os nossos' : 'against our'}{' '}
-              <span className="numeral" style={{ fontSize: 20, color: 'var(--gold-bright)' }}>{expectedHits.toFixed(1)}</span>
-              {' · '}
-              <b style={{ color: 'var(--warn)' }}>{comparison.disagreements.length}</b>{' '}
-              {lang === 'pt' ? 'discordancias em amarelo na grade' : 'disagreements in yellow on the grid'}
-              <span style={{ fontSize: 12, color: 'var(--text-dim)' }}> — {active.source}</span>
-            </div>
+        <div style={{ flex: 1, fontSize: 17, color: 'var(--text)', lineHeight: 1.45, alignSelf: 'center' }}>
+          {author.isModel ? (
+            <>
+              <b style={{ color: 'var(--gold-bright)' }}>{t.ceilingLead}</b> {t.ceilingBody}
+              <div style={{ marginTop: 8, fontSize: 15, color: 'var(--warn)' }}>
+                <b>4-0</b> / <b>4-1</b> {t.weakestLead} {t.weakestBody}
+              </div>
+            </>
+          ) : (
+            <>
+              <b style={{ color: 'var(--gold-bright)' }}>{author.name}</b>{' '}
+              {lang === 'pt'
+                ? `acerta ${expectedHits.toFixed(1)} contra ${ourHits.toFixed(1)} do Claude Opus, pelo nosso modelo.`
+                : `scores ${expectedHits.toFixed(1)} against Claude Opus's ${ourHits.toFixed(1)}, by our model.`}
+              <div style={{ marginTop: 8, fontSize: 15, color: 'var(--warn)' }}>
+                {lang === 'pt'
+                  ? 'Os cards em amarelo sao onde ele discorda de nos — o rotulo mostra onde nos colocamos aquele time.'
+                  : 'Yellow cards are where they disagree with us — the label shows where we put that team.'}
+              </div>
+            </>
           )}
         </div>
       </div>

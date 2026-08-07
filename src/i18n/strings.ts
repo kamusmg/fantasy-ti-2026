@@ -48,6 +48,14 @@ interface Strings {
   readonly badgeFirm: string;
   readonly badgeLikely: string;
   readonly badgeGuess: string;
+  readonly whosePicks: string;
+  readonly ourModelName: string;
+  readonly untouchedName: string;
+  readonly untouchedSource: string;
+  readonly modelSource: string;
+  readonly weSay: string;
+  readonly sameAsUs: string;
+  readonly agreesWithUs: (n: number) => string;
   readonly bucketSubtitle: Readonly<Record<Bucket, string>>;
 }
 
@@ -86,6 +94,14 @@ const PT: Strings = {
   badgeFirm: 'FIRME',
   badgeLikely: 'PROVAVEL',
   badgeGuess: 'CHUTE',
+  whosePicks: 'PALPITE DE',
+  ourModelName: 'Claude Opus',
+  untouchedName: 'Quem nao mexeu',
+  untouchedSource: 'a ordem que o cliente do Dota ja vem preenchido',
+  modelSource: '50.000 simulacoes do Suico com forca de time do mercado de apostas',
+  weSay: 'Claude',
+  sameAsUs: 'igual ao nosso',
+  agreesWithUs: (n) => `${n} de 16 iguais aos do Claude`,
   bucketSubtitle: {
     '4-0': 'Uma equipe invicta.',
     '4-1': 'Duas equipes com quatro vitorias e uma derrota.',
@@ -131,6 +147,14 @@ const EN: Strings = {
   badgeFirm: 'FIRM',
   badgeLikely: 'LIKELY',
   badgeGuess: 'GUESS',
+  whosePicks: 'PICKS BY',
+  ourModelName: 'Claude Opus',
+  untouchedName: 'Not touching it',
+  untouchedSource: "the order the Dota client comes pre-filled with",
+  modelSource: '50,000 Swiss simulations with team strength from the betting market',
+  weSay: 'Claude',
+  sameAsUs: 'same as ours',
+  agreesWithUs: (n) => `${n} of 16 match Claude's`,
   bucketSubtitle: {
     '4-0': 'One undefeated team.',
     '4-1': 'Two teams with four wins and one loss.',
