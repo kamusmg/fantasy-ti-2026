@@ -8,6 +8,30 @@
   },
   "pros": [
     {
+      "id": "gemini",
+      "name": "Gemini AI",
+      "source": "Análise de Consistência (Sem LGD)",
+      "capturedAt": "2026-08-07",
+      "picks": {
+        "yandex": "4-0",
+        "vision": "4-1",
+        "falcons": "4-1",
+        "ironwing": "elimWin",
+        "boomboys": "elimWin",
+        "aurora": "elimWin",
+        "spirit": "elimWin",
+        "liquid": "elimWin",
+        "vici": "elimLose",
+        "xtreme": "elimLose",
+        "resilience": "elimLose",
+        "nigma": "elimLose",
+        "og": "elimLose",
+        "gamerlegion": "1-4",
+        "lgd": "1-4",
+        "huligani": "0-4"
+      }
+    },
+    {
       "id": "topson",
       "name": "Topson",
       "source": "palpites dele na live de 06/08",

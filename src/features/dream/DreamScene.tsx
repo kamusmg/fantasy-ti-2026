@@ -5,6 +5,7 @@ import { PlayerPortrait, TeamLogo } from '../../ui/Portrait';
 import { ROLE_POSITIONS } from '../../domain/roles';
 import type { RoleSlot } from '../../domain/roles';
 import { PREFIX_DEFINITIONS, SUFFIX_DEFINITIONS } from '../../domain/titles';
+import { TRAIT_DEFINITIONS } from '../../domain/emblems';
 import { useLang } from '../../i18n/LangContext';
 import { label } from '../../i18n/strings';
 import type { RoleRanking } from '../../engine/teamRanking';
@@ -129,8 +130,32 @@ function RoleCard({
         </div>
       </div>
 
-      <div style={{ marginTop: 'auto', paddingTop: 10, fontSize: 12, color: 'var(--text-faint)' }}>
-        {t.rerollAnythingElse}
+      {/*
+        Nivel e traco alvo. Vem por busca exaustiva nos 216 arranjos, nao por
+        argumento — e o triplo Amigavel ganha nas tres funcoes, porque as tres
+        stats de um estandarte real tem valor parecido e o bonus PLANO bate a
+        concentracao. Fica claro que e ALVO: traco vem sorteado, nao se escolhe.
+      */}
+      <div style={{ marginTop: 'auto', paddingTop: 10 }}>
+        <div style={{ fontSize: 12, color: 'var(--text-faint)', marginBottom: 6 }}>
+          {t.rerollAnythingElse}
+        </div>
+        <div
+          style={{
+            padding: '8px 12px', borderRadius: 2,
+            border: '1px solid var(--gold-line)', background: 'rgba(0,0,0,0.22)',
+            fontSize: 13, color: 'var(--text-dim)', lineHeight: 1.4,
+          }}
+        >
+          <span style={{ color: 'var(--gold)' }}>{t.traitTargetLead}</span>{' '}
+          <b style={{ color: 'var(--text)' }}>
+            {t.tierV} · {leader.traitPlan.traits.map((tr) => TRAIT_DEFINITIONS[tr].labelPtBr).join(' + ')}
+          </b>{' '}
+          <span style={{ color: 'var(--gold-bright)' }}>
+            (+{Math.round((leader.traitPlan.bonuses[0] ?? 0) * 100)}%{' '}
+            {t.eachEmblem})
+          </span>
+        </div>
       </div>
     </div>
   );

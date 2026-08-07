@@ -3,6 +3,9 @@ import type { Period, RoleSlot } from '../domain/roles';
 import type { RoleCandidate } from './optimize';
 import type { ColorTargets } from './rerollTargets';
 import { rerollTargets } from './rerollTargets';
+import { bestTraitPlan } from './traitPlan';
+import type { TraitPlan } from './traitPlan';
+import { DEFAULT_RULES } from '../domain/rules';
 import type { RoleUnit } from '../domain/roster';
 
 /**
@@ -45,6 +48,8 @@ export interface TeamRanking {
   readonly winnersCurse: boolean;
   readonly bestCandidate: RoleCandidate;
   readonly rerollTargets: readonly ColorTargets[];
+  /** Melhor arranjo de tracos possivel — ALVO de reroll, nao escolha. */
+  readonly traitPlan: TraitPlan;
 }
 
 export interface RoleRanking {
@@ -134,6 +139,9 @@ export function rankTeams(
         winnersCurse: rm - rb >= 6 && rm - r75 <= 2,
         bestCandidate: r.bestCandidate,
         rerollTargets: unit ? rerollTargets(unit, period) : [],
+        traitPlan: unit
+          ? bestTraitPlan(unit, r.bestCandidate.statIds, period, DEFAULT_RULES)
+          : { traits: [], bonuses: [], score: 0, gainOverWorst: 0 },
       };
     });
 
