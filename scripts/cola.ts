@@ -63,6 +63,12 @@ for (const slot of [...ALL_ROLE_SLOTS].sort((a, b) => ranking[b].rerollPayoff - 
   console.log(`    ${ROLE_LABEL_PT_BR[slot].padEnd(11)} +${(ranking[slot].rerollPayoff * 100).toFixed(0)}%`);
 }
 
+const tieRoles = ALL_ROLE_SLOTS.filter((s) => isTechnicalTie(ranking[s].leaderMargin));
+console.log('');
+console.log(`  >>> A BRIGA NAO E PELO TIME, E PELAS FICHAS.`);
+console.log(`      ${tieRoles.map((s) => ROLE_LABEL_PT_BR[s]).join(' e ')} sao empate (~1%).`);
+console.log(`      Rerolar bem o Meio vale +${(ranking.mid.rerollPayoff * 100).toFixed(0)}% — quase 50x mais.`);
+
 console.log('\n  So da pra consertar STAT cirurgicamente em emblema VERDE.');
 console.log('  Vermelho so mira QUALIDADE, azul so mira TRACO — nos dois, subir');
 console.log('  qualidade de stat ruim e polir lixo.');

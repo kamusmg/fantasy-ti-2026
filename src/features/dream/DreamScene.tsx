@@ -198,34 +198,44 @@ export function DreamScene() {
         </div>
       </div>
 
-      {/* fichas */}
+      {/* fichas — o achado que reordena a prioridade de todo mundo */}
       <div className="panel" style={{ position: 'absolute', left: 968, top: 726, width: 892, height: 272, padding: '22px 28px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
           <span style={{ fontSize: 12, letterSpacing: '0.18em', color: 'var(--text-faint)' }}>AS 40 FICHAS DE REROLL</span>
           <span style={{ fontSize: 13, color: 'var(--gold-dim)' }}>nota do modelo {fmt(recommendedTotal)}</span>
         </div>
 
-        <div style={{ display: 'flex', gap: 14, marginTop: 16 }}>
+        <div style={{ display: 'flex', gap: 14, marginTop: 14 }}>
           {payoffOrder.map((slot, i) => (
-            <div key={slot} style={{ flex: 1, background: 'var(--bg-slot)', border: '1px solid var(--gold-line)', borderRadius: 2, padding: '12px 14px' }}>
+            <div key={slot} style={{ flex: 1, background: 'var(--bg-slot)', border: `1px solid ${i === 0 ? 'var(--gold)' : 'var(--gold-line)'}`, borderRadius: 2, padding: '10px 14px' }}>
               <div style={{ fontSize: 12, letterSpacing: '0.1em', color: 'var(--text-faint)' }}>{ROLE_LABEL_PT_BR[slot].toUpperCase()}</div>
-              <div className="numeral" style={{ fontSize: 40, color: i === 0 ? 'var(--gold-bright)' : 'var(--text-dim)', lineHeight: 1, marginTop: 4 }}>
+              <div className="numeral" style={{ fontSize: 38, color: i === 0 ? 'var(--gold-bright)' : 'var(--text-dim)', lineHeight: 1, marginTop: 2 }}>
                 +{(teamRanking[slot].rerollPayoff * 100).toFixed(0)}%
               </div>
-              <div style={{ fontSize: 12, color: 'var(--text-faint)', marginTop: 4 }}>
-                {i === 0 ? 'gaste aqui' : 'depois'}
+              <div style={{ fontSize: 12, color: i === 0 ? 'var(--gold)' : 'var(--text-faint)', marginTop: 2 }}>
+                {i === 0 ? 'gaste tudo aqui' : 'depois'}
               </div>
             </div>
           ))}
         </div>
 
-        <div style={{ marginTop: 16, fontSize: 14, color: 'var(--text-dim)', lineHeight: 1.5 }}>
-          So existe conserto cirurgico de <b style={{ color: 'var(--text)' }}>STAT</b> em emblema{' '}
-          <b style={{ color: 'var(--emblem-green)' }}>VERDE</b>. No vermelho so da pra mirar QUALIDADE, no azul so TRACO —
-          nos dois, subir qualidade de uma stat ruim e polir lixo.
+        {/*
+          A frase mais valiosa do programa inteiro. Todo mundo discute qual time
+          escolher; a medicao diz que isso empata em duas das tres funcoes,
+          enquanto a ficha bem gasta vale quase dez vezes mais.
+        */}
+        <div style={{ marginTop: 14, padding: '10px 14px', background: 'rgba(200,160,90,0.08)', border: '1px solid var(--gold-line)', borderRadius: 2 }}>
+          <div style={{ fontSize: 15, color: 'var(--text)', lineHeight: 1.45 }}>
+            Acertar o time no Principal ou no Meio vale <b style={{ color: 'var(--text-dim)' }}>~1%</b> — sao empates.
+            Rerolar bem o estandarte do Meio vale <b style={{ color: 'var(--gold-bright)' }}>+{(teamRanking.mid.rerollPayoff * 100).toFixed(0)}%</b>.
+            <b style={{ color: 'var(--gold)' }}> A briga nao e pelo time, e pelas fichas.</b>
+          </div>
         </div>
-        <div style={{ marginTop: 10, fontSize: 13, color: 'var(--warn)' }}>
-          ⚠ Com FRACTAL no estandarte, SUBIR uma qualidade pode PIORAR a nota — ele so paga se as tres qualidades forem diferentes.
+
+        <div style={{ marginTop: 10, fontSize: 13, color: 'var(--text-dim)', lineHeight: 1.4 }}>
+          So existe conserto cirurgico de <b style={{ color: 'var(--text)' }}>STAT</b> em emblema{' '}
+          <b style={{ color: 'var(--emblem-green)' }}>VERDE</b>. Vermelho so mira QUALIDADE, azul so TRACO.
+          <span style={{ color: 'var(--warn)' }}> ⚠ Com FRACTAL, SUBIR qualidade pode PIORAR a nota.</span>
         </div>
       </div>
 
