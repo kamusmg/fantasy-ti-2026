@@ -153,8 +153,14 @@ function RoleCard({
           <b style={{ color: 'var(--text)' }}>
             {t.tierV} · {leader.traitPlan.traits.map((tr) => TRAIT_DEFINITIONS[tr].labelPtBr).join(' + ')}
           </b>{' '}
+          {/*
+            Convencao do CLIENTE: ele mostra o TOTAL (100 base + nivel + traco),
+            nao o bonus. O print do Desleal marca "OPM 280%" pra 100+100+80.
+            Mostrar o bonus aqui faria a pessoa achar que uma das duas telas esta
+            errada quando as duas estao certas.
+          */}
           <span style={{ color: 'var(--gold-bright)' }}>
-            (+{Math.round((leader.traitPlan.bonuses[0] ?? 0) * 100)}%{' '}
+            ({Math.round(((leader.traitPlan.bonuses[0] ?? 0) + 1) * 100)}%{' '}
             {t.eachEmblem})
           </span>
         </div>

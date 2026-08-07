@@ -60,7 +60,27 @@
         "Vampirico no centro do Meio pra concentrar em Runas — testado: 32o de 216, 9,1% abaixo do otimo.",
         "Evitar Fractal, porque ele exige qualidades diferentes e obriga a segurar emblema de nivel baixo. Correto."
       ],
-      "correcaoDeDado": "A analise original escreveu 'Pure & MieRo (Yandex)' no Principal. Pure e do Iron Wing e MieRo do BoomBoys; a dupla core da Yandex e watson + DM. Como o jogo escolhe TIME e o texto dele defende a Yandex, registramos Yandex — o erro estava nos nomes dos jogadores, nao no time."
+      "correcaoDeDado": "A analise original escreveu 'Pure & MieRo (Yandex)' no Principal. Pure e do Iron Wing e MieRo do BoomBoys; a dupla core da Yandex e watson + DM. Como o jogo escolhe TIME e o texto dele defende a Yandex, registramos Yandex — o erro estava nos nomes dos jogadores, nao no time.",
+      "notaDeConvencao": "A analise dele escreve o BONUS ('+200%', '+240%'); o cliente do Dota escreve o TOTAL (bonus + 100). Sao o mesmo valor em escalas diferentes: o triplo Amigavel Nivel V dele da 200 de bonus = 300% no cliente. As contas dele batem entre si; so a escala difere.",
+      "bannerProposto": {
+        "_nota": "Montagem proposta em EQUIPE_DOS_SONHOS_2026.md, tudo Nivel V. Testada por busca exaustiva em scripts/trait-optimum.ts.",
+        "core": [
+          { "stat": "creepScore", "quality": 5, "trait": "friendly" },
+          { "stat": "teamfight", "quality": 5, "trait": "friendly" },
+          { "stat": "gpm", "quality": 5, "trait": "friendly" }
+        ],
+        "mid": [
+          { "stat": "gpm", "quality": 5, "trait": "benevolent" },
+          { "stat": "runes", "quality": 5, "trait": "vampiric" },
+          { "stat": "teamfight", "quality": 5, "trait": "benevolent" }
+        ],
+        "support": [
+          { "stat": "wardsPlaced", "quality": 5, "trait": "vampiric" },
+          { "stat": "teamfight", "quality": 5, "trait": "benevolent" },
+          { "stat": "campsStacked", "quality": 5, "trait": "vampiric" }
+        ],
+        "vereditoDaBuscaExaustiva": "Core: triplo Amigavel e o OTIMO (1o de 216). Suporte: 2o de 216, 4,4% abaixo. Meio: 32o de 216, 9,1% abaixo — concentrar o multiplicador em Runas so compensaria se o emblema do meio tivesse base muito maior que as pontas, e no Meio as tres sao parecidas (1243/1434/1479)."
+      }
     }
   ]
 }
