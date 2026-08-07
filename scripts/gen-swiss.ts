@@ -17,7 +17,7 @@ import type { Bucket } from '../src/engine/swiss';
 const BEST_VS_WORST = 0.85;
 const CALIBRATIONS = [0.75, 0.80, 0.85, 0.90, 0.95];
 
-const ratings = ratingsFromMarket(strength.polymarketTitleProbability as Record<string, number>);
+const ratings = ratingsFromMarket(strength.polymarketTitleProbability);
 const temperature = calibrateTemperature(ratings, BEST_VS_WORST);
 const sim = simulateSwiss(ratings, temperature, 50_000);
 const picks = assignPredictions(sim.bucketProbability);

@@ -6,7 +6,7 @@ import {
 import type { Bucket } from './swiss';
 import strength from '../data/raw/teamStrength.json';
 
-const ratings = ratingsFromMarket(strength.polymarketTitleProbability as Record<string, number>);
+const ratings = ratingsFromMarket(strength.polymarketTitleProbability);
 const temperature = calibrateTemperature(ratings, 0.85);
 
 describe('estrutura do Suico', () => {

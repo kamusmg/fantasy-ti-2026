@@ -6,27 +6,33 @@
   OBS quer pra codificar.
 */
 :root {
-  --bg-deep: #120a04;
-  --bg-mid: #1c1007;
-  --bg-panel: #2a1a0c;
-  --bg-panel-hi: #3a2512;
-  --bg-slot: #241507;
+  /*
+    Claro o bastante pra stream. A primeira versao ficou escura demais: em
+    transmissao o video perde contraste na compressao, entao o que ja e escuro
+    vira borrao. Painel e fundo subiram varios pontos e o texto foi pra quase
+    branco.
+  */
+  --bg-deep: #241608;
+  --bg-mid: #33200c;
+  --bg-panel: #4a3013;
+  --bg-panel-hi: #5c3d1a;
+  --bg-slot: #3d2710;
 
-  --gold: #c8a05a;
-  --gold-bright: #e8c87a;
-  --gold-dim: #8a6d3a;
-  --gold-line: rgba(200, 160, 90, 0.35);
+  --gold: #e0b86a;
+  --gold-bright: #ffe4a3;
+  --gold-dim: #b08d4e;
+  --gold-line: rgba(224, 184, 106, 0.5);
 
-  --emblem-red: #c0392b;
-  --emblem-blue: #2e6da4;
-  --emblem-green: #4a8b3c;
-  --emblem-red-soft: rgba(192, 57, 43, 0.16);
-  --emblem-blue-soft: rgba(46, 109, 164, 0.16);
-  --emblem-green-soft: rgba(74, 139, 60, 0.16);
+  --emblem-red: #e05543;
+  --emblem-blue: #4d94d8;
+  --emblem-green: #6cbb55;
+  --emblem-red-soft: rgba(224, 85, 67, 0.22);
+  --emblem-blue-soft: rgba(77, 148, 216, 0.22);
+  --emblem-green-soft: rgba(108, 187, 85, 0.22);
 
-  --text: #f0e2c8;
-  --text-dim: #a89372;
-  --text-faint: #715c40;
+  --text: #fdf4e0;
+  --text-dim: #dcc79c;
+  --text-faint: #a68d63;
 
   --warn: #d98a3a;
   --danger: #c0392b;
@@ -72,17 +78,17 @@ body {
   position: relative;
   overflow: hidden;
   background:
-    radial-gradient(ellipse 120% 80% at 50% 0%, #3a2512 0%, transparent 55%),
-    radial-gradient(ellipse 100% 100% at 50% 50%, #1c1007 0%, #0d0703 100%);
+    radial-gradient(ellipse 120% 80% at 50% 0%, #5c3d1a 0%, transparent 60%),
+    radial-gradient(ellipse 100% 100% at 50% 50%, #33200c 0%, #1b1006 100%);
 }
 
-/* vinheta */
+/* vinheta leve — o suficiente pra dar profundidade sem comer o contraste */
 .broadcast-stage::after {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
-  box-shadow: inset 0 0 260px 90px rgba(0, 0, 0, 0.72);
+  box-shadow: inset 0 0 200px 60px rgba(0, 0, 0, 0.38);
 }
 
 /* ---------- tipografia ---------- */

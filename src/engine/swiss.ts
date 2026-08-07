@@ -68,10 +68,12 @@ export interface TeamStrength {
  * serie — e a sensibilidade a ele e reportada em vez de escondida.
  */
 export function ratingsFromMarket(
-  titleProbability: Readonly<Record<string, number>>,
+  titleProbability: Readonly<Record<string, unknown>>,
 ): readonly TeamStrength[] {
+  // Aceita o objeto cru do JSON: chaves de documentacao (`_note`) sao descartadas
+  // aqui, no unico lugar que sabe o que e dado e o que e comentario.
   return Object.entries(titleProbability)
-    .filter(([id]) => !id.startsWith('_'))
+    .filter((entry): entry is [string, number] => !entry[0].startsWith('_') && typeof entry[1] === 'number')
     .map(([teamId, p]) => ({ teamId, rating: Math.log(Math.max(p, 1e-6)) }));
 }
 

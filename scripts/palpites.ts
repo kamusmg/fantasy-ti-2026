@@ -13,7 +13,7 @@ import {
 import type { Bucket } from '../src/engine/swiss';
 
 const data = loadDataset();
-const ratings = ratingsFromMarket(strength.polymarketTitleProbability as Record<string, number>);
+const ratings = ratingsFromMarket(strength.polymarketTitleProbability);
 
 /** Alvo de calibracao: chance do melhor bater o pior numa serie Bo3. */
 const BEST_VS_WORST = 0.85;

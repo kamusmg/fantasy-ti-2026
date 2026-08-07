@@ -28,22 +28,28 @@ export default function App() {
     <BroadcastFrame>
       {scene === 'dream' ? <DreamScene /> : <PredictionsScene />}
 
-      <div style={{ position: 'absolute', top: 26, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 8 }}>
+      {/* Abas bem visiveis: na versao anterior a segunda cena era invisivel e ninguem sabia que existia. */}
+      <div style={{ position: 'absolute', bottom: 16, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 10 }}>
         {SCENES.map((s) => (
-          <div
+          <button
             key={s.id}
+            type="button"
+            onClick={() => setScene(s.id)}
             style={{
-              fontSize: 11,
-              letterSpacing: '0.14em',
-              padding: '4px 12px',
-              borderRadius: 2,
-              border: `1px solid ${scene === s.id ? 'var(--gold)' : 'var(--gold-line)'}`,
-              color: scene === s.id ? 'var(--gold-bright)' : 'var(--text-faint)',
-              background: scene === s.id ? 'rgba(200,160,90,0.10)' : 'transparent',
+              font: 'inherit',
+              cursor: 'pointer',
+              fontSize: 15,
+              letterSpacing: '0.12em',
+              padding: '8px 22px',
+              borderRadius: 3,
+              border: `2px solid ${scene === s.id ? 'var(--gold-bright)' : 'var(--gold-line)'}`,
+              color: scene === s.id ? 'var(--bg-deep)' : 'var(--gold)',
+              background: scene === s.id ? 'var(--gold-bright)' : 'rgba(0,0,0,0.30)',
+              fontWeight: scene === s.id ? 700 : 500,
             }}
           >
             {s.key} · {s.label.toUpperCase()}
-          </div>
+          </button>
         ))}
       </div>
     </BroadcastFrame>

@@ -43,31 +43,32 @@ function TeamCard({ teamId, bucket, name, x, y }: {
       className="panel"
       style={{
         position: 'absolute', left: x, top: y, width: CARD_W, height: CARD_H,
-        padding: '16px 14px', display: 'flex', flexDirection: 'column',
+        padding: '16px 12px', display: 'flex', flexDirection: 'column',
         justifyContent: 'space-between', alignItems: 'center', textAlign: 'center',
-        borderColor: stable ? 'var(--gold)' : shaky ? 'rgba(217,138,58,0.4)' : 'var(--gold-line)',
+        borderColor: stable ? 'var(--gold-bright)' : shaky ? 'var(--warn)' : 'var(--gold-line)',
+        borderWidth: stable ? 2 : 1,
+        background: stable
+          ? 'linear-gradient(180deg, var(--bg-panel-hi) 0%, var(--bg-panel) 100%)'
+          : 'linear-gradient(180deg, var(--bg-panel) 0%, var(--bg-mid) 100%)',
       }}
     >
       <div
         style={{
-          fontSize: 10, letterSpacing: '0.12em', padding: '3px 8px', borderRadius: 2,
+          fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', padding: '4px 12px', borderRadius: 2,
+          background: stable ? 'var(--ok)' : shaky ? 'var(--warn)' : 'transparent',
           border: `1px solid ${stable ? 'var(--ok)' : shaky ? 'var(--warn)' : 'var(--gold-dim)'}`,
-          color: stable ? 'var(--ok)' : shaky ? 'var(--warn)' : 'var(--gold-dim)',
+          color: stable || shaky ? '#1b1006' : 'var(--gold)',
         }}
       >
         {stable ? 'FIRME' : shaky ? 'CHUTE' : 'PROVAVEL'}
       </div>
 
-      <div className="numeral" style={{ fontSize: 52, color: 'var(--gold-bright)', lineHeight: 0.9 }}>
-        {(p * 100).toFixed(0)}<span style={{ fontSize: 24, color: 'var(--gold-dim)' }}>%</span>
-      </div>
-
-      <div style={{ fontFamily: 'var(--font-display)', fontSize: 17, color: 'var(--text)', lineHeight: 1.15 }}>
+      <div style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700, color: 'var(--gold-bright)', lineHeight: 1.12 }}>
         {name}
       </div>
 
-      <div style={{ fontSize: 10, color: 'var(--text-faint)', letterSpacing: '0.06em' }}>
-        aguenta {stability[teamId]}/{swiss.maxStability} calibracoes
+      <div className="numeral" style={{ fontSize: 46, color: 'var(--text)', lineHeight: 0.9 }}>
+        {(p * 100).toFixed(0)}<span style={{ fontSize: 22, color: 'var(--text-dim)' }}>%</span>
       </div>
     </div>
   );
@@ -82,11 +83,11 @@ function BucketGroup({ group, teams, x, y, names }: {
   return (
     <>
       <div style={{ position: 'absolute', left: x, top: y, width, textAlign: 'center' }}>
-        <div className="display" style={{ fontSize: 17, fontWeight: 700, color: 'var(--gold)' }}>
+        <div className="display" style={{ fontSize: 22, fontWeight: 700, color: 'var(--gold-bright)' }}>
           {BUCKET_LABEL_PT_BR[group.bucket]}
         </div>
-        <div style={{ fontSize: 11, color: 'var(--text-faint)', marginTop: 3 }}>{group.subtitle}</div>
-        <GoldRule style={{ marginTop: 7 }} />
+        <div style={{ fontSize: 13, color: 'var(--text-dim)', marginTop: 4 }}>{group.subtitle}</div>
+        <GoldRule style={{ marginTop: 8 }} />
       </div>
       {teams.map((teamId, i) => (
         <TeamCard
