@@ -21,7 +21,9 @@ const answer = JSON.parse(process.env.FANTASY_ANSWER ?? '{}');
 const core = answer.core ?? 'LGD GAMING';
 const mid = answer.mid ?? 'TEAM FALCONS';
 const support = answer.support ?? 'LGD GAMING';
-const title = answer.title ?? 'CERULEO · O DECISIVO';
+// Entidades HTML nos acentos: o rasterizador de SVG e menos previsivel com
+// UTF-8 cru dentro de string de template.
+const title = answer.title ?? 'CER&#218;LEO &#183; O DECISIVO';
 
 const GOLD = '#e0b86a';
 const GOLD_BRIGHT = '#ffe4a3';
@@ -52,28 +54,29 @@ const og = `
   <rect x="26" y="26" width="1148" height="578" fill="none" stroke="${GOLD}" stroke-width="2" opacity="0.45"/>
   ${corner(26, 26, 1, 1)}${corner(1174, 26, -1, 1)}${corner(26, 604, 1, -1)}${corner(1174, 604, -1, -1)}
 
-  <text x="600" y="104" text-anchor="middle" font-family="Georgia, serif" font-size="30"
+  <text x="600" y="98" text-anchor="middle" font-family="Georgia, serif" font-size="30"
         letter-spacing="11" fill="${GOLD}">FANTASY TI 2026</text>
-  <rect x="380" y="128" width="440" height="2" fill="url(#rule)"/>
-  <text x="600" y="172" text-anchor="middle" font-family="Georgia, serif" font-size="21"
-        letter-spacing="6" fill="${DIM}">A ESCALACAO &#183; THE COLA</text>
+  <rect x="370" y="122" width="460" height="2" fill="url(#rule)"/>
+  <text x="600" y="164" text-anchor="middle" font-family="Georgia, serif" font-size="22"
+        letter-spacing="7" fill="${DIM}">A ESCALA&#199;&#195;O &#183; FASE DE GRUPOS</text>
 
-  <text x="600" y="256" text-anchor="middle" font-family="Georgia, serif" font-size="19"
-        letter-spacing="5" fill="${GOLD}">PRINCIPAL</text>
-  <text x="600" y="308" text-anchor="middle" font-family="Georgia, serif" font-size="46"
+  <text x="600" y="240" text-anchor="middle" font-family="Georgia, serif" font-size="19"
+        letter-spacing="6" fill="${GOLD}">PRINCIPAL</text>
+  <text x="600" y="292" text-anchor="middle" font-family="Georgia, serif" font-size="48"
         font-weight="bold" fill="${GOLD_BRIGHT}">${core}</text>
 
-  <text x="600" y="360" text-anchor="middle" font-family="Georgia, serif" font-size="19"
-        letter-spacing="5" fill="${GOLD}">MEIO</text>
-  <text x="600" y="412" text-anchor="middle" font-family="Georgia, serif" font-size="46"
+  <text x="600" y="348" text-anchor="middle" font-family="Georgia, serif" font-size="19"
+        letter-spacing="6" fill="${GOLD}">MEIO</text>
+  <text x="600" y="400" text-anchor="middle" font-family="Georgia, serif" font-size="48"
         font-weight="bold" fill="${GOLD_BRIGHT}">${mid}</text>
 
-  <text x="600" y="464" text-anchor="middle" font-family="Georgia, serif" font-size="19"
-        letter-spacing="5" fill="${GOLD}">SUPORTE</text>
-  <text x="600" y="516" text-anchor="middle" font-family="Georgia, serif" font-size="46"
+  <text x="600" y="456" text-anchor="middle" font-family="Georgia, serif" font-size="19"
+        letter-spacing="6" fill="${GOLD}">SUPORTE</text>
+  <text x="600" y="508" text-anchor="middle" font-family="Georgia, serif" font-size="48"
         font-weight="bold" fill="${GOLD_BRIGHT}">${support}</text>
 
-  <text x="600" y="576" text-anchor="middle" font-family="Georgia, serif" font-size="24"
+  <rect x="330" y="536" width="540" height="1" fill="url(#rule)"/>
+  <text x="600" y="576" text-anchor="middle" font-family="Georgia, serif" font-size="26"
         letter-spacing="3" fill="${TEXT}">${title}</text>
 </svg>`;
 

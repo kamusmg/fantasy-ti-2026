@@ -7,7 +7,8 @@ import { TeamLogo } from '../../ui/Portrait';
 import { useLang } from '../../i18n/LangContext';
 import { label } from '../../i18n/strings';
 import { compareWithPro, loadProPicks } from '../../data/proPicks';
-import { useMemo } from 'react';
+import { UNTOUCHED_PICKS } from '../../data/baselinePicks';
+import { useEffect, useMemo, useState } from 'react';
 
 const picks = swiss.picks as Record<string, Bucket>;
 const stability = swiss.stability as Record<string, number>;
@@ -147,17 +148,52 @@ export function PredictionsScene() {
    * So aparece quando ha dado REAL em proPicks.json. Enquanto ninguem tiver
    * publicado, a tela nao muda em nada — melhor ausencia que invencao.
    */
-  const comparisons = useMemo(
-    () => loadProPicks().map((pro) => compareWithPro(picks, pro)),
-    [],
-  );
+  const pros = useMemo(() => loadProPicks(), []);
+
+  /**
+   * Adversarios da comparacao.
+   *
+   * O primeiro sempre existe: "quem nao mexeu", a ordem que o cliente ja vem
+   * preenchido. Os profissionais entram depois, quando publicarem de verdade.
+   */
+  const opponents = useMemo(() => {
+    const base = {
+      id: 'untouched',
+      name: lang === 'pt' ? 'Quem nao mexeu' : 'Not touching it',
+      source: lang === 'pt'
+        ? 'ordem que o cliente ja vem preenchido'
+        : "the client's pre-filled order",
+      capturedAt: '2026-08-07',
+      picks: UNTOUCHED_PICKS,
+    };
+    return [base, ...pros];
+  }, [lang, pros]);
+
+  const [opponentIndex, setOpponentIndex] = useState(0);
+  const [comparing, setComparing] = useState(false);
+
+  // Tecla 3 liga/desliga a comparacao; 4 troca de adversario quando houver mais de um.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === '3') setComparing((v) => !v);
+      if (e.key === '4') setOpponentIndex((i) => (i + 1) % opponents.length);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [opponents.length]);
+
+  const active = opponents[Math.min(opponentIndex, opponents.length - 1)];
+  const comparison = useMemo(() => compareWithPro(picks, active), [active]);
+
   const disagreements = useMemo(() => {
-    const out = new Map<string, { who: string; theirs: Bucket }>();
-    for (const c of comparisons) {
-      for (const d of c.disagreements) out.set(d.teamId, { who: c.pro.name, theirs: d.theirs });
-    }
-    return out;
-  }, [comparisons]);
+    if (!comparing) return new Map<string, { who: string; theirs: Bucket }>();
+    return new Map(
+      comparison.disagreements.map((d) => [d.teamId, { who: active.name, theirs: d.theirs }]),
+    );
+  }, [comparing, comparison, active.name]);
+
+  const opponentHits = Object.entries(active.picks)
+    .reduce((acc, [id, b]) => acc + (probability[id]?.[b] ?? 0), 0);
 
   let x = 60;
   const topPositions = TOP_ROW.map((g) => {
@@ -178,9 +214,38 @@ export function PredictionsScene() {
         <span className="display" style={{ fontSize: 22, letterSpacing: '0.24em', color: 'var(--gold-bright)' }}>
           {t.predictionsTitle} &nbsp;·&nbsp; {t.groupStage}
         </span>
-        <span style={{ fontSize: 14, color: 'var(--text-dim)' }}>
-          {t.simulations(swiss._meta.iterations.toLocaleString(lang === 'pt' ? 'pt-BR' : 'en-US'))}
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <button
+            type="button"
+            onClick={() => setComparing((v) => !v)}
+            style={{
+              font: 'inherit', cursor: 'pointer', fontSize: 14, letterSpacing: '0.08em',
+              padding: '7px 16px', borderRadius: 3,
+              border: `2px solid ${comparing ? 'var(--warn)' : 'var(--gold-line)'}`,
+              color: comparing ? '#1b1006' : 'var(--gold)',
+              background: comparing ? 'var(--warn)' : 'rgba(0,0,0,0.30)',
+              fontWeight: comparing ? 700 : 500,
+            }}
+          >
+            3 · {lang === 'pt' ? 'COMPARAR COM' : 'COMPARE VS'} {active.name.toUpperCase()}
+          </button>
+          {comparing && opponents.length > 1 && (
+            <button
+              type="button"
+              onClick={() => setOpponentIndex((i) => (i + 1) % opponents.length)}
+              style={{
+                font: 'inherit', cursor: 'pointer', fontSize: 14, padding: '7px 14px',
+                borderRadius: 3, border: '2px solid var(--gold-line)',
+                color: 'var(--gold)', background: 'rgba(0,0,0,0.30)',
+              }}
+            >
+              4 · {lang === 'pt' ? 'TROCAR' : 'SWITCH'}
+            </button>
+          )}
+          <span style={{ fontSize: 14, color: 'var(--text-dim)' }}>
+            {t.simulations(swiss._meta.iterations.toLocaleString(lang === 'pt' ? 'pt-BR' : 'en-US'))}
+          </span>
+        </div>
       </div>
 
       {TOP_ROW.map((b, i) => (
@@ -252,18 +317,25 @@ export function PredictionsScene() {
             <b>4-0</b> / <b>4-1</b> {t.weakestLead} {t.weakestBody}
           </div>
 
-          {comparisons.map((c) => (
-            <div key={c.pro.id} style={{ marginTop: 10, fontSize: 16, color: 'var(--text)' }}>
-              <b style={{ color: 'var(--gold-bright)' }}>{c.pro.name}:</b>{' '}
-              {c.agreements}/16 {lang === 'pt' ? 'iguais aos nossos' : 'the same as ours'}
-              {c.disagreements.length > 0 && (
-                <span style={{ color: 'var(--warn)' }}>
-                  {' '}· {c.disagreements.length} {lang === 'pt' ? 'em amarelo na grade' : 'in yellow on the grid'}
-                </span>
-              )}
-              <span style={{ fontSize: 12, color: 'var(--text-faint)' }}> ({c.pro.source})</span>
+          {/* Confronto: so aparece com o modo ligado, e sempre com a fonte junto. */}
+          {comparing && (
+            <div
+              style={{
+                marginTop: 11, padding: '9px 13px', borderRadius: 3,
+                border: '1px solid var(--warn)', background: 'rgba(217,138,58,0.12)',
+                fontSize: 16, color: 'var(--text)',
+              }}
+            >
+              <b style={{ color: 'var(--gold-bright)' }}>{active.name}</b>
+              {' '}<span className="numeral" style={{ fontSize: 20 }}>{opponentHits.toFixed(1)}</span>
+              {' '}{lang === 'pt' ? 'contra os nossos' : 'against our'}{' '}
+              <span className="numeral" style={{ fontSize: 20, color: 'var(--gold-bright)' }}>{expectedHits.toFixed(1)}</span>
+              {' · '}
+              <b style={{ color: 'var(--warn)' }}>{comparison.disagreements.length}</b>{' '}
+              {lang === 'pt' ? 'discordancias em amarelo na grade' : 'disagreements in yellow on the grid'}
+              <span style={{ fontSize: 12, color: 'var(--text-dim)' }}> — {active.source}</span>
             </div>
-          ))}
+          )}
         </div>
       </div>
     </>

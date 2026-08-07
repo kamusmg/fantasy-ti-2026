@@ -1,18 +1,34 @@
 {
   "_meta": {
     "proposito": "Palpites de jogadores profissionais, pra comparar com os nossos na tela. Vira o melhor momento da live: onde a conta discorda de quem joga.",
-    "REGRA_INVIOLAVEL": "So entra aqui palpite que foi REALMENTE VISTO — print da tela dele, post, ou clipe. NUNCA extrapolado, NUNCA 'o que ele provavelmente escolheria'. Atribuir palpite inventado a uma pessoa real, em portugues e em tela cheia, e mentira sobre alguem que existe.",
-    "comoPreencher": "Copie o bloco de exemplo abaixo, preencha `picks` com teamId -> balde e apague `_exemplo`. Os teamId sao os de teams.json; os baldes sao 4-0, 4-1, elimWin, elimLose, 1-4, 0-4. As contagens precisam bater com as vagas (1/2/5/5/2/1) — data/load valida e estoura se nao bater.",
-    "statusEm_07-08-2026": "Nenhum. O print do Topson que recebemos era a tela VAZIA (mesma ordem padrao dos 16 times, 0 pontos), nao os palpites dele."
+    "REGRA_INVIOLAVEL": "So entra palpite que foi REALMENTE VISTO — print da tela dele, post, ou clipe. NUNCA extrapolado, NUNCA 'o que ele provavelmente escolheria'. Atribuir palpite inventado a uma pessoa real, em portugues e em tela cheia, e mentira sobre alguem que existe.",
+    "REGRA_DO_ROTULO": "Se a tela ainda estava na ordem padrao, o campo `source` TEM que dizer isso. Mostrar como 'a escolha dele' o que ele so nao mexeu seria verdade pela metade — e meia verdade em tela cheia e mentira.",
+    "comoPreencher": "Copie um bloco, preencha `picks` com teamId -> balde. Os teamId sao os de teams.json; os baldes sao 4-0, 4-1, elimWin, elimLose, 1-4, 0-4. As contagens precisam bater com as vagas (1/2/5/5/2/1) — o loader recusa entrada incompleta, porque palpite pela metade na tela pareceria que a pessoa escolheu o que nao escolheu."
   },
   "pros": [
     {
-      "_exemplo": "APAGUE este objeto inteiro ao adicionar o primeiro palpite de verdade.",
-      "id": "exemplo",
-      "name": "Nome do jogador",
-      "source": "print da tela dele na live de dd/mm, ou link do post",
-      "capturedAt": "2026-08-13",
-      "picks": {}
+      "id": "topson",
+      "name": "Topson",
+      "source": "tela dele na live de 06/08 — ainda na ordem padrao do cliente, sem ter arrastado nenhum time",
+      "capturedAt": "2026-08-06",
+      "picks": {
+        "yandex": "4-0",
+        "vision": "4-1",
+        "falcons": "4-1",
+        "spirit": "elimWin",
+        "liquid": "elimWin",
+        "boomboys": "elimWin",
+        "xtreme": "elimWin",
+        "og": "elimWin",
+        "nigma": "elimLose",
+        "lgd": "elimLose",
+        "aurora": "elimLose",
+        "ironwing": "elimLose",
+        "vici": "elimLose",
+        "gamerlegion": "1-4",
+        "resilience": "1-4",
+        "huligani": "0-4"
+      }
     }
   ]
 }
