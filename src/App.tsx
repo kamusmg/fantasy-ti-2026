@@ -66,7 +66,13 @@ function Shell() {
         cena de Palpites) fica em y=64 — antes as duas dividiam a mesma faixa e
         os botoes se cobriam.
       */}
-      <div style={{ position: 'absolute', top: 18, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 10, zIndex: 10 }}>
+      {/*
+        Centralizado por `left/right: 0` + `justifyContent: center`, NAO por
+        `left: 50%` + translate: naquele jeito a caixa so podia ocupar da metade
+        da tela pra direita (960px), e ao chegar na quinta cena as abas quebravam
+        em duas linhas. Centralizar por flex usa o palco inteiro.
+      */}
+      <div style={{ position: 'absolute', top: 18, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 10, zIndex: 10 }}>
         {scenes.map((s) => (
           <button
             key={s.id}
@@ -74,7 +80,7 @@ function Shell() {
             onClick={() => setScene(s.id)}
             style={{
               font: 'inherit', cursor: 'pointer', fontSize: 15, letterSpacing: '0.12em',
-              padding: '8px 22px', borderRadius: 3,
+              padding: '8px 20px', borderRadius: 3, whiteSpace: 'nowrap',
               border: `2px solid ${scene === s.id ? 'var(--gold-bright)' : 'var(--gold-line)'}`,
               color: scene === s.id ? 'var(--bg-deep)' : 'var(--gold)',
               background: scene === s.id ? 'var(--gold-bright)' : 'rgba(0,0,0,0.30)',

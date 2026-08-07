@@ -80,12 +80,16 @@ interface Strings {
   readonly qualityTitle: string;
   readonly qualityNote: string;
   readonly tierWord: string;
-  readonly traitAffects: string;
-  readonly sumTitle: string;
-  readonly sumFormula: string;
-  readonly sumBody: string;
-  readonly exampleTitle: string;
-  readonly exampleNote: string;
+  readonly traitWord: string;
+  readonly emblemWord: string;
+  readonly baseWord: string;
+  readonly neighboursWord: string;
+  readonly simTitle: string;
+  readonly simHowTo: string;
+  readonly bannerTotal: string;
+  readonly bannerTotalNote: string;
+  readonly onItself: string;
+  readonly onNeighbours: string;
 }
 
 const PT: Strings = {
@@ -153,19 +157,23 @@ const PT: Strings = {
   guideFooterBody:
     'Você não escolhe a cor do emblema nem o atributo que cai nele — a lista acima diz o que MANTER e o que renovar. O bloco apagado é a cor que aquela função NÃO tem: o Principal não tem azul, o Suporte não tem vermelho.',
 
-  traitsTitle: 'TRAÇOS E QUALIDADES',
+  traitsTitle: 'MEU ESTANDARTE',
   guideTab: 'ATRIBUTOS',
-  traitsTab: 'TRAÇOS',
-  traitsSubtitle: 'texto do cliente, e o desenho de quem cada traço afeta',
-  qualityTitle: 'QUALIDADE',
+  traitsTab: 'ESTANDARTE',
+  traitsSubtitle: 'a mesma conta do cliente, com o que caiu pra você',
+  qualityTitle: 'NÍVEL',
   qualityNote: 'multiplica o valor base daquele emblema. Vem sorteada.',
   tierWord: 'NÍVEL',
-  traitAffects: 'QUEM ELE AFETA NO ESTANDARTE',
-  sumTitle: 'COMO OS PEDAÇOS SE SOMAM',
-  sumFormula: '100% + qualidade + traço próprio + traço dos vizinhos',
-  sumBody: 'É soma, não multiplicação — conferido contra o cliente. Por isso um traço bom num emblema fraco rende menos do que parece: os 50% do Vampírico incidem sobre o valor daquele atributo, não sobre o estandarte inteiro. E a adjacência é em LINHA, não em anel: quem está na ponta tem um vizinho só.',
-  exampleTitle: 'UM ESTANDARTE REAL, CONFERIDO',
-  exampleNote: 'Repare no do meio: o Único dele vale ZERO (há dois Únicos no estandarte) e o −10% é o vizinho Vampírico. O cliente mostra o traço líquido na linha, já somando o que vem dos lados.',
+  traitWord: 'TRAÇO',
+  emblemWord: 'EMBLEMA',
+  baseWord: 'base do atributo',
+  neighboursWord: 'dos vizinhos',
+  simTitle: 'MONTE O ESTANDARTE QUE SAIU',
+  simHowTo: 'Escolha o nível e o traço de cada emblema, do jeito que caíram no seu jogo. A porcentagem sai na hora, pela mesma conta do cliente — e serve pra testar um roll ANTES de gastar a ficha.',
+  bannerTotal: 'SOMA DOS TRÊS',
+  onItself: 'no próprio emblema',
+  onNeighbours: 'nos vizinhos',
+  bannerTotalNote: 'Serve pra comparar dois estandartes entre si. Não é a sua pontuação: cada emblema multiplica um atributo diferente.',
 };
 
 const EN: Strings = {
@@ -233,19 +241,23 @@ const EN: Strings = {
   guideFooterBody:
     'You pick neither the emblem colour nor the stat that lands on it — the list above says what to KEEP and what to reroll. The dimmed block is the colour that role does NOT have: Core has no blue, Support has no red.',
 
-  traitsTitle: 'TRAITS & QUALITIES',
+  traitsTitle: 'MY WAR BANNER',
   guideTab: 'STATS',
-  traitsTab: 'TRAITS',
-  traitsSubtitle: "the client's own wording, plus a diagram of what each trait touches",
-  qualityTitle: 'QUALITY',
+  traitsTab: 'BANNER',
+  traitsSubtitle: "the client's own maths, with whatever you rolled",
+  qualityTitle: 'TIER',
   qualityNote: "multiplies that emblem's base value. It is rolled, not chosen.",
   tierWord: 'TIER',
-  traitAffects: 'WHAT IT TOUCHES ON THE BANNER',
-  sumTitle: 'HOW THE PIECES ADD UP',
-  sumFormula: "100% + quality + own trait + neighbours' traits",
-  sumBody: "It adds, it does not multiply — checked against the client. So a good trait on a weak emblem is worth less than it looks: Vampiric's 50% applies to that stat's value, not to the whole banner. And adjacency is a LINE, not a ring: an end emblem has only one neighbour.",
-  exampleTitle: 'A REAL BANNER, CHECKED',
-  exampleNote: 'Look at the middle one: its Unique is worth ZERO (there are two Uniques on the banner) and the −10% comes from the Vampiric neighbour. The client shows the net trait on that line, already including what comes from the sides.',
+  traitWord: 'TRAIT',
+  emblemWord: 'EMBLEM',
+  baseWord: 'stat base',
+  neighboursWord: 'from neighbours',
+  simTitle: 'BUILD THE BANNER YOU ROLLED',
+  simHowTo: 'Pick the tier and trait of each emblem, exactly as they came up in your game. The percentage updates live, using the same maths as the client — so you can test a roll BEFORE spending the token.',
+  bannerTotal: 'SUM OF THE THREE',
+  onItself: 'on itself',
+  onNeighbours: 'on neighbours',
+  bannerTotalNote: 'Use it to compare two banners against each other. It is not your score: each emblem multiplies a different stat.',
 };
 
 export const STRINGS: Readonly<Record<Lang, Strings>> = { pt: PT, en: EN };

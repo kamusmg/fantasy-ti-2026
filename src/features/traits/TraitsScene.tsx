@@ -1,90 +1,181 @@
+import { useState } from 'react';
 import { GoldRule } from '../../ui/primitives';
-import { ALL_QUALITY_TIERS, ALL_TRAIT_IDS, QUALITY_BONUS, QUALITY_LABEL, TRAIT_DEFINITIONS } from '../../domain/emblems';
-import type { TraitId } from '../../domain/emblems';
+import {
+  ALL_QUALITY_TIERS, ALL_TRAIT_IDS, QUALITY_BONUS, QUALITY_LABEL, TRAIT_DEFINITIONS,
+} from '../../domain/emblems';
+import type { Emblem, QualityTier, TraitId } from '../../domain/emblems';
+import { DEFAULT_RULES } from '../../domain/rules';
+import { emblemBonuses } from '../../engine/multipliers';
 import { useLang } from '../../i18n/LangContext';
 
 /**
- * A ficha de consulta do estandarte: as 5 qualidades e os 5 tracos.
+ * MEU ESTANDARTE — a mesma conta do cliente, com o que caiu pra voce.
  *
- * Estava so implicita no site — o Dota dos Sonhos dizia "alvo: Fractal" sem
- * nenhum lugar explicando o que Fractal faz. Aqui o texto e o do CLIENTE, e
- * embaixo de cada um vem o desenho de quem ele afeta, que e o que a descricao
- * oficial nao mostra.
+ * A versao anterior desta tela desenhava tres caixas VAZIAS pra ilustrar "quem o
+ * traco afeta". Ninguem leu como diagrama: leu como formulario, tentou preencher
+ * e nao aconteceu nada. A licao e que caixa vazia com borda E um convite pra
+ * digitar — entao ou ela aceita entrada, ou ela nao pode parecer uma caixa.
+ * Aqui ela aceita: escolher nivel e traco recalcula as porcentagens na hora.
  *
  * Ritmo vertical, somado:
  *    64  titulo
- *   108  faixa das qualidades (h 150)   -> 258
- *   276  os cinco tracos    (h 470)     -> 746
- *   762  a regra da soma    (h 190)     -> 952
+ *   108  simulador        (h 420)  -> 528
+ *   544  os cinco tracos  (h 420)  -> 964
  */
-const QUAL_Y = 108;
-const QUAL_H = 150;
-const TRAIT_Y = QUAL_Y + QUAL_H + 18;
-const TRAIT_H = 470;
-const RULE_Y = TRAIT_Y + TRAIT_H + 16;
-const RULE_H = 190;
+const SIM_Y = 108;
+const SIM_H = 420;
+const REF_Y = SIM_Y + SIM_H + 16;
+const REF_H = 420;
 
-const CARD_W = 348;
-const CARD_GAP = 16;
+const REF_W = 348;
+const REF_GAP = 16;
+
+type Slot = { readonly quality: QualityTier; readonly trait: TraitId };
 
 /**
- * O efeito do traco num estandarte de TRES emblemas, com ele no do meio.
- *
- * `null` = aquele emblema nao muda. E o desenho que responde a pergunta que a
- * descricao do jogo deixa no ar: "adjacente" quer dizer quantos?
+ * Um estado inicial que ja mostra a graca da coisa: tres niveis DIFERENTES com
+ * Fractal nos tres. Baixar qualquer qualidade pra repetir outra derruba os tres
+ * de uma vez — que e a armadilha que nenhuma calculadora publica avisa.
  */
-const EFFECT: Readonly<Record<Exclude<TraitId, 'none'>, readonly (string | null)[]>> = {
-  fractal: [null, '+60%', null],
-  benevolent: ['+20%', null, '+20%'],
-  vampiric: ['−10%', '+50%', '−10%'],
-  unique: [null, '+30%', null],
-  friendly: ['+50%', '+50%', '+50%'],
+const INITIAL: readonly Slot[] = [
+  { quality: 4, trait: 'fractal' },
+  { quality: 3, trait: 'fractal' },
+  { quality: 5, trait: 'fractal' },
+];
+
+const selectStyle: React.CSSProperties = {
+  font: 'inherit', fontSize: 16, fontWeight: 600, cursor: 'pointer', width: '100%',
+  padding: '8px 10px', borderRadius: 3,
+  border: '1px solid var(--gold-line)',
+  background: 'rgba(0,0,0,0.35)', color: 'var(--gold-bright)',
 };
 
-/** Se o traco precisa dos TRES emblemas pra valer, os tres aparecem marcados. */
-const NEEDS_ALL: Readonly<Record<string, boolean>> = { friendly: true };
+const optionStyle: React.CSSProperties = { background: 'var(--bg-panel)', color: 'var(--text)' };
 
-function EffectDiagram({ trait }: { readonly trait: Exclude<TraitId, 'none'> }) {
-  const cells = EFFECT[trait];
+/** `emblemBonuses` so olha qualidade, traco e posicao — cor e stat sao inertes aqui. */
+function toEmblems(slots: readonly Slot[]): readonly Emblem[] {
+  return slots.map((s, index) => ({
+    index, color: 'red' as const, statId: 'gpm' as const, quality: s.quality, trait: s.trait,
+  }));
+}
+
+/** Por que um traco que deveria pagar esta valendo zero. Vazio = esta pagando. */
+function zeroReason(slots: readonly Slot[], i: number, lang: 'pt' | 'en'): string {
+  const trait = slots[i].trait;
+  const qualities = slots.map((s) => s.quality);
+  const distinct = new Set(qualities).size === qualities.length;
+  const uniques = slots.filter((s) => s.trait === 'unique').length;
+  const friendlies = slots.filter((s) => s.trait === 'friendly').length;
+
+  if (trait === 'fractal' && !distinct) return lang === 'pt' ? 'níveis repetidos' : 'repeated tiers';
+  if (trait === 'unique' && uniques > 1) return lang === 'pt' ? 'há outro Único' : 'another Unique';
+  if (trait === 'friendly' && friendlies < 3) return lang === 'pt' ? `só ${friendlies} de 3` : `only ${friendlies} of 3`;
+  if (trait === 'benevolent') return lang === 'pt' ? 'só age nos vizinhos' : 'only affects neighbours';
+  return '';
+}
+
+function EmblemSlot({
+  index, slots, onChange, x, w,
+}: {
+  readonly index: number;
+  readonly slots: readonly Slot[];
+  readonly onChange: (index: number, next: Slot) => void;
+  readonly x: number;
+  readonly w: number;
+}) {
+  const { lang, t } = useLang();
+  const slot = slots[index];
+  const bonus = emblemBonuses(toEmblems(slots), DEFAULT_RULES)[index];
+  const total = Math.round(bonus.multiplier * 100);
+  const reason = zeroReason(slots, index, lang);
+  const traitName = lang === 'pt' ? TRAIT_DEFINITIONS[slot.trait].labelPtBr : TRAIT_DEFINITIONS[slot.trait].labelEn;
+
+  const pct = (v: number) => `${v > 0 ? '+' : v < 0 ? '−' : '+'}${Math.abs(Math.round(v * 100))}`;
 
   return (
-    <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
-      {cells.map((value, i) => {
-        const isSelf = i === 1;
-        const marked = NEEDS_ALL[trait] || isSelf;
-        const negative = value?.startsWith('−');
-        return (
-          <div key={i} style={{ width: 92, textAlign: 'center' }}>
-            <div
-              style={{
-                height: 52, borderRadius: 3,
-                border: `2px solid ${marked ? 'var(--gold-bright)' : 'var(--gold-line)'}`,
-                background: marked ? 'rgba(255,228,163,0.14)' : 'rgba(0,0,0,0.28)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 13, letterSpacing: '0.06em',
-                color: marked ? 'var(--gold-bright)' : 'var(--text-faint)',
-                fontWeight: marked ? 700 : 400,
-              }}
-            >
-              {marked ? '★' : ''}
-            </div>
-            <div
-              className="numeral"
-              style={{
-                marginTop: 6, fontSize: 20, fontWeight: 600,
-                color: value ? (negative ? '#f0705e' : '#8fd46e') : 'var(--text-faint)',
-              }}
-            >
-              {value ?? '—'}
-            </div>
+    <div
+      style={{
+        position: 'absolute', left: x, top: 0, width: w, bottom: 0,
+        display: 'flex', flexDirection: 'column',
+      }}
+    >
+      <div style={{ fontSize: 12, letterSpacing: '0.16em', color: 'var(--text-faint)' }}>
+        {t.emblemWord} {index + 1}
+      </div>
+
+      <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
+        <label style={{ flex: 1 }}>
+          <div style={{ fontSize: 11, letterSpacing: '0.1em', color: 'var(--gold)', marginBottom: 4 }}>{t.qualityTitle}</div>
+          <select
+            style={selectStyle}
+            value={slot.quality}
+            onChange={(e) => onChange(index, { ...slot, quality: Number(e.target.value) as QualityTier })}
+          >
+            {ALL_QUALITY_TIERS.map((tier) => (
+              <option key={tier} value={tier} style={optionStyle}>
+                {t.tierWord} {QUALITY_LABEL[tier]} · +{Math.round(QUALITY_BONUS[tier] * 100)}%
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label style={{ flex: 1 }}>
+          <div style={{ fontSize: 11, letterSpacing: '0.1em', color: 'var(--gold)', marginBottom: 4 }}>{t.traitWord}</div>
+          <select
+            style={selectStyle}
+            value={slot.trait}
+            onChange={(e) => onChange(index, { ...slot, trait: e.target.value as TraitId })}
+          >
+            {ALL_TRAIT_IDS.map((id) => (
+              <option key={id} value={id} style={optionStyle}>
+                {lang === 'pt' ? TRAIT_DEFINITIONS[id].labelPtBr : TRAIT_DEFINITIONS[id].labelEn}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+
+      {/* O RESULTADO — na convencao do cliente: total, nao bonus. */}
+      <div
+        style={{
+          marginTop: 16, flex: 1, borderRadius: 3,
+          border: '1px solid var(--gold-line)', background: 'rgba(0,0,0,0.26)',
+          padding: '14px 16px', display: 'flex', flexDirection: 'column',
+        }}
+      >
+        <div className="numeral" style={{ fontSize: 68, fontWeight: 700, color: 'var(--gold-bright)', lineHeight: 1 }}>
+          {total}%
+        </div>
+
+        <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 5, fontSize: 14, color: 'var(--text-dim)' }}>
+          <div><span className="numeral" style={{ color: 'var(--text)' }}>100</span> {t.baseWord}</div>
+          <div>
+            <span className="numeral" style={{ color: '#8fd46e' }}>{pct(bonus.quality)}</span>{' '}
+            {t.tierWord} {QUALITY_LABEL[slot.quality]}
           </div>
-        );
-      })}
+          <div>
+            <span className="numeral" style={{ color: bonus.ownTrait > 0 ? '#8fd46e' : 'var(--text-faint)' }}>
+              {pct(bonus.ownTrait)}
+            </span>{' '}
+            {traitName}
+            {reason && <span style={{ color: 'var(--warn)' }}> ({reason})</span>}
+          </div>
+          <div>
+            <span
+              className="numeral"
+              style={{ color: bonus.adjacency > 0 ? '#8fd46e' : bonus.adjacency < 0 ? '#f0705e' : 'var(--text-faint)' }}
+            >
+              {pct(bonus.adjacency)}
+            </span>{' '}
+            {t.neighboursWord}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
 
-function TraitCard({ trait, x }: { readonly trait: Exclude<TraitId, 'none'>; readonly x: number }) {
+function TraitCard({ trait, x }: { readonly trait: TraitId; readonly x: number }) {
   const { lang, t } = useLang();
   const def = TRAIT_DEFINITIONS[trait];
 
@@ -92,33 +183,54 @@ function TraitCard({ trait, x }: { readonly trait: Exclude<TraitId, 'none'>; rea
     <div
       className="panel"
       style={{
-        position: 'absolute', left: x, top: TRAIT_Y, width: CARD_W, height: TRAIT_H,
+        position: 'absolute', left: x, top: REF_Y, width: REF_W, height: REF_H,
         padding: '20px 22px', display: 'flex', flexDirection: 'column', overflow: 'hidden',
         background: 'linear-gradient(180deg, var(--bg-panel-hi) 0%, var(--bg-panel) 100%)',
       }}
     >
-      <div className="display" style={{ fontSize: 24, fontWeight: 700, color: 'var(--gold-bright)' }}>
-        {lang === 'pt' ? def.labelPtBr : def.labelEn}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+        <span className="display" style={{ fontSize: 24, fontWeight: 700, color: 'var(--gold-bright)' }}>
+          {lang === 'pt' ? def.labelPtBr : def.labelEn}
+        </span>
       </div>
 
       <GoldRule style={{ margin: '10px 0 14px' }} />
 
-      <div style={{ fontSize: 15, lineHeight: 1.45, color: 'var(--text)', minHeight: 130 }}>
+      <div style={{ fontSize: 15, lineHeight: 1.45, color: 'var(--text)' }}>
         {lang === 'pt' ? def.descriptionPtBr : def.descriptionEn}
       </div>
 
-      <div style={{ marginTop: 4 }}>
-        <div style={{ fontSize: 11, letterSpacing: '0.14em', color: 'var(--text-faint)', textAlign: 'center', marginBottom: 8 }}>
-          {t.traitAffects}
+      {/*
+        Os dois numeros que a descricao oficial mistura numa frase so. Em texto,
+        nao em caixa: a versao anterior desenhava tres retangulos vazios aqui e
+        todo mundo tentou digitar dentro deles.
+      */}
+      <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 7 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', fontSize: 14, color: 'var(--text-dim)' }}>
+          <span>{t.onItself}</span>
+          <span className="numeral" style={{ fontSize: 20, fontWeight: 700, color: def.selfBonus > 0 ? '#8fd46e' : 'var(--text-faint)' }}>
+            {def.selfBonus > 0 ? `+${Math.round(def.selfBonus * 100)}%` : '—'}
+          </span>
         </div>
-        <EffectDiagram trait={trait} />
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', fontSize: 14, color: 'var(--text-dim)' }}>
+          <span>{t.onNeighbours}</span>
+          <span
+            className="numeral"
+            style={{
+              fontSize: 20, fontWeight: 700,
+              color: def.neighborBonus > 0 ? '#8fd46e' : def.neighborBonus < 0 ? '#f0705e' : 'var(--text-faint)',
+            }}
+          >
+            {def.neighborBonus === 0 ? '—' : `${def.neighborBonus > 0 ? '+' : '−'}${Math.abs(Math.round(def.neighborBonus * 100))}%`}
+          </span>
+        </div>
       </div>
 
       <div
         style={{
-          marginTop: 'auto', padding: '10px 12px', borderRadius: 2,
+          marginTop: 'auto', padding: '12px 14px', borderRadius: 2,
           border: '1px solid var(--gold-line)', background: 'rgba(0,0,0,0.26)',
-          fontSize: 13, lineHeight: 1.4, color: 'var(--text-dim)',
+          fontSize: 14, lineHeight: 1.45, color: 'var(--text-dim)',
         }}
       >
         {lang === 'pt' ? def.tipPtBr : def.tipEn}
@@ -129,6 +241,12 @@ function TraitCard({ trait, x }: { readonly trait: Exclude<TraitId, 'none'>; rea
 
 export function TraitsScene() {
   const { t } = useLang();
+  const [slots, setSlots] = useState<readonly Slot[]>(INITIAL);
+  const change = (index: number, next: Slot) =>
+    setSlots((prev) => prev.map((s, i) => (i === index ? next : s)));
+
+  const total = emblemBonuses(toEmblems(slots), DEFAULT_RULES)
+    .reduce((acc, b) => acc + b.multiplier, 0);
 
   return (
     <>
@@ -141,86 +259,49 @@ export function TraitsScene() {
         </span>
       </div>
 
-      {/* AS CINCO QUALIDADES */}
+      {/* O SIMULADOR */}
       <div
         className="panel"
         style={{
-          position: 'absolute', left: 60, top: QUAL_Y, width: 1800, height: QUAL_H,
-          padding: '16px 28px', display: 'flex', alignItems: 'center', gap: 24,
+          position: 'absolute', left: 60, top: SIM_Y, width: 1800, height: SIM_H,
+          padding: '20px 24px',
           background: 'linear-gradient(180deg, var(--bg-panel-hi) 0%, var(--bg-panel) 100%)',
         }}
       >
-        <div style={{ width: 190, flexShrink: 0 }}>
-          <div className="display" style={{ fontSize: 21, color: 'var(--gold-bright)' }}>{t.qualityTitle}</div>
-          <div style={{ fontSize: 13, color: 'var(--text-faint)', marginTop: 6, lineHeight: 1.35 }}>{t.qualityNote}</div>
-        </div>
-        <div style={{ width: 1, alignSelf: 'stretch', background: 'var(--gold-line)' }} />
-        <div style={{ flex: 1, display: 'flex', gap: 14 }}>
-          {ALL_QUALITY_TIERS.map((tier) => (
-            <div
-              key={tier}
-              style={{
-                flex: 1, padding: '12px 0', borderRadius: 3, textAlign: 'center',
-                border: '1px solid var(--gold-line)', background: 'rgba(0,0,0,0.26)',
-              }}
-            >
-              <div className="display" style={{ fontSize: 24, color: 'var(--gold)' }}>{t.tierWord} {QUALITY_LABEL[tier]}</div>
-              <div className="numeral" style={{ fontSize: 34, fontWeight: 700, color: 'var(--gold-bright)', lineHeight: 1.1 }}>
-                +{Math.round(QUALITY_BONUS[tier] * 100)}%
+        <div style={{ position: 'absolute', inset: '20px 24px', display: 'flex', gap: 24 }}>
+          <div style={{ width: 320, flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
+            <div className="display" style={{ fontSize: 23, color: 'var(--gold-bright)', lineHeight: 1.2 }}>
+              {t.simTitle}
+            </div>
+            <div style={{ fontSize: 15, color: 'var(--text)', marginTop: 12, lineHeight: 1.5 }}>
+              {t.simHowTo}
+            </div>
+
+            <div style={{ marginTop: 'auto' }}>
+              <div style={{ fontSize: 12, letterSpacing: '0.14em', color: 'var(--gold)' }}>{t.bannerTotal}</div>
+              <div className="numeral" style={{ fontSize: 46, fontWeight: 700, color: 'var(--gold-bright)', lineHeight: 1.1 }}>
+                {Math.round(total * 100)}%
+              </div>
+              <div style={{ fontSize: 13, color: 'var(--text-faint)', lineHeight: 1.4, marginTop: 4 }}>
+                {t.bannerTotalNote}
               </div>
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* OS CINCO TRACOS */}
-      {ALL_TRAIT_IDS.map((trait, i) => (
-        <TraitCard key={trait} trait={trait as Exclude<TraitId, 'none'>} x={60 + i * (CARD_W + CARD_GAP)} />
-      ))}
-
-      {/* COMO OS PEDACOS SE SOMAM — com o exemplo de um estandarte real */}
-      <div
-        className="panel"
-        style={{
-          position: 'absolute', left: 60, top: RULE_Y, width: 1800, height: RULE_H,
-          padding: '18px 28px', display: 'flex', gap: 28, alignItems: 'stretch',
-          background: 'linear-gradient(180deg, var(--bg-panel-hi) 0%, var(--bg-panel) 100%)',
-        }}
-      >
-        <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 14, letterSpacing: '0.14em', color: 'var(--gold)' }}>{t.sumTitle}</div>
-          <div className="display" style={{ fontSize: 27, color: 'var(--gold-bright)', marginTop: 10, lineHeight: 1.25 }}>
-            {t.sumFormula}
           </div>
-          <div style={{ fontSize: 16, color: 'var(--text)', marginTop: 12, lineHeight: 1.45 }}>
-            {t.sumBody}
-          </div>
-        </div>
 
-        <div style={{ width: 1, background: 'var(--gold-line)' }} />
+          <div style={{ width: 1, background: 'var(--gold-line)' }} />
 
-        <div style={{ width: 720, flexShrink: 0 }}>
-          <div style={{ fontSize: 14, letterSpacing: '0.14em', color: 'var(--gold)' }}>{t.exampleTitle}</div>
-          <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 7 }}>
-            {[
-              { name: 'OPM', total: '250%', parts: '100 + 100 (Nível IV) + 50 (Vampírico)' },
-              { name: 'Roshans Mortos', total: '120%', parts: '100 + 30 (Nível II) − 10 (vizinho Vampírico)' },
-              { name: 'Finalizações', total: '110%', parts: '100 + 10 (Nível I) + 0 (Único, porque há dois)' },
-            ].map((row) => (
-              <div key={row.name} style={{ display: 'flex', alignItems: 'baseline', gap: 12, fontSize: 15 }}>
-                <span style={{ width: 150, flexShrink: 0, color: 'var(--text-dim)' }}>{row.name}</span>
-                <span className="numeral" style={{ width: 58, flexShrink: 0, fontSize: 20, fontWeight: 700, color: 'var(--gold-bright)' }}>
-                  {row.total}
-                </span>
-                <span style={{ color: 'var(--text)' }}>{row.parts}</span>
-              </div>
+          <div style={{ flex: 1, position: 'relative' }}>
+            {[0, 1, 2].map((i) => (
+              <EmblemSlot key={i} index={i} slots={slots} onChange={change} x={i * (453 + 16)} w={453} />
             ))}
           </div>
-          <div style={{ fontSize: 13, color: 'var(--text-faint)', marginTop: 10, lineHeight: 1.4 }}>
-            {t.exampleNote}
-          </div>
         </div>
       </div>
+
+      {/* OS CINCO TRACOS, como referencia */}
+      {ALL_TRAIT_IDS.map((trait, i) => (
+        <TraitCard key={trait} trait={trait} x={60 + i * (REF_W + REF_GAP)} />
+      ))}
     </>
   );
 }
