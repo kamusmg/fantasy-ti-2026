@@ -1,12 +1,27 @@
 # Post para r/DotA2
 
-## Títulos (escolhe um)
+## Títulos — limite medido: ~100 caracteres
 
-1. `I built an open fantasy calculator for TI2026 — and found a trap where UPGRADING an emblem quality can LOWER your score`
-2. `TI2026 Fantasy: the math says your team pick barely matters, but your 40 reroll tokens do. Open tool + all the data`
-3. `Open-source TI2026 fantasy calculator — every calculator (including mine vs battlepass) is underestimating scores by ~30%, here's why`
+**1. RECOMENDADO (82 chars)**
+```
+TI2026 Fantasy: raising an emblem quality can LOWER your score. Here's exactly when
+```
+Soa errado, é específico, e qualquer um confere no próprio cliente em 10 segundos.
+Não promete nem vende nada. É o formato que sobe em r/DotA2.
 
-Recomendo o **1**. É verificável no cliente de cada um, é útil, e não é auto-promoção.
+**2. Para provocar debate (80 chars)**
+```
+TI2026 Fantasy: your team pick is worth ~1%. Your 40 reroll tokens are worth +47%
+```
+Gera mais comentário porque contraria o que todo mundo está fazendo. Risco: parte
+discorda sem clicar.
+
+**3. Puxando pela ferramenta (84 chars)**
+```
+I open-sourced a TI2026 fantasy calculator and found 3 things nobody has published
+```
+Honesta, mas a mais fraca — "eu fiz uma ferramenta" já ativa o filtro de
+auto-promoção do sub na primeira palavra.
 
 ---
 
