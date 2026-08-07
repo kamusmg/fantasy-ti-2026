@@ -23,13 +23,17 @@ const LOCK_AT = Date.parse('2026-08-13T02:00:00Z');
  *
  * O card mais alto e o do MEIO: retrato solo maior e TRES cores de emblema
  * contra duas das outras funcoes.
- *   20 padding + 28 rotulo + 26 regua + 60 logo/nome + 190 retrato
- *   + 43 rotulo + 154 tres caixas + 68 alvo de roll + 20 padding = 609
- * 634 deixa folga. A versao anterior fixava 610 SEM contar o alvo de roll, que
- * eu tinha acabado de adicionar — e o Meio vazou.
+ *   20 padding + 30 rotulo + 26 regua + 60 logo/nome + 180 retrato
+ *   + 47 rotulo + 154 tres caixas + 106 alvo de renovacao + 20 padding = 643
+ * 654 deixa folga.
+ *
+ * Ja vazou DUAS vezes aqui, sempre pelo mesmo motivo: eu somei a altura antes de
+ * adicionar a ultima caixa. Da segunda vez o retrato solo estava em 156 e a caixa
+ * de alvo tinha crescido — o Meio cortava o "dois ou mais REPETIDOS". Se mexer em
+ * qualquer linha desta conta, some de novo.
  */
 const CARD_Y = 108;
-const CARD_H = 634;
+const CARD_H = 654;
 const BAND_Y = CARD_Y + CARD_H + 14;
 const BAND_H = 160;
 const RULES_Y = BAND_Y + BAND_H + 12;
@@ -70,7 +74,7 @@ function RoleCard({
   const team = data.teams.get(leader.teamId);
   const unit = data.roleUnits.get(`${leader.teamId}:${slot}`);
   const roster = (unit?.playerIds ?? []).map((id) => ({ id, nick: data.players.get(id)?.nick ?? id }));
-  const portraitSize = roster.length > 1 ? 128 : 156;
+  const portraitSize = roster.length > 1 ? 128 : 140;
 
   return (
     <div
@@ -130,7 +134,7 @@ function RoleCard({
                   {color.emblemCount > 1 && <span style={{ color: 'var(--gold)' }}> ×{color.emblemCount}</span>}
                 </div>
                 <div style={{ flex: 1, minWidth: 0, fontSize: 17, color: 'var(--text)', fontWeight: 600, lineHeight: 1.3 }}>
-                  {keep.map((k) => label.stat(k.statId, lang)).join(', ')}
+                  {keep.map((k) => label.statShort(k.statId, lang)).join(', ')}
                 </div>
               </div>
             );
@@ -280,22 +284,20 @@ export function DreamScene() {
         }}
       >
         <div style={{ fontSize: 14, letterSpacing: '0.14em', color: 'var(--gold)' }}>{t.coachTitle}</div>
-        <div className="display" style={{ fontSize: 60, color: 'var(--gold-bright)', marginTop: 10, lineHeight: 1 }}>
-          {recommendedTitle.prefix ? label.prefix(recommendedTitle.prefix, lang) : '—'}
-          <span style={{ color: 'var(--gold-dim)' }}> · </span>
-          {recommendedTitle.suffix ? label.suffix(recommendedTitle.suffix, lang) : '—'}
+        <div className="display" style={{ fontSize: 56, color: 'var(--gold-bright)', marginTop: 10, lineHeight: 1 }}>
+          {label.coachTitle(recommendedTitle.prefix ?? null, recommendedTitle.suffix ?? null, lang)}
         </div>
         <div style={{ display: 'flex', gap: 44, marginTop: 16, fontSize: 19, color: 'var(--text)' }}>
           {prefix && recommendedTitle.prefix && (
             <span>
               <b style={{ color: 'var(--gold-bright)' }}>+{Math.round(prefix.bonus * 100)}%</b>{' '}
-              {t.when} {label.prefixCondition(recommendedTitle.prefix, lang)}
+              {label.prefixCondition(recommendedTitle.prefix, lang)}
             </span>
           )}
           {suffix && recommendedTitle.suffix && (
             <span>
               <b style={{ color: 'var(--gold-bright)' }}>+{Math.round(suffix.bonus * 100)}%</b>{' '}
-              {t.when} {label.suffixCondition(recommendedTitle.suffix, lang)}
+              {label.suffixCondition(recommendedTitle.suffix, lang)}
             </span>
           )}
         </div>

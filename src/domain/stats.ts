@@ -27,8 +27,22 @@ export type ScoringRule =
 export interface StatDefinition {
   readonly id: StatId;
   readonly color: EmblemColor;
+  /**
+   * O nome EXATO do cliente, na traducao oficial da Valve.
+   *
+   * Nao e detalhe: quem assiste vai comparar a tela com o cliente aberto do lado.
+   * Nome inventado ("Abates de Coruja" pro courier, que ja esteve aqui) queima a
+   * confianca em tudo o mais que a tela diz. Fonte: GLOSSARIO_PONTUACAO_2026.md,
+   * transcrito do proprio jogo.
+   */
   readonly labelPtBr: string;
   readonly labelEn: string;
+  /**
+   * Forma curta, pra lista onde varias stats entram separadas por virgula.
+   * E o substantivo-cabeca do nome oficial — nunca um apelido novo.
+   */
+  readonly shortPtBr: string;
+  readonly shortEn: string;
   readonly rule: ScoringRule;
   /**
    * Evento de credito unico: no maximo um jogador do time leva os pontos.
@@ -55,38 +69,46 @@ const def = (
   color: EmblemColor,
   labelPtBr: string,
   labelEn: string,
+  shortPtBr: string,
+  shortEn: string,
   rule: ScoringRule,
   assumedCv: number,
   soloCredit = false,
-): StatDefinition => ({ id, color, labelPtBr, labelEn, rule, assumedCv, soloCredit });
+): StatDefinition => ({ id, color, labelPtBr, labelEn, shortPtBr, shortEn, rule, assumedCv, soloCredit });
 
+/**
+ * Os 18 atributos, com o nome do cliente.
+ *
+ * Todo `labelPtBr` daqui esta escrito exatamente como o jogo escreve, conferido
+ * linha a linha contra o GLOSSARIO_PONTUACAO_2026.md. A versao anterior misturava
+ * jargao em ingles com traducao minha e chegou a inventar nome ("Abates de
+ * Coruja"), o que numa tela de live e o tipo de erro que faz o espectador de Dota
+ * parar de acreditar no resto dos numeros.
+ */
 export const STAT_DEFINITIONS: Readonly<Record<StatId, StatDefinition>> = {
   // ---------- VERMELHO ----------
-  kills: def('kills', 'red', 'Abates', 'Kills', { kind: 'perUnit', pointsPerUnit: 107 }, 0.55),
-  deaths: def('deaths', 'red', 'Poucas Mortes', 'Low Deaths', { kind: 'baseMinus', base: 1950, perUnit: 195 }, 0.35),
-  creepScore: def('creepScore', 'red', 'Creep Score', 'Creep Score', { kind: 'perUnit', pointsPerUnit: 3 }, 0.20),
-  gpm: def('gpm', 'red', 'GPM', 'GPM', { kind: 'perUnit', pointsPerUnit: 2 }, 0.20),
-  madstone: def('madstone', 'red', 'Madstones', 'Madstones', { kind: 'perUnit', pointsPerUnit: 13 }, 0.40),
-  towerKills: def('towerKills', 'red', 'Torres', 'Tower Kills', { kind: 'perUnit', pointsPerUnit: 352 }, 0.70),
+  kills: def('kills', 'red', 'Vítimas', 'Kills', 'Vítimas', 'Kills', { kind: 'perUnit', pointsPerUnit: 107 }, 0.55),
+  deaths: def('deaths', 'red', 'Mortes', 'Deaths', 'Mortes', 'Deaths', { kind: 'baseMinus', base: 1950, perUnit: 195 }, 0.35),
+  creepScore: def('creepScore', 'red', 'Criaturas', 'Creep Score', 'Criaturas', 'Creep Score', { kind: 'perUnit', pointsPerUnit: 3 }, 0.20),
+  gpm: def('gpm', 'red', 'OPM', 'GPM', 'OPM', 'GPM', { kind: 'perUnit', pointsPerUnit: 2 }, 0.20),
+  madstone: def('madstone', 'red', 'Lascas de Insanite', 'Madstones Collected', 'Lascas', 'Madstones', { kind: 'perUnit', pointsPerUnit: 13 }, 0.40),
+  towerKills: def('towerKills', 'red', 'Torres Destruídas', 'Tower Kills', 'Torres', 'Towers', { kind: 'perUnit', pointsPerUnit: 352 }, 0.70),
 
   // ---------- AZUL ----------
-  wardsPlaced: def('wardsPlaced', 'blue', 'Wards Colocadas', 'Wards Placed', { kind: 'perUnit', pointsPerUnit: 117 }, 0.25),
-  campsStacked: def('campsStacked', 'blue', 'Acampamentos Empilhados', 'Camps Stacked', { kind: 'perUnit', pointsPerUnit: 234 }, 0.40),
-  runes: def('runes', 'blue', 'Runas', 'Runes', { kind: 'perUnit', pointsPerUnit: 141 }, 0.35),
-  watchers: def('watchers', 'blue', 'Vigias', 'Watchers', { kind: 'perUnit', pointsPerUnit: 147 }, 0.45),
-  smokes: def('smokes', 'blue', 'Smokes Usados', 'Smokes Used', { kind: 'perUnit', pointsPerUnit: 293 }, 0.45),
-  lotuses: def('lotuses', 'blue', 'Lotus', 'Lotuses', { kind: 'perUnit', pointsPerUnit: 176 }, 0.50),
+  wardsPlaced: def('wardsPlaced', 'blue', 'Sentinelas Posicionadas', 'Wards Placed', 'Sentinelas', 'Wards', { kind: 'perUnit', pointsPerUnit: 117 }, 0.25),
+  campsStacked: def('campsStacked', 'blue', 'Acampamentos Acumulados', 'Camps Stacked', 'Acampamentos', 'Camps', { kind: 'perUnit', pointsPerUnit: 234 }, 0.40),
+  runes: def('runes', 'blue', 'Runas Obtidas', 'Runes Grabbed', 'Runas', 'Runes', { kind: 'perUnit', pointsPerUnit: 141 }, 0.35),
+  watchers: def('watchers', 'blue', 'Vigias Ativados', 'Watchers Taken', 'Vigias', 'Watchers', { kind: 'perUnit', pointsPerUnit: 147 }, 0.45),
+  smokes: def('smokes', 'blue', 'Fumaças Usadas', 'Smokes Used', 'Fumaças', 'Smokes', { kind: 'perUnit', pointsPerUnit: 293 }, 0.45),
+  lotuses: def('lotuses', 'blue', 'Lótus Obtidos', 'Lotuses Grabbed', 'Lótus', 'Lotuses', { kind: 'perUnit', pointsPerUnit: 176 }, 0.50),
 
   // ---------- VERDE ----------
-  roshan: def('roshan', 'green', 'Roshan', 'Roshan', { kind: 'perUnit', pointsPerUnit: 1172 }, 1.10, true),
-  teamfight: def('teamfight', 'green', 'Participacao em Combate', 'Teamfight Participation', { kind: 'capped', max: 2124 }, 0.15),
-  stuns: def('stuns', 'green', 'Stuns', 'Stuns', { kind: 'perUnit', pointsPerUnit: 10 }, 0.40),
-  tormentor: def('tormentor', 'green', 'Tormentor', 'Tormentor', { kind: 'perUnit', pointsPerUnit: 879 }, 0.75),
-  firstBlood: def('firstBlood', 'green', 'First Blood', 'First Blood', { kind: 'flat', points: 1934 }, 2.00, true),
-  // "Entregador" e o nome do courier no cliente em portugues: o glossario diz
-  // "ENTREGADORES MORTOS, +703,00 por entregador morto". Ja esteve como "Abates
-  // de Coruja" aqui, que nao e nome de nada no jogo.
-  courier: def('courier', 'green', 'Entregadores', 'Courier Kills', { kind: 'perUnit', pointsPerUnit: 703 }, 1.30, true),
+  roshan: def('roshan', 'green', 'Roshans Mortos', 'Roshan Kills', 'Roshans', 'Roshan', { kind: 'perUnit', pointsPerUnit: 1172 }, 1.10, true),
+  teamfight: def('teamfight', 'green', 'Participação em Batalhas', 'Teamfight Participation', 'Batalhas', 'Teamfight', { kind: 'capped', max: 2124 }, 0.15),
+  stuns: def('stuns', 'green', 'Atordoamentos', 'Stuns', 'Atordoamentos', 'Stuns', { kind: 'perUnit', pointsPerUnit: 10 }, 0.40),
+  tormentor: def('tormentor', 'green', 'Tormentas Destruídas', 'Tormentor Kills', 'Tormentas', 'Tormentor', { kind: 'perUnit', pointsPerUnit: 879 }, 0.75),
+  firstBlood: def('firstBlood', 'green', 'Primeira Vítima', 'First Blood', 'Primeira Vítima', 'First Blood', { kind: 'flat', points: 1934 }, 2.00, true),
+  courier: def('courier', 'green', 'Entregadores Mortos', 'Courier Kills', 'Entregadores', 'Courier', { kind: 'perUnit', pointsPerUnit: 703 }, 1.30, true),
 } as const;
 
 export const ALL_STAT_IDS: readonly StatId[] = Object.keys(STAT_DEFINITIONS) as StatId[];

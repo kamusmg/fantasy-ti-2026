@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useEngine } from '../../state/useEngine';
 import { GoldRule } from '../../ui/primitives';
 import { BANNER_LAYOUT, ROLE_POSITIONS } from '../../domain/roles';
@@ -149,12 +150,20 @@ function BannerOrder({ slot }: { readonly slot: RoleSlot }) {
   );
 }
 
-function RoleGuideCard({ slot, x }: { readonly slot: RoleSlot; readonly x: number }) {
+function RoleGuideCard({
+  slot, x, teamId, onPickTeam,
+}: {
+  readonly slot: RoleSlot;
+  readonly x: number;
+  /** Equipe escolhida. null = a que o modelo recomenda. */
+  readonly teamId: string | null;
+  readonly onPickTeam: (teamId: string | null) => void;
+}) {
   const { data, teamRanking } = useEngine();
   const { lang, t } = useLang();
 
-  const leader = teamRanking[slot].teams[0];
-  const teamName = data.teams.get(leader.teamId)?.name ?? leader.teamId;
+  const ranked = teamRanking[slot].teams;
+  const leader = (teamId ? ranked.find((tm) => tm.teamId === teamId) : undefined) ?? ranked[0];
 
   return (
     <div
@@ -176,12 +185,32 @@ function RoleGuideCard({ slot, x }: { readonly slot: RoleSlot; readonly x: numbe
       </div>
 
       {/*
-        De QUEM sao esses numeros. O valor de uma stat depende do time — Runas no
-        Meio do Falcons nao vale o mesmo que no de outro. Sem esta linha o card
-        pareceria uma verdade geral do jogo, e nao e.
+        De QUEM sao esses numeros — e trocavel.
+        O valor de um atributo depende da equipe: Runas no Meio do Falcons nao
+        vale o mesmo que no de outra. Sem poder trocar, a tela so servia pra quem
+        fosse seguir a recomendacao. As opcoes vem na ordem do ranking, e a
+        primeira (★) e a que o modelo recomenda.
       */}
-      <div style={{ fontSize: 13, letterSpacing: '0.04em', color: 'var(--text-faint)', marginTop: 4 }}>
-        {t.guideMeasuredOn} <span style={{ color: 'var(--gold)' }}>{teamName}</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 }}>
+        <span style={{ fontSize: 12, letterSpacing: '0.12em', color: 'var(--text-faint)' }}>
+          {t.guideMeasuredOn.toUpperCase()}
+        </span>
+        <select
+          value={leader.teamId}
+          onChange={(e) => onPickTeam(e.target.value === ranked[0].teamId ? null : e.target.value)}
+          style={{
+            font: 'inherit', fontSize: 15, fontWeight: 600, cursor: 'pointer',
+            padding: '3px 8px', borderRadius: 3,
+            border: '1px solid var(--gold-line)',
+            background: 'rgba(0,0,0,0.35)', color: 'var(--gold-bright)',
+          }}
+        >
+          {ranked.map((tm, i) => (
+            <option key={tm.teamId} value={tm.teamId} style={{ background: 'var(--bg-panel)', color: 'var(--text)' }}>
+              {i === 0 ? '★ ' : `${i + 1}. `}{data.teams.get(tm.teamId)?.name ?? tm.teamId}
+            </option>
+          ))}
+        </select>
       </div>
 
       <GoldRule style={{ margin: '11px 0 14px' }} />
@@ -209,6 +238,9 @@ function RoleGuideCard({ slot, x }: { readonly slot: RoleSlot; readonly x: numbe
 
 export function GuideScene() {
   const { t } = useLang();
+  /** null = a equipe que o modelo recomenda pra aquela funcao. */
+  const [picked, setPicked] = useState<Record<RoleSlot, string | null>>({ core: null, mid: null, support: null });
+  const pick = (slot: RoleSlot) => (teamId: string | null) => setPicked((p) => ({ ...p, [slot]: teamId }));
 
   return (
     <>
@@ -222,9 +254,9 @@ export function GuideScene() {
         </span>
       </div>
 
-      <RoleGuideCard slot="core" x={60} />
-      <RoleGuideCard slot="mid" x={666} />
-      <RoleGuideCard slot="support" x={1272} />
+      <RoleGuideCard slot="core" x={60} teamId={picked.core} onPickTeam={pick('core')} />
+      <RoleGuideCard slot="mid" x={666} teamId={picked.mid} onPickTeam={pick('mid')} />
+      <RoleGuideCard slot="support" x={1272} teamId={picked.support} onPickTeam={pick('support')} />
 
       <div
         className="panel"

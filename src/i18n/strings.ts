@@ -79,63 +79,63 @@ const PT: Strings = {
   locksIn: 'FECHA EM',
   pos: 'POS',
   keepOnBanner: 'NO ESTANDARTE, FIQUE COM',
-  rerollAnythingElse: 'qualquer outra stat nessa cor: rerole',
-  coachTitle: 'TITULO DE TREINADOR',
+  rerollAnythingElse: 'qualquer outro atributo nessa cor: renove',
+  coachTitle: 'TÍTULO DE TREINADOR',
   when: 'quando',
-  tokensTitle: 'AS 40 FICHAS',
+  tokensTitle: 'AS 40 FICHAS DE RENOVAÇÃO',
   spendOn: 'Gaste no',
-  tokensYield: (pct) => `Rende +${pct}%, o dobro das outras duas funcoes.`,
+  tokensYield: (pct) => `Rende +${pct}%, o dobro das outras duas funções.`,
   tokensWhy: (color, stat, times) =>
-    `Porque no ${color} do Meio a sorte PESA: ${stat} vale ${times}x a segunda melhor. Tirou outra coisa, aquele emblema quase nao pontua.`,
+    `No ${color} do Meio a sorte PESA: ${stat} vale ${times}× o segundo melhor — saiu outra coisa e o emblema quase não pontua.`,
   tokensWhyFlat: (color, role) =>
-    `Ja no ${color} do ${role}, quatro das seis opcoes sao boas — rolar mal quase nao doi, entao ficha ali compra pouco.`,
+    `Já no ${color} do ${role}, quatro das seis opções são boas — sair mal quase não dói, então ficha ali compra pouco.`,
   greenRule: (green, red, blue) =>
-    `Stat ruim so tem conserto direto em emblema ${green}. No ${red} voce so mira qualidade, no ${blue} so traco.`,
+    `Atributo ruim só tem conserto direto em emblema ${green}. No ${red} você só mira qualidade, no ${blue} só traço.`,
   fractalWarnLead: 'Cuidado com o FRACTAL:',
-  fractalWarnBody: 'se ele estiver no estandarte, subir uma qualidade pode baixar sua nota. Ele so paga com as tres qualidades diferentes.',
-  simulations: (n) => `${n} simulacoes do Suico`,
+  fractalWarnBody: 'se ele estiver no estandarte, subir uma qualidade pode baixar sua nota. Ele só paga com as três qualidades diferentes.',
+  simulations: (n) => `${n} simulações do Suíço`,
   firmPicks: 'palpites FIRMES',
-  firmSubtitle: 'nao mudam por mais que eu mexa no modelo',
+  firmSubtitle: 'não mudam por mais que eu mexa no modelo',
   outOf16: 'de 16',
   expectedHits: 'acertos esperados',
   vsRandom: (n) => `contra ${n} no chute`,
-  aboveRandom: (pct) => `${pct}% acima de sortear os 16 times nas vagas`,
-  ceilingLead: 'Por que o teto e baixo:',
-  ceilingBody: 'dez dos 16 times caem na rodada eliminatoria, e ganhar ou perder la e quase cara-ou-coroa. Essas dez vagas nao rendem por mais que se calcule — nem pra mim, nem pra ninguem.',
-  weakestLead: 'sao os mais fracos:',
-  weakestBody: 'mexendo na calibracao eles trocam de dono. Por isso vao marcados como CHUTE.',
+  aboveRandom: (pct) => `${pct}% acima de sortear as 16 equipes nas vagas`,
+  ceilingLead: 'Por que o teto é baixo:',
+  ceilingBody: 'dez das 16 equipes caem na rodada eliminatória, e ganhar ou perder lá é quase cara-ou-coroa. Essas dez vagas não rendem por mais que se calcule — nem pra mim, nem pra ninguém.',
+  weakestLead: 'são os mais fracos:',
+  weakestBody: 'mexendo na calibração eles trocam de dono. Por isso vão marcados como CHUTE.',
   badgeFirm: 'FIRME',
-  badgeLikely: 'PROVAVEL',
+  badgeLikely: 'PROVÁVEL',
   badgeGuess: 'CHUTE',
   whosePicks: 'PALPITE DE',
   ourModelName: 'Claude Opus',
-  modelSource: '50.000 simulacoes do Suico com forca de time do mercado de apostas',
+  modelSource: '50.000 simulações do Suíço com força de equipe do mercado de apostas',
   weSay: 'Claude',
   sameAsUs: 'igual ao nosso',
   agreesWithUs: (n) => `${n} de 16 iguais aos do Claude`,
-  traitTargetLead: 'ALVO DE ROLL:',
-  tierV: 'tudo Nivel V',
-  tiersDistinct: 'niveis TODOS diferentes ->',
+  traitTargetLead: 'ALVO DE RENOVAÇÃO:',
+  tierV: 'tudo Nível V',
+  tiersDistinct: 'níveis TODOS diferentes ->',
   tiersRepeated: 'dois ou mais REPETIDOS ->',
   eachEmblem: 'em cada emblema',
   bucketSubtitle: {
     '4-0': 'Uma equipe invicta.',
-    '4-1': 'Duas equipes com quatro vitorias e uma derrota.',
-    elimWin: 'As cinco equipes vencedoras da rodada eliminatoria.',
-    elimLose: 'As cinco equipes perdedoras da rodada eliminatoria.',
-    '1-4': 'Duas equipes com uma vitoria e quatro derrotas.',
-    '0-4': 'Uma equipe sem vitorias.',
+    '4-1': 'Duas equipes com quatro vitórias e uma derrota.',
+    elimWin: 'As cinco equipes vencedoras da rodada eliminatória.',
+    elimLose: 'As cinco equipes perdedoras da rodada eliminatória.',
+    '1-4': 'Duas equipes com uma vitória e quatro derrotas.',
+    '0-4': 'Uma equipe sem vitórias.',
   },
 
   guideTitle: 'GUIA DE ATRIBUTOS',
-  guideSubtitle: 'as 18 stats em ordem de valor, por funcao — 100% = a melhor da cor',
+  guideSubtitle: 'os 18 atributos em ordem de valor — 100% = o melhor da cor',
   bannerOrder: 'ORDEM DO ESTANDARTE',
-  guideMeasuredOn: 'medido no',
-  guideColorAbsent: 'Esta funcao nao tem emblema desta cor no estandarte.',
-  verdictLabel: { guardar: 'GUARDAR', aceitavel: 'ACEITAVEL', rerolar: 'REROLAR' },
-  guideFooterLead: 'A cor vem TRAVADA pela funcao.',
+  guideMeasuredOn: 'equipe',
+  guideColorAbsent: 'Esta função não tem emblema desta cor no estandarte.',
+  verdictLabel: { guardar: 'GUARDAR', aceitavel: 'ACEITÁVEL', rerolar: 'RENOVAR' },
+  guideFooterLead: 'A cor vem TRAVADA pela função.',
   guideFooterBody:
-    'Voce nao escolhe a cor do emblema nem a stat que cai nele — a lista acima diz o que MANTER e o que rerolar. O bloco apagado e a cor que aquela funcao NAO tem: o Principal nao tem azul, o Suporte nao tem vermelho.',
+    'Você não escolhe a cor do emblema nem o atributo que cai nele — a lista acima diz o que MANTER e o que renovar. O bloco apagado é a cor que aquela função NÃO tem: o Principal não tem azul, o Suporte não tem vermelho.',
 };
 
 const EN: Strings = {
@@ -194,9 +194,9 @@ const EN: Strings = {
   },
 
   guideTitle: 'STAT GUIDE',
-  guideSubtitle: 'all 18 stats ranked by value, per role — 100% = best of that colour',
+  guideSubtitle: 'all 18 stats ranked by value — 100% = best of that colour',
   bannerOrder: 'BANNER ORDER',
-  guideMeasuredOn: 'measured on',
+  guideMeasuredOn: 'team',
   guideColorAbsent: 'This role has no emblem of this colour on its banner.',
   verdictLabel: { guardar: 'KEEP', aceitavel: 'ACCEPTABLE', rerolar: 'REROLL' },
   guideFooterLead: 'The colour is LOCKED by the role.',
@@ -237,24 +237,24 @@ const PREFIX_LABEL_EN: Readonly<Record<PrefixId, string>> = {
 
 const SUFFIX_LABEL_EN: Readonly<Record<SuffixId, string>> = {
   clutch: 'the Clutch', lucky: 'the Lucky', underdog: 'the Underdog', tormented: 'the Tormented',
-  flayedTwinsAcolyte: 'Flayed Twins Acolyte', patient: 'the Patient', decisive: 'the Decisive', cruel: 'the Cruel',
+  flayedTwinsAcolyte: 'the Flayed Twins Acolyte', patient: 'the Patient', decisive: 'the Decisive', cruel: 'the Cruel',
 };
 
 const PREFIX_CONDITION_EN: Readonly<Record<PrefixId, string>> = {
-  crimson: 'red hero', cerulean: 'blue hero', emerald: 'green hero', royal: 'purple hero',
-  golden: 'yellow or brown hero', elemental: 'Aquatic, Fiery or Icy hero',
-  otherworldly: 'Undead, Demon or Spirit hero', heroic: 'Caped or Masked hero',
+  crimson: 'a red hero', cerulean: 'a blue hero', emerald: 'a green hero', royal: 'a purple hero',
+  golden: 'a yellow or brown hero', elemental: 'an Aquatic, Fiery, or Icy Hero',
+  otherworldly: 'an Undead, Demon, or Spirit Hero', heroic: 'a Caped or Masked Hero',
 };
 
 const SUFFIX_CONDITION_EN: Readonly<Record<SuffixId, string>> = {
-  clutch: 'last possible match of a series',
-  lucky: 'match duration ends in an 8',
-  underdog: 'matches the player LOSES',
-  tormented: 'a player dies to the Tormentor',
-  flayedTwinsAcolyte: 'first blood before the horn',
-  patient: 'no first blood until 10:00',
-  decisive: 'match under 25 minutes',
-  cruel: 'a player is killed in their own fountain',
+  clutch: 'playing the last possible match of a series',
+  lucky: 'the match time ends with an 8',
+  underdog: 'the player loses',
+  tormented: 'any player dies to a Tormentor',
+  flayedTwinsAcolyte: 'any player gets first blood before the starting horn',
+  patient: 'first blood does not happen until after 10 minutes',
+  decisive: 'the game lasts less than 25 minutes',
+  cruel: 'a player is killed while in their own fountain',
 };
 
 /** Versao curta pro selo dentro do card — "Vencedora da Eliminatoria" nao cabe em 206px. */
@@ -268,9 +268,26 @@ export const label = {
   bucketShort: (b: Bucket, lang: Lang) => BUCKET_SHORT[lang][b],
   color: (color: EmblemColor, lang: Lang) => (lang === 'pt' ? COLOR_LABEL_PT_BR[color] : COLOR_LABEL_EN[color]),
   stat: (id: StatId, lang: Lang) => (lang === 'pt' ? STAT_DEFINITIONS[id].labelPtBr : STAT_DEFINITIONS[id].labelEn),
+  /** Forma curta, pra lista de varios atributos separados por virgula. */
+  statShort: (id: StatId, lang: Lang) => (lang === 'pt' ? STAT_DEFINITIONS[id].shortPtBr : STAT_DEFINITIONS[id].shortEn),
   bucket: (b: Bucket, lang: Lang) => (lang === 'pt' ? BUCKET_LABEL_PT_BR[b] : BUCKET_LABEL_EN[b]),
   prefix: (id: PrefixId, lang: Lang) => (lang === 'pt' ? PREFIX_DEFINITIONS[id].labelPtBr : PREFIX_LABEL_EN[id]),
   suffix: (id: SuffixId, lang: Lang) => (lang === 'pt' ? SUFFIX_DEFINITIONS[id].labelPtBr : SUFFIX_LABEL_EN[id]),
+  /**
+   * O titulo como o CLIENTE escreve: `{jogador}, o {sufixo} {prefixo}`.
+   *
+   * A tela mostrava "Ceruleo · o Decisivo" — prefixo primeiro, com um ponto no
+   * meio. No jogo le-se "o Decisivo Ceruleo", e o cabecalho do proprio cliente
+   * chama o sufixo de "Primeiro" e o prefixo de "Segundo". Em ingles o rotulo do
+   * sufixo ja traz o "the" dentro ("the Clutch"), entao o artigo so entra no pt.
+   */
+  coachTitle: (prefixId: PrefixId | null, suffixId: SuffixId | null, lang: Lang) => {
+    const p = prefixId ? label.prefix(prefixId, lang) : null;
+    const s = suffixId ? label.suffix(suffixId, lang) : null;
+    if (!p && !s) return '—';
+    if (lang === 'pt') return [s ? `o ${s}` : null, p].filter(Boolean).join(' ');
+    return [s, p].filter(Boolean).join(' ');
+  },
   prefixCondition: (id: PrefixId, lang: Lang) =>
     (lang === 'pt' ? PREFIX_DEFINITIONS[id].conditionPtBr : PREFIX_CONDITION_EN[id]),
   suffixCondition: (id: SuffixId, lang: Lang) =>
