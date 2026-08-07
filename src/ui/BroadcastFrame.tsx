@@ -23,7 +23,7 @@ export function BroadcastFrame({ children }: { readonly children: ReactNode }) {
 
   return (
     <div className="broadcast-root">
-      <div className="broadcast-stage" style={{ transform: `scale(${scale})` }}>
+      <div className="broadcast-stage" style={{ transform: `translate(-50%, -50%) scale(${scale})` }}>
         {children}
       </div>
     </div>

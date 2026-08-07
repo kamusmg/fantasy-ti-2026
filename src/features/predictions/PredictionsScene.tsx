@@ -1,31 +1,20 @@
 import swiss from '../../data/generated/swiss.json';
 import { loadDataset } from '../../data/load';
-import { BUCKET_LABEL_PT_BR, BUCKET_ORDER, BUCKET_SLOTS } from '../../engine/swiss';
+import { BUCKET_ORDER, BUCKET_SLOTS } from '../../engine/swiss';
 import type { Bucket } from '../../engine/swiss';
 import { GoldRule } from '../../ui/primitives';
 import { TeamLogo } from '../../ui/Portrait';
+import { useLang } from '../../i18n/LangContext';
+import { label } from '../../i18n/strings';
 import { useMemo } from 'react';
 
 const picks = swiss.picks as Record<string, Bucket>;
 const stability = swiss.stability as Record<string, number>;
 const probability = swiss.bucketProbability as Record<string, Record<Bucket, number>>;
 
-interface Group {
-  readonly bucket: Bucket;
-  readonly subtitle: string;
-}
-
 /** Mesma ordem de leitura da tela do cliente — o publico reconhece na hora. */
-const TOP_ROW: readonly Group[] = [
-  { bucket: '4-0', subtitle: 'Uma equipe invicta.' },
-  { bucket: '4-1', subtitle: 'Duas equipes com quatro vitorias e uma derrota.' },
-  { bucket: 'elimWin', subtitle: 'As cinco equipes vencedoras da rodada eliminatoria.' },
-];
-const BOTTOM_ROW: readonly Group[] = [
-  { bucket: 'elimLose', subtitle: 'As cinco equipes perdedoras da rodada eliminatoria.' },
-  { bucket: '1-4', subtitle: 'Duas equipes com uma vitoria e quatro derrotas.' },
-  { bucket: '0-4', subtitle: 'Uma equipe sem vitorias.' },
-];
+const TOP_ROW: readonly Bucket[] = ['4-0', '4-1', 'elimWin'];
+const BOTTOM_ROW: readonly Bucket[] = ['elimLose', '1-4', '0-4'];
 
 const CARD_W = 206;
 const CARD_H = 268;
@@ -35,6 +24,7 @@ function TeamCard({ teamId, bucket, name, x, y }: {
   readonly teamId: string; readonly bucket: Bucket; readonly name: string;
   readonly x: number; readonly y: number;
 }) {
+  const { t } = useLang();
   const p = probability[teamId][bucket];
   const stable = stability[teamId] === swiss.maxStability;
   const shaky = stability[teamId] <= 1;
@@ -61,7 +51,7 @@ function TeamCard({ teamId, bucket, name, x, y }: {
           color: stable || shaky ? '#1b1006' : 'var(--gold)',
         }}
       >
-        {stable ? 'FIRME' : shaky ? 'CHUTE' : 'PROVAVEL'}
+        {stable ? t.badgeFirm : shaky ? t.badgeGuess : t.badgeLikely}
       </div>
 
       <TeamLogo teamId={teamId} size={74} />
@@ -77,26 +67,27 @@ function TeamCard({ teamId, bucket, name, x, y }: {
   );
 }
 
-function BucketGroup({ group, teams, x, y, names }: {
-  readonly group: Group; readonly teams: readonly string[];
+function BucketGroup({ bucket, teams, x, y, names }: {
+  readonly bucket: Bucket; readonly teams: readonly string[];
   readonly x: number; readonly y: number; readonly names: ReadonlyMap<string, string>;
 }) {
-  const width = BUCKET_SLOTS[group.bucket] * CARD_W + (BUCKET_SLOTS[group.bucket] - 1) * GAP;
+  const { lang, t } = useLang();
+  const width = BUCKET_SLOTS[bucket] * CARD_W + (BUCKET_SLOTS[bucket] - 1) * GAP;
 
   return (
     <>
       <div style={{ position: 'absolute', left: x, top: y, width, textAlign: 'center' }}>
         <div className="display" style={{ fontSize: 22, fontWeight: 700, color: 'var(--gold-bright)' }}>
-          {BUCKET_LABEL_PT_BR[group.bucket]}
+          {label.bucket(bucket, lang)}
         </div>
-        <div style={{ fontSize: 13, color: 'var(--text-dim)', marginTop: 4 }}>{group.subtitle}</div>
+        <div style={{ fontSize: 13, color: 'var(--text-dim)', marginTop: 4 }}>{t.bucketSubtitle[bucket]}</div>
         <GoldRule style={{ marginTop: 8 }} />
       </div>
       {teams.map((teamId, i) => (
         <TeamCard
           key={teamId}
           teamId={teamId}
-          bucket={group.bucket}
+          bucket={bucket}
           name={names.get(teamId) ?? teamId}
           x={x + i * (CARD_W + GAP)}
           y={y + 56}
@@ -107,9 +98,10 @@ function BucketGroup({ group, teams, x, y, names }: {
 }
 
 export function PredictionsScene() {
+  const { lang, t } = useLang();
   const names = useMemo(() => {
     const data = loadDataset();
-    return new Map([...data.teams].map(([id, t]) => [id, t.name]));
+    return new Map([...data.teams].map(([id, team]) => [id, team.name]));
   }, []);
 
   const byBucket = (bucket: Bucket) => Object.keys(picks).filter((id) => picks[id] === bucket);
@@ -132,32 +124,32 @@ export function PredictionsScene() {
   let x = 60;
   const topPositions = TOP_ROW.map((g) => {
     const pos = x;
-    x += BUCKET_SLOTS[g.bucket] * CARD_W + (BUCKET_SLOTS[g.bucket] - 1) * GAP + 46;
+    x += BUCKET_SLOTS[g] * CARD_W + (BUCKET_SLOTS[g] - 1) * GAP + 46;
     return pos;
   });
   x = 60;
   const bottomPositions = BOTTOM_ROW.map((g) => {
     const pos = x;
-    x += BUCKET_SLOTS[g.bucket] * CARD_W + (BUCKET_SLOTS[g.bucket] - 1) * GAP + 46;
+    x += BUCKET_SLOTS[g] * CARD_W + (BUCKET_SLOTS[g] - 1) * GAP + 46;
     return pos;
   });
 
   return (
     <>
       <div style={{ position: 'absolute', top: 26, left: 60, right: 60, display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-        <span className="display" style={{ fontSize: 20, letterSpacing: '0.32em', color: 'var(--gold-dim)' }}>
-          PALPITES &nbsp;·&nbsp; FASE DE GRUPOS
+        <span className="display" style={{ fontSize: 22, letterSpacing: '0.24em', color: 'var(--gold-bright)' }}>
+          {t.predictionsTitle} &nbsp;·&nbsp; {t.groupStage}
         </span>
-        <span style={{ fontSize: 13, color: 'var(--text-faint)' }}>
-          {swiss._meta.iterations.toLocaleString('pt-BR')} simulacoes do Suico
+        <span style={{ fontSize: 14, color: 'var(--text-dim)' }}>
+          {t.simulations(swiss._meta.iterations.toLocaleString(lang === 'pt' ? 'pt-BR' : 'en-US'))}
         </span>
       </div>
 
-      {TOP_ROW.map((g, i) => (
-        <BucketGroup key={g.bucket} group={g} teams={byBucket(g.bucket)} x={topPositions[i]} y={78} names={names} />
+      {TOP_ROW.map((b, i) => (
+        <BucketGroup key={b} bucket={b} teams={byBucket(b)} x={topPositions[i]} y={78} names={names} />
       ))}
-      {BOTTOM_ROW.map((g, i) => (
-        <BucketGroup key={g.bucket} group={g} teams={byBucket(g.bucket)} x={bottomPositions[i]} y={452} names={names} />
+      {BOTTOM_ROW.map((b, i) => (
+        <BucketGroup key={b} bucket={b} teams={byBucket(b)} x={bottomPositions[i]} y={452} names={names} />
       ))}
 
       {/*
@@ -183,13 +175,13 @@ export function PredictionsScene() {
         >
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
             <span className="numeral" style={{ fontSize: 76, color: 'var(--ok)', lineHeight: 0.85 }}>{firm}</span>
-            <span className="numeral" style={{ fontSize: 32, color: 'var(--text-dim)' }}>de 16</span>
+            <span className="numeral" style={{ fontSize: 32, color: 'var(--text-dim)' }}>{t.outOf16}</span>
           </div>
           <div style={{ fontSize: 17, color: 'var(--text)', marginTop: 8, fontWeight: 600 }}>
-            palpites FIRMES
+            {t.firmPicks}
           </div>
           <div style={{ fontSize: 13, color: 'var(--text-dim)', marginTop: 3 }}>
-            nao mudam por mais que eu mexa no modelo
+            {t.firmSubtitle}
           </div>
         </div>
 
@@ -205,24 +197,21 @@ export function PredictionsScene() {
               {expectedHits.toFixed(1)}
             </span>
             <span style={{ fontSize: 22, color: 'var(--text-dim)' }}>
-              contra <b className="numeral" style={{ color: 'var(--text)' }}>{randomBaseline.toFixed(1)}</b> no chute
+              {t.vsRandom(randomBaseline.toFixed(1))}
             </span>
           </div>
           <div style={{ fontSize: 17, color: 'var(--text)', marginTop: 8, fontWeight: 600 }}>
-            acertos esperados
+            {t.expectedHits}
           </div>
           <div style={{ fontSize: 13, color: 'var(--text-dim)', marginTop: 3 }}>
-            {((expectedHits / randomBaseline - 1) * 100).toFixed(0)}% acima de sortear os 16 times nas vagas
+            {t.aboveRandom(((expectedHits / randomBaseline - 1) * 100).toFixed(0))}
           </div>
         </div>
 
         <div style={{ flex: 1, fontSize: 18, color: 'var(--text)', lineHeight: 1.5, alignSelf: 'center' }}>
-          <b style={{ color: 'var(--gold-bright)' }}>Por que o teto e baixo:</b> dez dos 16 times caem na
-          rodada eliminatoria, e ganhar ou perder la e quase cara-ou-coroa. Essas dez vagas nao rendem
-          por mais que se calcule — nem pra mim, nem pra ninguem.
+          <b style={{ color: 'var(--gold-bright)' }}>{t.ceilingLead}</b> {t.ceilingBody}
           <div style={{ marginTop: 9, fontSize: 16, color: 'var(--warn)' }}>
-            O <b>4-0</b> e o <b>4-1</b> sao os mais fracos: mexendo na calibracao eles trocam de dono.
-            Por isso vao marcados como CHUTE.
+            <b>4-0</b> / <b>4-1</b> {t.weakestLead} {t.weakestBody}
           </div>
         </div>
       </div>

@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react';
 import { useEngine } from '../../state/useEngine';
 import { GoldRule } from '../../ui/primitives';
 import { PlayerPortrait, TeamLogo } from '../../ui/Portrait';
-import { ROLE_LABEL_PT_BR, ROLE_POSITIONS } from '../../domain/roles';
+import { ROLE_POSITIONS } from '../../domain/roles';
 import type { RoleSlot } from '../../domain/roles';
-import { COLOR_LABEL_PT_BR } from '../../domain/stats';
 import { PREFIX_DEFINITIONS, SUFFIX_DEFINITIONS } from '../../domain/titles';
+import { useLang } from '../../i18n/LangContext';
+import { label } from '../../i18n/strings';
 import type { RoleRanking } from '../../engine/teamRanking';
 import type { LoadedData } from '../../data/load';
 
@@ -55,6 +56,7 @@ function RoleCard({
   readonly data: LoadedData;
   readonly x: number; readonly y: number; readonly w: number;
 }) {
+  const { lang, t } = useLang();
   const leader = ranking.teams[0];
   const team = data.teams.get(leader.teamId);
   const unit = data.roleUnits.get(`${leader.teamId}:${slot}`);
@@ -75,10 +77,10 @@ function RoleCard({
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
         <span className="display" style={{ fontSize: 25, fontWeight: 700, color: 'var(--gold-bright)' }}>
-          {ROLE_LABEL_PT_BR[slot]}
+          {label.role(slot, lang)}
         </span>
         <span style={{ fontSize: 14, color: 'var(--text-dim)', letterSpacing: '0.08em' }}>
-          POS {ROLE_POSITIONS[slot].join(' + ')}
+          {t.pos} {ROLE_POSITIONS[slot].join(' + ')}
         </span>
       </div>
 
@@ -100,7 +102,7 @@ function RoleCard({
 
       <div style={{ marginTop: 20 }}>
         <div style={{ fontSize: 13, letterSpacing: '0.12em', color: 'var(--gold)', marginBottom: 10 }}>
-          NO ESTANDARTE, FIQUE COM
+          {t.keepOnBanner}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {leader.rerollTargets.map((color) => {
@@ -115,11 +117,11 @@ function RoleCard({
                 style={{ padding: '9px 13px', gap: 11, alignItems: 'center', minHeight: 46 }}
               >
                 <div style={{ width: 76, flexShrink: 0, fontSize: 12, letterSpacing: '0.04em', color: 'var(--text-dim)' }}>
-                  {COLOR_LABEL_PT_BR[color.color].toUpperCase()}
+                  {label.color(color.color, lang).toUpperCase()}
                   {color.emblemCount > 1 && <span style={{ color: 'var(--gold)' }}> ×{color.emblemCount}</span>}
                 </div>
                 <div style={{ flex: 1, minWidth: 0, fontSize: 17, color: 'var(--text)', fontWeight: 600, lineHeight: 1.3 }}>
-                  {keep.map((t) => t.labelPtBr).join(', ')}
+                  {keep.map((k) => label.stat(k.statId, lang)).join(', ')}
                 </div>
               </div>
             );
@@ -128,7 +130,7 @@ function RoleCard({
       </div>
 
       <div style={{ marginTop: 'auto', paddingTop: 10, fontSize: 12, color: 'var(--text-faint)' }}>
-        qualquer outra stat nessa cor: rerole
+        {t.rerollAnythingElse}
       </div>
     </div>
   );
@@ -137,6 +139,7 @@ function RoleCard({
 export function DreamScene() {
   const { data, teamRanking, recommendedTitle } = useEngine();
   const countdown = useCountdown();
+  const { lang, t } = useLang();
 
   const prefix = recommendedTitle.prefix ? PREFIX_DEFINITIONS[recommendedTitle.prefix] : null;
   const suffix = recommendedTitle.suffix ? SUFFIX_DEFINITIONS[recommendedTitle.suffix] : null;
@@ -169,13 +172,25 @@ export function DreamScene() {
           background: 'linear-gradient(180deg, var(--bg-panel-hi) 0%, var(--bg-panel) 100%)',
         }}
       >
-        <div style={{ fontSize: 14, letterSpacing: '0.14em', color: 'var(--gold)' }}>TITULO DE TREINADOR</div>
+        <div style={{ fontSize: 14, letterSpacing: '0.14em', color: 'var(--gold)' }}>{t.coachTitle}</div>
         <div className="display" style={{ fontSize: 60, color: 'var(--gold-bright)', marginTop: 10, lineHeight: 1 }}>
-          {prefix?.labelPtBr ?? '—'} <span style={{ color: 'var(--gold-dim)' }}>·</span> {suffix?.labelPtBr ?? '—'}
+          {recommendedTitle.prefix ? label.prefix(recommendedTitle.prefix, lang) : '—'}
+          <span style={{ color: 'var(--gold-dim)' }}> · </span>
+          {recommendedTitle.suffix ? label.suffix(recommendedTitle.suffix, lang) : '—'}
         </div>
         <div style={{ display: 'flex', gap: 44, marginTop: 16, fontSize: 19, color: 'var(--text)' }}>
-          {prefix && <span><b style={{ color: 'var(--gold-bright)' }}>+{Math.round(prefix.bonus * 100)}%</b> quando {prefix.conditionPtBr}</span>}
-          {suffix && <span><b style={{ color: 'var(--gold-bright)' }}>+{Math.round(suffix.bonus * 100)}%</b> quando {suffix.conditionPtBr}</span>}
+          {prefix && recommendedTitle.prefix && (
+            <span>
+              <b style={{ color: 'var(--gold-bright)' }}>+{Math.round(prefix.bonus * 100)}%</b>{' '}
+              {t.when} {label.prefixCondition(recommendedTitle.prefix, lang)}
+            </span>
+          )}
+          {suffix && recommendedTitle.suffix && (
+            <span>
+              <b style={{ color: 'var(--gold-bright)' }}>+{Math.round(suffix.bonus * 100)}%</b>{' '}
+              {t.when} {label.suffixCondition(recommendedTitle.suffix, lang)}
+            </span>
+          )}
         </div>
       </div>
 
@@ -187,13 +202,12 @@ export function DreamScene() {
           background: 'linear-gradient(180deg, var(--bg-panel-hi) 0%, var(--bg-panel) 100%)',
         }}
       >
-        <div style={{ fontSize: 14, letterSpacing: '0.14em', color: 'var(--gold)' }}>AS 40 FICHAS</div>
+        <div style={{ fontSize: 14, letterSpacing: '0.14em', color: 'var(--gold)' }}>{t.tokensTitle}</div>
         <div className="display" style={{ fontSize: 48, color: 'var(--gold-bright)', marginTop: 10, lineHeight: 1 }}>
-          Gaste no {ROLE_LABEL_PT_BR[bestReroll]}
+          {t.spendOn} {label.role(bestReroll, lang)}
         </div>
         <div style={{ marginTop: 14, fontSize: 19, color: 'var(--text)', lineHeight: 1.4 }}>
-          Rende <b style={{ color: 'var(--gold-bright)' }}>+{(teamRanking[bestReroll].rerollPayoff * 100).toFixed(0)}%</b>,
-          o dobro das outras duas funcoes.
+          {t.tokensYield((teamRanking[bestReroll].rerollPayoff * 100).toFixed(0))}
         </div>
       </div>
 
@@ -207,15 +221,15 @@ export function DreamScene() {
         }}
       >
         <div style={{ flex: 1, fontSize: 21, color: 'var(--text)', lineHeight: 1.45 }}>
-          Stat ruim so tem conserto direto em emblema{' '}
-          <b style={{ color: 'var(--emblem-green)' }}>VERDE</b>. No{' '}
-          <b style={{ color: 'var(--emblem-red)' }}>vermelho</b> voce so mira qualidade, no{' '}
-          <b style={{ color: 'var(--emblem-blue)' }}>azul</b> so traco.
+          {t.greenRule(
+            label.color('green', lang).toUpperCase(),
+            label.color('red', lang).toLowerCase(),
+            label.color('blue', lang).toLowerCase(),
+          )}
         </div>
         <div style={{ width: 1, alignSelf: 'stretch', background: 'var(--gold-line)' }} />
         <div style={{ flex: 1, fontSize: 21, color: 'var(--text)', lineHeight: 1.45 }}>
-          <b style={{ color: 'var(--warn)' }}>Cuidado com o FRACTAL:</b> se ele estiver no estandarte,
-          <b> subir</b> uma qualidade pode <b>baixar</b> sua nota. Ele so paga com as tres qualidades diferentes.
+          <b style={{ color: 'var(--warn)' }}>{t.fractalWarnLead}</b> {t.fractalWarnBody}
         </div>
       </div>
     </>
