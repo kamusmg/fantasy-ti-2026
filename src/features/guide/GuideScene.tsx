@@ -213,6 +213,19 @@ function RoleGuideCard({
         </select>
       </div>
 
+      {/*
+        Equipe E jogadores, porque o cliente usa os dois nomes em telas
+        diferentes: na de escolher vem o nome da EQUIPE ("TEAM VISION"), e na
+        escalacao montada vem o nome dos JOGADORES ("Satanic e Noticed"). Quem
+        confere as duas telas lado a lado precisa dos dois pra fechar.
+      */}
+      <div style={{ fontSize: 15, color: 'var(--text-dim)', marginTop: 6, minHeight: 20, letterSpacing: '0.02em' }}>
+        {(data.roleUnits.get(`${leader.teamId}:${slot}`)?.playerIds ?? [])
+          .map((id) => data.players.get(id)?.nick ?? id)
+          .join(' e ')}
+      </div>
+
+
       <GoldRule style={{ margin: '11px 0 14px' }} />
 
       <BannerOrder slot={slot} />
