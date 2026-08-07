@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "deploy": "npm run build && npx wrangler pages deploy dist --project-name=fantasyti --branch=main --commit-dirty=true && npx wrangler pages deploy dist --project-name=dota2fantasy --branch=main --commit-dirty=true"
+    "deploy": "npm run build && npx wrangler pages deploy dist --project-name=fantasyti --branch=master --commit-dirty=true && npx wrangler pages deploy dist --project-name=dota2fantasy --branch=master --commit-dirty=true"
   },
   "dependencies": {
     "react": "^19.2.8",
