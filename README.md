@@ -4,10 +4,20 @@ Programa de tela cheia (1920×1080) para a live do KamusMG que calcula a escala�
 ótima do Dota dos Sonhos do The International 2026.
 
 ```bash
-npm run dev          # tela em http://localhost:5173
-npm test             # 28 testes do motor
-npx vite-node scripts/answer.ts   # a resposta no terminal
+npm run dev          # tela cheia em http://localhost:5173 — tecla 1 e 2 trocam de cena
+npm test             # 37 testes do motor
+
+npx vite-node scripts/cola.ts       # A COLA: o que digitar no cliente
+npx vite-node scripts/palpites.ts   # os 16 palpites, com estabilidade
+npx vite-node scripts/gen-swiss.ts  # regera a simulacao pre-computada
 ```
+
+## São dois jogos diferentes
+
+| | O que é | O que decide |
+|---|---|---|
+| **Dota dos Sonhos** | 3 times + estandartes + título | escolha de time, título e 40 fichas de reroll |
+| **Palpites** | encaixar os 16 times em 4-0 / 4-1 / eliminatória / 1-4 / 0-4 | simulação do Suíço |
 
 ## O que o programa faz
 

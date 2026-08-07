@@ -3,7 +3,8 @@ import { ALL_ROLE_SLOTS } from '../domain/roles';
 import type { Period, RoleSlot } from '../domain/roles';
 import { DEFAULT_RULES } from '../domain/rules';
 import type { ScoringRuleSet } from '../domain/rules';
-import { DEFAULT_SERIES_SHAPE, GROUP_STAGE_SCHEDULE } from './aggregate';
+import swiss from '../data/generated/swiss.json';
+import { DEFAULT_SERIES_SHAPE, GROUP_STAGE_SCHEDULE, groupStageSchedule } from './aggregate';
 import type { PeriodSchedule, SeriesShape } from './aggregate';
 import { prefixLeagueMeans } from './coach';
 import type { TitleContext } from './coach';
@@ -25,10 +26,26 @@ export interface ContextOptions {
   readonly period?: Period;
   readonly rules?: ScoringRuleSet;
   readonly seriesShape?: SeriesShape;
-  readonly schedule?: Readonly<Record<RoleSlot, PeriodSchedule>>;
+  /** Cronograma por time. Ausente = usa o Suico pre-computado. */
+  readonly scheduleByTeam?: ReadonlyMap<string, PeriodSchedule>;
+  readonly defaultSchedule?: PeriodSchedule;
   readonly lossProbabilityByRole?: Readonly<Record<RoleSlot, number>>;
   /** Estandarte ja rolado. Ausente = modo Planejamento (tudo Tier III, sem traco). */
   readonly rolls?: Readonly<Record<RoleSlot, readonly EmblemRoll[]>>;
+}
+
+/**
+ * Cronograma de cada time a partir do Suico pre-computado.
+ *
+ * Substitui o "todo mundo joga 5,5 series", que era a suposicao que o proprio
+ * codigo marcava como errada pra time forte: quem atropela o grupo joga MENOS.
+ */
+function scheduleFromSwiss(): ReadonlyMap<string, PeriodSchedule> {
+  const out = new Map<string, PeriodSchedule>();
+  for (const [teamId, probs] of Object.entries(swiss.bucketProbability)) {
+    out.set(teamId, groupStageSchedule(probs as Record<string, number>));
+  }
+  return out;
 }
 
 export function buildContext(data: LoadedData, options: ContextOptions = {}): EngineContext {
@@ -48,10 +65,6 @@ export function buildContext(data: LoadedData, options: ContextOptions = {}): En
     ALL_ROLE_SLOTS.map((slot) => [slot, planningRolls(slot, period)]),
   ) as Record<RoleSlot, readonly EmblemRoll[]>);
 
-  const schedule = options.schedule ?? (Object.fromEntries(
-    ALL_ROLE_SLOTS.map((slot) => [slot, GROUP_STAGE_SCHEDULE]),
-  ) as Record<RoleSlot, PeriodSchedule>);
-
   return {
     roleUnits: data.roleUnits,
     players: data.players,
@@ -59,7 +72,8 @@ export function buildContext(data: LoadedData, options: ContextOptions = {}): En
     rules,
     period,
     seriesShape: options.seriesShape ?? DEFAULT_SERIES_SHAPE,
-    schedule,
+    scheduleByTeam: options.scheduleByTeam ?? scheduleFromSwiss(),
+    defaultSchedule: options.defaultSchedule ?? GROUP_STAGE_SCHEDULE,
     titleContext,
     rolls,
   };

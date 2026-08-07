@@ -29,7 +29,13 @@ export interface EngineContext {
   readonly rules: ScoringRuleSet;
   readonly period: Period;
   readonly seriesShape: SeriesShape;
-  readonly schedule: Readonly<Record<RoleSlot, PeriodSchedule>>;
+  /**
+   * Cronograma POR TIME, nao por funcao: quantas series aquele time joga depende
+   * de como ele vai na chave. O 4-0 joga 4 e quem cai na eliminatoria joga 6 —
+   * e, como so conta a MELHOR serie, jogar mais e sorteio a mais.
+   */
+  readonly scheduleByTeam: ReadonlyMap<string, PeriodSchedule>;
+  readonly defaultSchedule: PeriodSchedule;
   readonly titleContext: TitleContext;
   /** Estado rolado dos emblemas por funcao. No Planejamento, tudo Tier III sem traco. */
   readonly rolls: Readonly<Record<RoleSlot, readonly EmblemRoll[]>>;
@@ -60,12 +66,12 @@ export function evaluateRoleCandidates(ctx: EngineContext): Readonly<Record<Role
   return byRoleSlot<readonly RoleCandidate[]>((slot) => {
     const assignments = enumerateStatAssignments(slot, ctx.period, ctx.rules);
     const rolls = ctx.rolls[slot];
-    const schedule = ctx.schedule[slot];
     const candidates: RoleCandidate[] = [];
 
     for (const teamId of ctx.teamIds) {
       const unit = ctx.roleUnits.get(roleUnitKey(teamId, slot));
       if (!unit) continue;
+      const schedule = ctx.scheduleByTeam.get(teamId) ?? ctx.defaultSchedule;
 
       for (const statIds of assignments) {
         const banner = buildBanner(slot, ctx.period, statIds, rolls);

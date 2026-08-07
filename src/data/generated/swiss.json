@@ -1,0 +1,202 @@
+{
+  "_meta": {
+    "generatedAt": "2026-08-07",
+    "iterations": 50000,
+    "temperature": 2.657762551901386,
+    "bestVsWorstTarget": 0.85,
+    "calibrationsTested": [
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95
+    ],
+    "fonte": "forca de time do Polymarket (teamStrength.json), semente fixa 20260813",
+    "nota": "Reproduzivel: rodar scripts/gen-swiss.ts de novo da exatamente este arquivo."
+  },
+  "bucketProbability": {
+    "vision": {
+      "4-0": 0.16194,
+      "4-1": 0.24864,
+      "elimWin": 0.36642,
+      "elimLose": 0.18608,
+      "1-4": 0.02866,
+      "0-4": 0.00826
+    },
+    "yandex": {
+      "4-0": 0.15784,
+      "4-1": 0.24478,
+      "elimWin": 0.36752,
+      "elimLose": 0.19254,
+      "1-4": 0.029,
+      "0-4": 0.00832
+    },
+    "falcons": {
+      "4-0": 0.08826,
+      "4-1": 0.18056,
+      "elimWin": 0.3803,
+      "elimLose": 0.2737,
+      "1-4": 0.05816,
+      "0-4": 0.01902
+    },
+    "boomboys": {
+      "4-0": 0.08836,
+      "4-1": 0.17212,
+      "elimWin": 0.37696,
+      "elimLose": 0.281,
+      "1-4": 0.06242,
+      "0-4": 0.01914
+    },
+    "ironwing": {
+      "4-0": 0.08646,
+      "4-1": 0.17516,
+      "elimWin": 0.37794,
+      "elimLose": 0.27738,
+      "1-4": 0.06302,
+      "0-4": 0.02004
+    },
+    "aurora": {
+      "4-0": 0.07626,
+      "4-1": 0.15574,
+      "elimWin": 0.37088,
+      "elimLose": 0.29894,
+      "1-4": 0.07432,
+      "0-4": 0.02386
+    },
+    "spirit": {
+      "4-0": 0.07216,
+      "4-1": 0.15406,
+      "elimWin": 0.37046,
+      "elimLose": 0.30238,
+      "1-4": 0.0743,
+      "0-4": 0.02664
+    },
+    "liquid": {
+      "4-0": 0.06858,
+      "4-1": 0.14524,
+      "elimWin": 0.3691,
+      "elimLose": 0.31192,
+      "1-4": 0.07838,
+      "0-4": 0.02678
+    },
+    "vici": {
+      "4-0": 0.04838,
+      "4-1": 0.11742,
+      "elimWin": 0.3472,
+      "elimLose": 0.3442,
+      "1-4": 0.10508,
+      "0-4": 0.03772
+    },
+    "xtreme": {
+      "4-0": 0.04526,
+      "4-1": 0.11114,
+      "elimWin": 0.34108,
+      "elimLose": 0.352,
+      "1-4": 0.11002,
+      "0-4": 0.0405
+    },
+    "resilience": {
+      "4-0": 0.03336,
+      "4-1": 0.08952,
+      "elimWin": 0.31768,
+      "elimLose": 0.36936,
+      "1-4": 0.1376,
+      "0-4": 0.05248
+    },
+    "lgd": {
+      "4-0": 0.03056,
+      "4-1": 0.0801,
+      "elimWin": 0.30564,
+      "elimLose": 0.37982,
+      "1-4": 0.14594,
+      "0-4": 0.05794
+    },
+    "nigma": {
+      "4-0": 0.02246,
+      "4-1": 0.06306,
+      "elimWin": 0.269,
+      "elimLose": 0.39152,
+      "1-4": 0.17798,
+      "0-4": 0.07598
+    },
+    "og": {
+      "4-0": 0.00866,
+      "4-1": 0.02632,
+      "elimWin": 0.17356,
+      "elimLose": 0.37516,
+      "1-4": 0.26596,
+      "0-4": 0.15034
+    },
+    "gamerlegion": {
+      "4-0": 0.00896,
+      "4-1": 0.02688,
+      "elimWin": 0.17596,
+      "elimLose": 0.37194,
+      "1-4": 0.26614,
+      "0-4": 0.15012
+    },
+    "huligani": {
+      "4-0": 0.0025,
+      "4-1": 0.00926,
+      "elimWin": 0.0903,
+      "elimLose": 0.29206,
+      "1-4": 0.32302,
+      "0-4": 0.28286
+    }
+  },
+  "expectedSeries": {
+    "vision": 5.3823,
+    "yandex": 5.393900000000001,
+    "falcons": 5.5467200000000005,
+    "boomboys": 5.55046,
+    "ironwing": 5.548820000000001,
+    "aurora": 5.569699999999999,
+    "spirit": 5.57404,
+    "liquid": 5.585659999999999,
+    "vici": 5.6053,
+    "xtreme": 5.6073200000000005,
+    "resilience": 5.6012,
+    "lgd": 5.596960000000001,
+    "nigma": 5.56208,
+    "og": 5.38972,
+    "gamerlegion": 5.38882,
+    "huligani": 5.0969999999999995
+  },
+  "picks": {
+    "vision": "4-0",
+    "yandex": "4-1",
+    "falcons": "4-1",
+    "boomboys": "elimWin",
+    "ironwing": "elimWin",
+    "aurora": "elimWin",
+    "spirit": "elimWin",
+    "liquid": "elimWin",
+    "vici": "elimLose",
+    "xtreme": "elimLose",
+    "resilience": "elimLose",
+    "lgd": "elimLose",
+    "nigma": "elimLose",
+    "og": "1-4",
+    "gamerlegion": "1-4",
+    "huligani": "0-4"
+  },
+  "stability": {
+    "vision": 1,
+    "yandex": 3,
+    "falcons": 1,
+    "boomboys": 3,
+    "ironwing": 3,
+    "aurora": 5,
+    "spirit": 5,
+    "liquid": 5,
+    "vici": 5,
+    "xtreme": 5,
+    "resilience": 5,
+    "lgd": 5,
+    "nigma": 5,
+    "og": 5,
+    "gamerlegion": 5,
+    "huligani": 5
+  },
+  "maxStability": 5
+}
