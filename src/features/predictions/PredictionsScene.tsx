@@ -221,12 +221,20 @@ export function PredictionsScene() {
   return (
     <>
       {/* Linha 2: seletor de autor. As abas de cena e idioma ficam em y=18. */}
-      <div style={{ position: 'absolute', top: 64, left: 60, right: 60, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span className="display" style={{ fontSize: 19, letterSpacing: '0.18em', color: 'var(--gold-bright)' }}>
-          {t.predictionsTitle} &nbsp;·&nbsp; {t.groupStage}
-        </span>
+      <span
+        className="display"
+        style={{ position: 'absolute', top: 64, left: 60, fontSize: 19, letterSpacing: '0.18em', color: 'var(--gold-bright)', lineHeight: '38px' }}
+      >
+        {t.predictionsTitle} &nbsp;·&nbsp; {t.groupStage}
+      </span>
 
-        {/* O SELETOR DE AUTOR: o coracao da apresentacao. */}
+      {/*
+        O SELETOR DE AUTOR: o coracao da apresentacao, entao vai no MEIO da tela.
+        Com `space-between` e so dois filhos ele era empurrado pro canto direito —
+        centralizado de verdade so com `left: 50%` + `translateX(-50%)`, que
+        independe da largura do titulo ao lado.
+      */}
+      <div style={{ position: 'absolute', top: 64, left: '50%', transform: 'translateX(-50%)', zIndex: 5 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
           <span style={{ fontSize: 12, letterSpacing: '0.14em', color: 'var(--text-dim)' }}>{t.whosePicks}</span>
           {authors.map((a, i) => (

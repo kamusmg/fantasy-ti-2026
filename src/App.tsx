@@ -3,11 +3,12 @@ import { BroadcastFrame } from './ui/BroadcastFrame';
 import { DreamScene } from './features/dream/DreamScene';
 import { PredictionsScene } from './features/predictions/PredictionsScene';
 import { GuideScene } from './features/guide/GuideScene';
+import { TraitsScene } from './features/traits/TraitsScene';
 import { LangProvider, useLang } from './i18n/LangContext';
 import type { Lang } from './i18n/strings';
 import './ui/theme.css';
 
-type Scene = 'dream' | 'predictions' | 'guide';
+type Scene = 'dream' | 'predictions' | 'guide' | 'traits';
 
 /**
  * Cena inicial pela URL: `#guia`, `#palpites`, `#sonhos`.
@@ -19,6 +20,7 @@ const SCENE_BY_HASH: Readonly<Record<string, Scene>> = {
   '#sonhos': 'dream', '#dream': 'dream',
   '#palpites': 'predictions', '#predictions': 'predictions',
   '#guia': 'guide', '#guide': 'guide',
+  '#tracos': 'traits', '#traits': 'traits',
 };
 
 function Shell() {
@@ -30,7 +32,8 @@ function Shell() {
     { id: 'predictions', key: '2', label: t.predictionsTitle },
     // Tecla G, nao 3: os numeros de 3 pra cima ja trocam de AUTOR dentro das
     // duas outras cenas, entao "3" mudaria de cena e de autor no mesmo aperto.
-    { id: 'guide', key: 'G', label: t.guideTitle },
+    { id: 'guide', key: 'G', label: t.guideTab },
+    { id: 'traits', key: 'T', label: t.traitsTab },
   ];
 
   // Troca de cena por tecla: numa live, mexer o mouse na tela e sujeira.
@@ -39,6 +42,7 @@ function Shell() {
       if (e.key === '1') setScene('dream');
       if (e.key === '2') setScene('predictions');
       if (e.key.toLowerCase() === 'g') setScene('guide');
+      if (e.key.toLowerCase() === 't') setScene('traits');
       if (e.key.toLowerCase() === 'l') setLang(lang === 'pt' ? 'en' : 'pt');
     };
     window.addEventListener('keydown', onKey);
@@ -50,6 +54,7 @@ function Shell() {
       {scene === 'dream' && <DreamScene />}
       {scene === 'predictions' && <PredictionsScene />}
       {scene === 'guide' && <GuideScene />}
+      {scene === 'traits' && <TraitsScene />}
 
       {/*
         Abas no TOPO, centralizadas. No rodape ficavam na borda do palco e sumiam

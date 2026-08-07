@@ -70,6 +70,22 @@ interface Strings {
   readonly verdictLabel: Readonly<Record<'guardar' | 'aceitavel' | 'rerolar', string>>;
   readonly guideFooterLead: string;
   readonly guideFooterBody: string;
+
+  // ---------- tela de Tracos e Qualidades ----------
+  readonly traitsTitle: string;
+  /** Rotulo curto da aba. O titulo inteiro nao cabe na barra com cinco cenas. */
+  readonly guideTab: string;
+  readonly traitsTab: string;
+  readonly traitsSubtitle: string;
+  readonly qualityTitle: string;
+  readonly qualityNote: string;
+  readonly tierWord: string;
+  readonly traitAffects: string;
+  readonly sumTitle: string;
+  readonly sumFormula: string;
+  readonly sumBody: string;
+  readonly exampleTitle: string;
+  readonly exampleNote: string;
 }
 
 const PT: Strings = {
@@ -136,6 +152,20 @@ const PT: Strings = {
   guideFooterLead: 'A cor vem TRAVADA pela função.',
   guideFooterBody:
     'Você não escolhe a cor do emblema nem o atributo que cai nele — a lista acima diz o que MANTER e o que renovar. O bloco apagado é a cor que aquela função NÃO tem: o Principal não tem azul, o Suporte não tem vermelho.',
+
+  traitsTitle: 'TRAÇOS E QUALIDADES',
+  guideTab: 'ATRIBUTOS',
+  traitsTab: 'TRAÇOS',
+  traitsSubtitle: 'texto do cliente, e o desenho de quem cada traço afeta',
+  qualityTitle: 'QUALIDADE',
+  qualityNote: 'multiplica o valor base daquele emblema. Vem sorteada.',
+  tierWord: 'NÍVEL',
+  traitAffects: 'QUEM ELE AFETA NO ESTANDARTE',
+  sumTitle: 'COMO OS PEDAÇOS SE SOMAM',
+  sumFormula: '100% + qualidade + traço próprio + traço dos vizinhos',
+  sumBody: 'É soma, não multiplicação — conferido contra o cliente. Por isso um traço bom num emblema fraco rende menos do que parece: os 50% do Vampírico incidem sobre o valor daquele atributo, não sobre o estandarte inteiro. E a adjacência é em LINHA, não em anel: quem está na ponta tem um vizinho só.',
+  exampleTitle: 'UM ESTANDARTE REAL, CONFERIDO',
+  exampleNote: 'Repare no do meio: o Único dele vale ZERO (há dois Únicos no estandarte) e o −10% é o vizinho Vampírico. O cliente mostra o traço líquido na linha, já somando o que vem dos lados.',
 };
 
 const EN: Strings = {
@@ -202,6 +232,20 @@ const EN: Strings = {
   guideFooterLead: 'The colour is LOCKED by the role.',
   guideFooterBody:
     'You pick neither the emblem colour nor the stat that lands on it — the list above says what to KEEP and what to reroll. The dimmed block is the colour that role does NOT have: Core has no blue, Support has no red.',
+
+  traitsTitle: 'TRAITS & QUALITIES',
+  guideTab: 'STATS',
+  traitsTab: 'TRAITS',
+  traitsSubtitle: "the client's own wording, plus a diagram of what each trait touches",
+  qualityTitle: 'QUALITY',
+  qualityNote: "multiplies that emblem's base value. It is rolled, not chosen.",
+  tierWord: 'TIER',
+  traitAffects: 'WHAT IT TOUCHES ON THE BANNER',
+  sumTitle: 'HOW THE PIECES ADD UP',
+  sumFormula: "100% + quality + own trait + neighbours' traits",
+  sumBody: "It adds, it does not multiply — checked against the client. So a good trait on a weak emblem is worth less than it looks: Vampiric's 50% applies to that stat's value, not to the whole banner. And adjacency is a LINE, not a ring: an end emblem has only one neighbour.",
+  exampleTitle: 'A REAL BANNER, CHECKED',
+  exampleNote: 'Look at the middle one: its Unique is worth ZERO (there are two Uniques on the banner) and the −10% comes from the Vampiric neighbour. The client shows the net trait on that line, already including what comes from the sides.',
 };
 
 export const STRINGS: Readonly<Record<Lang, Strings>> = { pt: PT, en: EN };
