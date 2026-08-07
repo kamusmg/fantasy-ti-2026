@@ -5,6 +5,8 @@ import type { RoleSlot } from '../domain/roles';
 import { BUCKET_LABEL_PT_BR } from '../engine/swiss';
 import type { Bucket } from '../engine/swiss';
 import { PREFIX_DEFINITIONS, SUFFIX_DEFINITIONS } from '../domain/titles';
+import { TRAIT_DEFINITIONS } from '../domain/emblems';
+import type { TraitId } from '../domain/emblems';
 import type { PrefixId, SuffixId } from '../domain/titles';
 
 export type Lang = 'pt' | 'en';
@@ -90,6 +92,8 @@ interface Strings {
   readonly bannerTotalNote: string;
   readonly onItself: string;
   readonly onNeighbours: string;
+  /** Conjuncao pra juntar dois nomes: 'Satanic E Noticed'. */
+  readonly andWord: string;
   readonly bannerConditions: string;
   readonly condFractal: (tiers: string) => string;
   readonly condUnique: (n: number) => string;
@@ -175,6 +179,7 @@ const PT: Strings = {
   simTitle: 'MONTE O ESTANDARTE QUE SAIU',
   simHowTo: 'Escolha o nível e o traço de cada emblema, do jeito que caíram no seu jogo. A porcentagem sai na hora, pela mesma conta do cliente — e serve pra testar um roll ANTES de gastar a ficha.',
   bannerTotal: 'SOMA DOS TRÊS',
+  andWord: 'e',
   bannerConditions: 'CONDIÇÕES DO ESTANDARTE',
   condFractal: (tiers) => `Fractal — níveis ${tiers}`,
   condUnique: (n) => `Único — ${n} no estandarte`,
@@ -198,7 +203,7 @@ const EN: Strings = {
   spendOn: 'Spend on',
   tokensYield: (pct) => `Worth +${pct}%, double the other two roles.`,
   tokensWhy: (color, stat, times) =>
-    `Because on Mid's ${color} luck MATTERS: ${stat} is worth ${times}× the next best. Roll anything else and that emblem barely scores.`,
+    `On Mid's ${color}, luck MATTERS: ${stat} is worth ${times}× the next best — roll anything else and the emblem barely scores.`,
   tokensWhyFlat: (color, role) =>
     `On ${role}'s ${color}, four of the six options are good — a bad roll barely hurts, so tokens buy little there.`,
   greenRule: (green, red, blue) =>
@@ -263,6 +268,7 @@ const EN: Strings = {
   simTitle: 'BUILD THE BANNER YOU ROLLED',
   simHowTo: 'Pick the tier and trait of each emblem, exactly as they came up in your game. The percentage updates live, using the same maths as the client — so you can test a roll BEFORE spending the token.',
   bannerTotal: 'SUM OF THE THREE',
+  andWord: 'and',
   bannerConditions: 'BANNER-WIDE CONDITIONS',
   condFractal: (tiers) => `Fractal — tiers ${tiers}`,
   condUnique: (n) => `Unique — ${n} on the banner`,
@@ -337,6 +343,7 @@ export const label = {
   color: (color: EmblemColor, lang: Lang) => (lang === 'pt' ? COLOR_LABEL_PT_BR[color] : COLOR_LABEL_EN[color]),
   stat: (id: StatId, lang: Lang) => (lang === 'pt' ? STAT_DEFINITIONS[id].labelPtBr : STAT_DEFINITIONS[id].labelEn),
   /** Forma curta, pra lista de varios atributos separados por virgula. */
+  trait: (id: TraitId, lang: Lang) => (lang === 'pt' ? TRAIT_DEFINITIONS[id].labelPtBr : TRAIT_DEFINITIONS[id].labelEn),
   statShort: (id: StatId, lang: Lang) => (lang === 'pt' ? STAT_DEFINITIONS[id].shortPtBr : STAT_DEFINITIONS[id].shortEn),
   bucket: (b: Bucket, lang: Lang) => (lang === 'pt' ? BUCKET_LABEL_PT_BR[b] : BUCKET_LABEL_EN[b]),
   prefix: (id: PrefixId, lang: Lang) => (lang === 'pt' ? PREFIX_DEFINITIONS[id].labelPtBr : PREFIX_LABEL_EN[id]),

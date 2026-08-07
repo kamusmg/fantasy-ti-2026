@@ -222,7 +222,7 @@ function RoleGuideCard({
       <div style={{ fontSize: 15, color: 'var(--text-dim)', marginTop: 6, minHeight: 20, letterSpacing: '0.02em' }}>
         {(data.roleUnits.get(`${leader.teamId}:${slot}`)?.playerIds ?? [])
           .map((id) => data.players.get(id)?.nick ?? id)
-          .join(' e ')}
+          .join(` ${t.andWord} `)}
       </div>
 
 

@@ -1,6 +1,6 @@
 # Cola do Fantasy — The International 2026
 
-**[dota2fantasy.pages.dev](https://dota2fantasy.pages.dev)** · calculadora aberta do Dota dos Sonhos e dos Palpites do TI 2026.
+**[dota2fantasy.pages.dev](https://dota2fantasy.pages.dev)** · calculadora aberta do Dota dos Sonhos, dos Palpites e do estandarte do TI 2026.
 
 *[Read in English](README.en.md)*
 
@@ -16,7 +16,7 @@ todos aqui — use, copie, discorde, abra issue.
 | **SUPORTE** (pos 4+5) | **LGD Gaming** — Thiolicor + KJ | 13% à frente do 2º |
 | **MEIO** (pos 2) | **Team Falcons** — Malr1ne | empate técnico com BoomBoys |
 | **PRINCIPAL** (pos 1+3) | **TEAM VISION** — Satanic + Noticed | empate com LGD, desempatado pelas odds |
-| **TREINADOR** | **Cerúleo · o Decisivo** | +11% herói azul, +16% última partida |
+| **TREINADOR** | **o Decisivo Cerúleo** | +11% herói azul, +16% última partida |
 
 **Gaste as 40 fichas no MEIO.** Rende +47%, o dobro das outras duas funções — porque
 Runas vale 3× a segunda melhor stat azul, enquanto o azul do Suporte é achatado.
@@ -47,6 +47,23 @@ duas consequências que ninguém precifica:
    eliminatória joga 6. Time mediano pode valer mais que favorito.
 
 ---
+
+## As quatro telas
+
+| tecla | URL | o que faz |
+|---|---|---|
+| **1** | `#sonhos` | **Dota dos Sonhos** — a cola: três equipes e o título, com seletor de autor (Claude / Desleal Dota / Gemini 3.1 Pro) |
+| **2** | `#palpites` | **Palpites** — as 16 equipes encaixadas nas vagas do Suíço, com seletor de autor e sobreposição de comparação |
+| **G** | `#guia` | **Guia de Atributos** — os 18 atributos em ordem de valor por função e por cor, com seletor de equipe |
+| **T** | `#tracos` | **Meu Estandarte** — simulador: escolha o nível e o traço que caíram e veja a porcentagem, pela conta do cliente |
+
+`L` troca o idioma. Os endereços com `#` abrem direto na tela, o que serve pra
+uma fonte de navegador por cena no OBS.
+
+**Todo nome de jogo vem da localização oficial da Valve** — `dota_brazilian.txt`
+e `dota_english.txt` para traços e títulos, e o glossário do cliente
+(`GLOSSARIO_PONTUACAO_2026.md`) para os 18 atributos. Não há tradução nossa em
+nenhum termo do jogo.
 
 ## Os dados
 
@@ -143,7 +160,7 @@ Benevolente pode piorar os vizinhos (quebra o degrau do Amigável).
 
 ```bash
 npm install
-npm run dev          # tela cheia; teclas 1, 2 e G trocam de cena, L troca o idioma
+npm run dev          # tela cheia; teclas 1 2 G T trocam de cena, L troca o idioma
 npm test             # 44 testes
 
 npx vite-node scripts/cola.ts       # a cola no terminal

@@ -14,7 +14,7 @@ import { evaluateRoleCandidates } from '../src/engine/optimize';
 import { rankTeams } from '../src/engine/teamRanking';
 import { scoreBannerPerMap } from '../src/engine/scoreBanner';
 import { buildBanner } from '../src/engine/enumerate';
-import { ALL_ROLE_SLOTS, ROLE_LABEL_PT_BR, byRoleSlot } from '../src/domain/roles';
+import { ALL_ROLE_SLOTS, ROLE_LABEL_PT_BR } from '../src/domain/roles';
 import { ALL_TRAIT_IDS, TRAIT_DEFINITIONS } from '../src/domain/emblems';
 import type { TraitId } from '../src/domain/emblems';
 import { STAT_DEFINITIONS } from '../src/domain/stats';

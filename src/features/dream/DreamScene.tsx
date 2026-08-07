@@ -5,7 +5,6 @@ import { PlayerPortrait, TeamLogo } from '../../ui/Portrait';
 import { ROLE_POSITIONS } from '../../domain/roles';
 import type { RoleSlot } from '../../domain/roles';
 import { PREFIX_DEFINITIONS, SUFFIX_DEFINITIONS } from '../../domain/titles';
-import { TRAIT_DEFINITIONS } from '../../domain/emblems';
 import { useLang } from '../../i18n/LangContext';
 import { label } from '../../i18n/strings';
 import type { RoleRanking } from '../../engine/teamRanking';
@@ -168,13 +167,13 @@ function RoleCard({
           <div>
             {t.tiersDistinct}{' '}
             <b style={{ color: 'var(--text)' }}>
-              {leader.traitPlan.whenDistinct.map((tr) => TRAIT_DEFINITIONS[tr].labelPtBr).join(' + ')}
+              {leader.traitPlan.whenDistinct.map((tr) => label.trait(tr, lang)).join(' + ')}
             </b>
           </div>
           <div>
             {t.tiersRepeated}{' '}
             <b style={{ color: 'var(--text)' }}>
-              {leader.traitPlan.whenRepeated.map((tr) => TRAIT_DEFINITIONS[tr].labelPtBr).join(' + ')}
+              {leader.traitPlan.whenRepeated.map((tr) => label.trait(tr, lang)).join(' + ')}
             </b>
           </div>
         </div>
@@ -238,12 +237,15 @@ export function DreamScene() {
         y=18 — pela SEGUNDA vez eu pus outra fileira de botao na mesma faixa e
         eles se cobriram. Aqui embaixo nao ha colisao possivel.
       */}
-      <div style={{ position: 'absolute', top: 64, left: 60, right: 60, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span className="display" style={{ fontSize: 19, letterSpacing: '0.18em', color: 'var(--gold-bright)' }}>
-          {t.dreamTitle}
-        </span>
+      <span className="display" style={{ position: 'absolute', top: 64, left: 60, fontSize: 19, letterSpacing: '0.18em', color: 'var(--gold-bright)', lineHeight: '38px' }}>
+        {t.dreamTitle}
+      </span>
+      <span style={{ position: 'absolute', top: 64, right: 60, fontSize: 14, letterSpacing: '0.1em', color: 'var(--text-dim)', whiteSpace: 'nowrap', lineHeight: '38px' }}>
+        {t.locksIn} <span className="numeral" style={{ color: 'var(--warn)', fontSize: 22, letterSpacing: 0 }}>{countdown}</span>
+      </span>
 
-        {/* Seletor de autor: mesma logica da tela de Palpites. */}
+      {/* Seletor de autor CENTRALIZADO, igual ao da tela de Palpites. */}
+      <div style={{ position: 'absolute', top: 64, left: '50%', transform: 'translateX(-50%)', zIndex: 5 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{ fontSize: 12, letterSpacing: '0.12em', color: 'var(--text-dim)' }}>{t.whosePicks}</span>
           {[{ id: null, name: t.ourModelName }, ...dreamAuthors.map((a) => ({ id: a.id, name: a.name }))]
@@ -265,9 +267,6 @@ export function DreamScene() {
               </button>
             ))}
         </div>
-        <span style={{ fontSize: 14, letterSpacing: '0.1em', color: 'var(--text-dim)', whiteSpace: 'nowrap' }}>
-          {t.locksIn} <span className="numeral" style={{ color: 'var(--warn)', fontSize: 22, letterSpacing: 0 }}>{countdown}</span>
-        </span>
       </div>
 
       {/* PRINCIPAL, MEIO, SUPORTE — na ordem do cliente, pra bater com o que a pessoa ve la */}
@@ -312,10 +311,10 @@ export function DreamScene() {
         }}
       >
         <div style={{ fontSize: 14, letterSpacing: '0.14em', color: 'var(--gold)' }}>{t.tokensTitle}</div>
-        <div className="display" style={{ fontSize: 42, color: 'var(--gold-bright)', marginTop: 8, lineHeight: 1 }}>
+        <div className="display" style={{ fontSize: 38, color: 'var(--gold-bright)', marginTop: 8, lineHeight: 1 }}>
           {t.spendOn} {label.role(bestReroll, lang)}
         </div>
-        <div style={{ marginTop: 10, fontSize: 17, color: 'var(--gold)', fontWeight: 600 }}>
+        <div style={{ marginTop: 9, fontSize: 16, color: 'var(--gold)', fontWeight: 600 }}>
           {t.tokensYield((teamRanking[bestReroll].rerollPayoff * 100).toFixed(0))}
         </div>
         {/*
@@ -324,7 +323,7 @@ export function DreamScene() {
           pesa mais do que em qualquer outro lugar do torneio.
         */}
         {sharpest && (
-          <div style={{ marginTop: 10, fontSize: 15, color: 'var(--text)', lineHeight: 1.4 }}>
+          <div style={{ marginTop: 9, fontSize: 14, color: 'var(--text)', lineHeight: 1.4 }}>
             {t.tokensWhy(
               label.color(sharpest.color, lang).toLowerCase(),
               label.stat(sharpest.topStat, lang),

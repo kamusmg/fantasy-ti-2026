@@ -17,7 +17,7 @@ use it, copy it, disagree with it, open an issue.
 | **SUPPORT** (pos 4+5) | **LGD Gaming** — Thiolicor + KJ | 13% clear of second |
 | **MID** (pos 2) | **Team Falcons** — Malr1ne | technical tie with BoomBoys |
 | **CORE** (pos 1+3) | **TEAM VISION** — Satanic + Noticed | tied with LGD, broken by market odds |
-| **COACH TITLE** | **Cerulean · the Clutch** | +11% blue hero, +16% last possible match |
+| **COACH TITLE** | **the Clutch Cerulean** | +11% blue hero, +16% last possible match |
 
 **Spend your 40 tokens on MID.** Worth +47%, double the other two roles — because Runes is
 worth 3× the next-best blue stat, while Support's blue pool is flat.
@@ -146,7 +146,7 @@ lower the banner (it breaks Fractal), and swapping a trait for Benevolent can hu
 
 ```bash
 npm install
-npm run dev          # full screen; keys 1 and 2 switch scenes, L switches language
+npm run dev          # full screen; keys 1 2 G T switch scenes, L switches language
 npm test             # 44 tests
 
 npx vite-node scripts/cola.ts       # the cheat sheet, in the terminal

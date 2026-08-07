@@ -10,7 +10,6 @@ import {
   BUCKET_LABEL_PT_BR, BUCKET_ORDER, BUCKET_SLOTS,
   assignPredictions, calibrateTemperature, ratingsFromMarket, simulateSwiss,
 } from '../src/engine/swiss';
-import type { Bucket } from '../src/engine/swiss';
 
 const data = loadDataset();
 const ratings = ratingsFromMarket(strength.polymarketTitleProbability);
