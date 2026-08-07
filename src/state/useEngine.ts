@@ -9,12 +9,16 @@ import type { Objective } from '../engine/objectives';
 import { expectedScore } from '../engine/objectives';
 import { ALL_ROLE_SLOTS } from '../domain/roles';
 import type { RoleSlot } from '../domain/roles';
+import { rankTeams } from '../engine/teamRanking';
+import type { RoleRanking } from '../engine/teamRanking';
 
 export interface EngineResult {
   readonly data: LoadedData;
   readonly ranked: readonly RankedLineup[];
   readonly candidates: Readonly<Record<RoleSlot, readonly RoleCandidate[]>>;
   readonly perTeam: Readonly<Record<RoleSlot, readonly RoleCandidate[]>>;
+  /** Ranking de TIME por funcao — a decisao copiavel, com alvos de reroll juntos. */
+  readonly teamRanking: Readonly<Record<RoleSlot, RoleRanking>>;
   readonly elapsedMs: number;
   readonly candidateCount: number;
 }
@@ -51,6 +55,7 @@ export function useEngine(options: ContextOptions = {}, objective: Objective = e
       ranked,
       candidates,
       perTeam,
+      teamRanking: rankTeams(candidates, data.roleUnits, ctx.period),
       elapsedMs,
       candidateCount: ALL_ROLE_SLOTS.reduce((acc, s) => acc + candidates[s].length, 0),
     };

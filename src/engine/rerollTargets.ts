@@ -1,5 +1,5 @@
 import { BANNER_LAYOUT } from '../domain/roles';
-import type { Period, RoleSlot } from '../domain/roles';
+import type { Period } from '../domain/roles';
 import { STATS_BY_COLOR, STAT_DEFINITIONS } from '../domain/stats';
 import type { EmblemColor, StatId } from '../domain/stats';
 import type { RoleUnit } from '../domain/roster';
