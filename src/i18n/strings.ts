@@ -64,13 +64,10 @@ interface Strings {
   // ---------- tela do Guia ----------
   readonly guideTitle: string;
   readonly guideSubtitle: string;
-  readonly tierTop: string;
-  readonly tierMid: string;
-  readonly tierBad: string;
-  readonly overallRank: string;
   readonly bannerOrder: string;
-  readonly guideNoteCoreBlue: string;
-  readonly guideNoteSupportRed: string;
+  readonly guideMeasuredOn: string;
+  readonly guideColorAbsent: string;
+  readonly verdictLabel: Readonly<Record<'guardar' | 'aceitavel' | 'rerolar', string>>;
   readonly guideFooterLead: string;
   readonly guideFooterBody: string;
 }
@@ -131,17 +128,14 @@ const PT: Strings = {
   },
 
   guideTitle: 'GUIA DE ATRIBUTOS',
-  guideSubtitle: 'o que vale a pena em cada cor, por funcao',
-  tierTop: 'TOP',
-  tierMid: 'MEDIO',
-  tierBad: 'RUIM',
-  overallRank: 'RANKING GERAL',
+  guideSubtitle: 'as 18 stats em ordem de valor, por funcao — 100% = a melhor da cor',
   bannerOrder: 'ORDEM DO ESTANDARTE',
-  guideNoteCoreBlue: 'Quase irrelevante pro Principal — o estandarte dele nao tem emblema azul.',
-  guideNoteSupportRed: 'Geralmente ruim pro Suporte — o estandarte dele nao tem emblema vermelho.',
+  guideMeasuredOn: 'medido no',
+  guideColorAbsent: 'Esta funcao nao tem emblema desta cor no estandarte.',
+  verdictLabel: { guardar: 'GUARDAR', aceitavel: 'ACEITAVEL', rerolar: 'REROLAR' },
   guideFooterLead: 'A cor vem TRAVADA pela funcao.',
   guideFooterBody:
-    'Voce nao escolhe a cor do emblema nem a stat que cai nele: o ranking acima serve pra decidir o que MANTER e o que rerolar. Stat so tem conserto direto no emblema VERDE.',
+    'Voce nao escolhe a cor do emblema nem a stat que cai nele — a lista acima diz o que MANTER e o que rerolar. O bloco apagado e a cor que aquela funcao NAO tem: o Principal nao tem azul, o Suporte nao tem vermelho.',
 };
 
 const EN: Strings = {
@@ -200,17 +194,14 @@ const EN: Strings = {
   },
 
   guideTitle: 'STAT GUIDE',
-  guideSubtitle: 'what each colour is worth, per role',
-  tierTop: 'TOP',
-  tierMid: 'MID',
-  tierBad: 'BAD',
-  overallRank: 'OVERALL RANKING',
+  guideSubtitle: 'all 18 stats ranked by value, per role — 100% = best of that colour',
   bannerOrder: 'BANNER ORDER',
-  guideNoteCoreBlue: 'Almost irrelevant for Core — its banner has no blue emblem.',
-  guideNoteSupportRed: 'Usually bad for Support — its banner has no red emblem.',
+  guideMeasuredOn: 'measured on',
+  guideColorAbsent: 'This role has no emblem of this colour on its banner.',
+  verdictLabel: { guardar: 'KEEP', aceitavel: 'ACCEPTABLE', rerolar: 'REROLL' },
   guideFooterLead: 'The colour is LOCKED by the role.',
   guideFooterBody:
-    'You pick neither the emblem colour nor the stat that lands on it: the ranking above is for deciding what to KEEP and what to reroll. Stats can only be targeted directly on a GREEN emblem.',
+    'You pick neither the emblem colour nor the stat that lands on it — the list above says what to KEEP and what to reroll. The dimmed block is the colour that role does NOT have: Core has no blue, Support has no red.',
 };
 
 export const STRINGS: Readonly<Record<Lang, Strings>> = { pt: PT, en: EN };

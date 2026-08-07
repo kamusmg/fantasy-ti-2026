@@ -1,11 +1,11 @@
+import { useEngine } from '../../state/useEngine';
 import { GoldRule } from '../../ui/primitives';
 import { BANNER_LAYOUT, ROLE_POSITIONS } from '../../domain/roles';
 import type { RoleSlot } from '../../domain/roles';
 import type { EmblemColor } from '../../domain/stats';
+import type { ColorTargets, RerollTarget } from '../../engine/rerollTargets';
 import { useLang } from '../../i18n/LangContext';
 import { label } from '../../i18n/strings';
-import { ROLE_GUIDES } from './guideData';
-import type { ColorGuide, GuideItem, TierList } from './guideData';
 
 /**
  * Ritmo vertical do palco de 1080px, somado a mao.
@@ -15,20 +15,26 @@ import type { ColorGuide, GuideItem, TierList } from './guideData';
  *  108   os cards
  *
  * Card, de cima pra baixo:
- *   20 padding + 30 cabecalho + 26 regua + 60 ordem do estandarte
- *   + 414 tres blocos de cor + 14 folga + 146 ranking geral + 20 padding = 710
+ *   20 padding + 30 cabecalho + 17 time + 26 regua + 56 ordem do estandarte
+ *   + 579 tres blocos de cor (185 cada + 12 de gap) + 20 padding = 748
  *
- * Sobram ~44px de folga dentro do CARD_H. Ela mora no container das cores, que e
- * `flex: 1` com `overflow: hidden`: se alguma lista de stats quebrar em duas
- * linhas, o excedente come a folga em vez de empurrar o ranking geral pra fora
- * do card. O ranking geral e `flexShrink: 0` — ele nunca cede.
+ * Cada bloco lista as SEIS stats da cor — 18 linhas no card. Com linha de 22px e
+ * gap de 4 dava 786 e o Meio cortava a ultima stat: 22 e 4 sao o que a soma
+ * aguenta em DUAS cores, nao em tres.
+ *
+ * As tres cores aparecem SEMPRE, mesmo a que a funcao nao tem — assim os tres
+ * cards tem a mesma estrutura, e a ausencia vira informacao em vez de buraco.
  */
 const CARD_Y = 108;
-const CARD_H = 754;
+const CARD_H = 796;
 const FOOT_Y = CARD_Y + CARD_H + 14;
-const FOOT_H = 120;
+const FOOT_H = 110;
 
-const TIER_COLOR = { top: '#8fd46e', mid: 'var(--gold)', bad: '#f0705e' } as const;
+const VERDICT_COLOR = {
+  guardar: '#8fd46e',
+  aceitavel: 'var(--gold)',
+  rerolar: '#f0705e',
+} as const;
 
 const EMBLEM_VAR: Readonly<Record<EmblemColor, string>> = {
   red: 'var(--emblem-red)',
@@ -36,64 +42,74 @@ const EMBLEM_VAR: Readonly<Record<EmblemColor, string>> = {
   green: 'var(--emblem-green)',
 };
 
-function TierRow({ tier, items }: { readonly tier: keyof typeof TIER_COLOR; readonly items: readonly GuideItem[] }) {
-  const { lang, t } = useLang();
-  const name = tier === 'top' ? t.tierTop : tier === 'mid' ? t.tierMid : t.tierBad;
-  const text = items
-    .map((item) => (typeof item === 'string' ? label.stat(item, lang) : lang === 'pt' ? item.raw : item.rawEn))
-    .join(', ');
+/**
+ * Uma stat da cor, com o quanto ela vale em relacao a melhor da MESMA cor.
+ *
+ * A barra e o numero sao a mesma informacao — a barra pra quem esta assistindo e
+ * so bate o olho, o numero pra quem esta decidindo se gasta ficha.
+ */
+function StatRow({ target }: { readonly target: RerollTarget }) {
+  const { lang } = useLang();
+  const pct = Math.round(target.shareOfBest * 100);
+  const color = VERDICT_COLOR[target.verdict];
 
   return (
-    <div style={{ display: 'flex', gap: 10, alignItems: 'baseline' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10, height: 20 }}>
       <span
         style={{
-          width: 48, flexShrink: 0, fontSize: 11, fontWeight: 700,
-          letterSpacing: '0.1em', color: TIER_COLOR[tier],
+          flex: 1, minWidth: 0, fontSize: 15, color: 'var(--text)',
+          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+          fontWeight: target.verdict === 'guardar' ? 600 : 400,
         }}
       >
-        {name}
+        {label.stat(target.statId, lang)}
       </span>
-      <span style={{ flex: 1, minWidth: 0, fontSize: 16, lineHeight: 1.35, color: text ? 'var(--text)' : 'var(--text-faint)' }}>
-        {text || '—'}
+
+      <span style={{ width: 96, flexShrink: 0, height: 7, background: 'rgba(0,0,0,0.45)', borderRadius: 4, overflow: 'hidden' }}>
+        <span style={{ display: 'block', height: '100%', width: `${pct}%`, background: color, opacity: 0.85 }} />
+      </span>
+
+      <span className="numeral" style={{ width: 42, flexShrink: 0, textAlign: 'right', fontSize: 17, color, fontWeight: 600 }}>
+        {pct}%
       </span>
     </div>
   );
 }
 
-function Tiers({ tiers }: { readonly tiers: TierList }) {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-      <TierRow tier="top" items={tiers.top} />
-      <TierRow tier="mid" items={tiers.mid} />
-      <TierRow tier="bad" items={tiers.bad} />
-    </div>
-  );
-}
-
-/** Um bloco de cor. Reaproveita `.emblem`, que ja pinta a borda esquerda pela cor. */
-function ColorBlock({ guide }: { readonly guide: ColorGuide }) {
+/**
+ * Um bloco de cor. Reaproveita `.emblem`, que ja pinta a borda esquerda pela cor.
+ *
+ * `targets` ausente = a funcao nao tem emblema dessa cor. O bloco continua
+ * aparecendo, apagado: e a resposta pra "e o azul do Principal?", que a tela
+ * anterior deixava o espectador adivinhar.
+ */
+function ColorBlock({ color, targets }: { readonly color: EmblemColor; readonly targets?: ColorTargets }) {
   const { lang, t } = useLang();
 
   return (
     <div
       className="emblem"
-      data-color={guide.color}
-      style={{ display: 'block', padding: '12px 14px', flexShrink: 0 }}
+      data-color={color}
+      style={{ display: 'block', padding: '12px 14px', flexShrink: 0, opacity: targets ? 1 : 0.55 }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 8 }}>
-        <span style={{ fontSize: 13, letterSpacing: '0.12em', fontWeight: 600, color: EMBLEM_VAR[guide.color] }}>
-          {label.color(guide.color, lang).toUpperCase()}
+        <span style={{ fontSize: 13, letterSpacing: '0.12em', fontWeight: 600, color: EMBLEM_VAR[color] }}>
+          {label.color(color, lang).toUpperCase()}
         </span>
-        <span style={{ fontSize: 13, letterSpacing: '0.06em', color: guide.emblems > 0 ? 'var(--gold)' : 'var(--text-faint)' }}>
-          {guide.emblems > 0 ? `×${guide.emblems}` : '—'}
+        <span style={{ fontSize: 13, letterSpacing: '0.06em', color: targets ? 'var(--gold)' : 'var(--text-faint)' }}>
+          {targets ? `×${targets.emblemCount}` : '×0'}
         </span>
       </div>
 
-      {guide.tiers
-        ? <Tiers tiers={guide.tiers} />
+      {targets
+        ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+            {targets.targets.map((tg) => <StatRow key={tg.statId} target={tg} />)}
+          </div>
+        )
         : (
-          <div style={{ fontSize: 15, lineHeight: 1.4, fontStyle: 'italic', color: 'var(--text-faint)' }}>
-            {guide.noteKey ? t[guide.noteKey] : null}
+          <div style={{ fontSize: 14, lineHeight: 1.4, fontStyle: 'italic', color: 'var(--text-faint)' }}>
+            {t.guideColorAbsent}
           </div>
         )}
     </div>
@@ -105,19 +121,19 @@ function ColorBlock({ guide }: { readonly guide: ColorGuide }) {
  *
  * Vem do `BANNER_LAYOUT`, nao de texto: a tabela original abreviava isso como
  * "Prioridade R/G/R", que so faz sentido pra quem ja sabe. Aqui a pessoa ve as
- * tres caixas na mesma ordem em que elas aparecem no cliente.
+ * caixas na mesma ordem em que elas aparecem no cliente — e uma cor que nao
+ * aparece na fileira simplesmente nao tem bloco embaixo.
  */
 function BannerOrder({ slot }: { readonly slot: RoleSlot }) {
   const { t } = useLang();
-  const colors = BANNER_LAYOUT[slot].groupStage;
 
   return (
-    <div style={{ marginBottom: 16 }}>
+    <div style={{ marginBottom: 12 }}>
       <div style={{ fontSize: 11, letterSpacing: '0.14em', color: 'var(--text-faint)', marginBottom: 6 }}>
         {t.bannerOrder}
       </div>
       <div style={{ display: 'flex', gap: 8, height: 26 }}>
-        {colors.map((color, i) => (
+        {BANNER_LAYOUT[slot].groupStage.map((color, i) => (
           <div
             key={i}
             style={{
@@ -134,9 +150,11 @@ function BannerOrder({ slot }: { readonly slot: RoleSlot }) {
 }
 
 function RoleGuideCard({ slot, x }: { readonly slot: RoleSlot; readonly x: number }) {
+  const { data, teamRanking } = useEngine();
   const { lang, t } = useLang();
-  const guide = ROLE_GUIDES.find((g) => g.slot === slot);
-  if (!guide) return null;
+
+  const leader = teamRanking[slot].teams[0];
+  const teamName = data.teams.get(leader.teamId)?.name ?? leader.teamId;
 
   return (
     <div
@@ -157,41 +175,33 @@ function RoleGuideCard({ slot, x }: { readonly slot: RoleSlot; readonly x: numbe
         </span>
       </div>
 
+      {/*
+        De QUEM sao esses numeros. O valor de uma stat depende do time — Runas no
+        Meio do Falcons nao vale o mesmo que no de outro. Sem esta linha o card
+        pareceria uma verdade geral do jogo, e nao e.
+      */}
+      <div style={{ fontSize: 13, letterSpacing: '0.04em', color: 'var(--text-faint)', marginTop: 4 }}>
+        {t.guideMeasuredOn} <span style={{ color: 'var(--gold)' }}>{teamName}</span>
+      </div>
+
       <GoldRule style={{ margin: '11px 0 14px' }} />
 
       <BannerOrder slot={slot} />
 
       {/*
         `flex: 1` + `minHeight: 0` + `overflow: hidden`: a folga do card mora
-        aqui. Se uma lista quebrar em duas linhas ela come a folga; o ranking
-        geral la embaixo nao se mexe.
+        aqui, repartida entre os blocos. O Principal tem so DUAS cores (o
+        estandarte dele nao tem azul), entao a folga dele e maior.
       */}
       <div
         style={{
           flex: 1, minHeight: 0, overflow: 'hidden',
-          display: 'flex', flexDirection: 'column', gap: 12,
-          // A sobra se reparte ENTRE os blocos. Empilhados no topo, ela virava
-          // um buraco unico logo acima do ranking geral — e de tamanho diferente
-          // em cada card, porque o Principal tem um bloco mais curto (o azul).
-          justifyContent: 'space-between',
+          display: 'flex', flexDirection: 'column', gap: 12, justifyContent: 'space-between',
         }}
       >
-        {guide.colors.map((c) => <ColorBlock key={c.color} guide={c} />)}
-      </div>
-
-      {/* RANKING GERAL — preso no rodape do card, alinhado nas tres funcoes */}
-      <div style={{ flexShrink: 0, paddingTop: 14 }}>
-        <div
-          style={{
-            padding: '14px 16px', borderRadius: 2,
-            border: '1px solid var(--gold-line)', background: 'rgba(0,0,0,0.26)',
-          }}
-        >
-          <div style={{ fontSize: 13, letterSpacing: '0.14em', fontWeight: 600, color: 'var(--gold-bright)', marginBottom: 8 }}>
-            {t.overallRank}
-          </div>
-          <Tiers tiers={guide.overall} />
-        </div>
+        {(['red', 'blue', 'green'] as const).map((color) => (
+          <ColorBlock key={color} color={color} targets={leader.rerollTargets.find((c) => c.color === color)} />
+        ))}
       </div>
     </div>
   );
@@ -225,20 +235,20 @@ export function GuideScene() {
         }}
       >
         <div style={{ display: 'flex', gap: 14, flexShrink: 0 }}>
-          {(['top', 'mid', 'bad'] as const).map((tier) => (
+          {(['guardar', 'aceitavel', 'rerolar'] as const).map((v) => (
             <span
-              key={tier}
+              key={v}
               style={{
-                fontSize: 13, fontWeight: 700, letterSpacing: '0.1em', color: TIER_COLOR[tier],
-                border: `1px solid ${TIER_COLOR[tier]}`, borderRadius: 2, padding: '5px 12px',
+                fontSize: 13, fontWeight: 700, letterSpacing: '0.1em', color: VERDICT_COLOR[v],
+                border: `1px solid ${VERDICT_COLOR[v]}`, borderRadius: 2, padding: '5px 12px',
               }}
             >
-              {tier === 'top' ? t.tierTop : tier === 'mid' ? t.tierMid : t.tierBad}
+              {t.verdictLabel[v]}
             </span>
           ))}
         </div>
         <div style={{ width: 1, alignSelf: 'stretch', background: 'var(--gold-line)' }} />
-        <div style={{ flex: 1, fontSize: 20, color: 'var(--text)', lineHeight: 1.45 }}>
+        <div style={{ flex: 1, fontSize: 19, color: 'var(--text)', lineHeight: 1.45 }}>
           <b style={{ color: 'var(--warn)' }}>{t.guideFooterLead}</b> {t.guideFooterBody}
         </div>
       </div>
