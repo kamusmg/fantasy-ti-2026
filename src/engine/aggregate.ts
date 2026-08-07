@@ -34,10 +34,52 @@ export const DEFAULT_SERIES_SHAPE: SeriesShape = {
   ]),
 };
 
-/** Fase de grupos suica: todo time joga as 5 rodadas, sem risco de eliminacao. */
-export const GROUP_STAGE_SCHEDULE: PeriodSchedule = {
-  seriesCountDistribution: new Map<number, number>([[5, 1]]),
+/**
+ * Quantas SERIES cada faixa de classificacao joga na fase de grupos.
+ *
+ * Suico ate 4 vitorias ou 4 derrotas (5 rodadas, 39 series) mais uma rodada de
+ * eliminacao com 5 series para os 10 times do meio. Conferido no wikitext da
+ * Liquipedia: a rodada 5 tem SETE partidas, nao oito, porque o 4-0 e o 0-4 ja
+ * estao resolvidos e ficam de fora.
+ *
+ * O detalhe que inverte a intuicao: sob MELHOR-DE-K, quem cai na eliminatoria
+ * tira SEIS amostras e quem faz 4-0 tira so QUATRO. Mais series e uma OPCAO
+ * gratuita. Ou seja, um time de meio de tabela pode valer mais que um favorito
+ * que atropela o grupo — e nenhuma calculadora publica modela isso.
+ */
+export const GROUP_STAGE_SERIES_BY_BUCKET: Readonly<Record<string, { readonly series: number; readonly teams: number }>> = {
+  '4-0': { series: 4, teams: 1 },
+  '4-1': { series: 5, teams: 2 },
+  eliminationRound: { series: 6, teams: 10 },
+  '1-4': { series: 5, teams: 2 },
+  '0-4': { series: 4, teams: 1 },
 };
+
+/**
+ * Cronograma de um time MEDIO da fase de grupos, ponderado pelas 16 vagas.
+ * E[K] = (1x4 + 2x5 + 10x6 + 2x5 + 1x4) / 16 = 5,5 series.
+ *
+ * Substituir pelo cronograma especifico do time quando a simulacao do Suico
+ * entrar: quanto mais forte o time, MENOS series ele tende a jogar.
+ */
+export const GROUP_STAGE_SCHEDULE: PeriodSchedule = {
+  seriesCountDistribution: new Map<number, number>([
+    [4, 2 / 16],
+    [5, 4 / 16],
+    [6, 10 / 16],
+  ]),
+};
+
+/** Cronograma da fase de grupos a partir de P(faixa) — alimentado pelo Suico. */
+export function groupStageSchedule(bucketProbabilities: Readonly<Record<string, number>>): PeriodSchedule {
+  const dist = new Map<number, number>();
+  for (const [bucket, probability] of Object.entries(bucketProbabilities)) {
+    const entry = GROUP_STAGE_SERIES_BY_BUCKET[bucket];
+    if (!entry || probability <= 0) continue;
+    dist.set(entry.series, (dist.get(entry.series) ?? 0) + probability);
+  }
+  return { seriesCountDistribution: dist };
+}
 
 function mixture(parts: readonly { readonly weight: number; readonly dist: ScoreDistribution }[]): ScoreDistribution {
   const totalWeight = parts.reduce((acc, p) => acc + p.weight, 0);
