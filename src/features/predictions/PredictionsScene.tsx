@@ -6,6 +6,7 @@ import { GoldRule } from '../../ui/primitives';
 import { TeamLogo } from '../../ui/Portrait';
 import { useLang } from '../../i18n/LangContext';
 import { label } from '../../i18n/strings';
+import { compareWithPro, loadProPicks } from '../../data/proPicks';
 import { useMemo } from 'react';
 
 const picks = swiss.picks as Record<string, Bucket>;
@@ -20,11 +21,13 @@ const CARD_W = 206;
 const CARD_H = 268;
 const GAP = 12;
 
-function TeamCard({ teamId, bucket, name, x, y }: {
+function TeamCard({ teamId, bucket, name, x, y, disagreesWith }: {
   readonly teamId: string; readonly bucket: Bucket; readonly name: string;
   readonly x: number; readonly y: number;
+  /** Quem palpitou DIFERENTE neste time, e onde ele pos. Vazio = todo mundo concorda. */
+  readonly disagreesWith?: { readonly who: string; readonly theirs: Bucket };
 }) {
-  const { t } = useLang();
+  const { lang, t } = useLang();
   const p = probability[teamId][bucket];
   const stable = stability[teamId] === swiss.maxStability;
   const shaky = stability[teamId] <= 1;
@@ -63,13 +66,29 @@ function TeamCard({ teamId, bucket, name, x, y }: {
       <div className="numeral" style={{ fontSize: 38, color: 'var(--text)', lineHeight: 0.9 }}>
         {(p * 100).toFixed(0)}<span style={{ fontSize: 19, color: 'var(--text-dim)' }}>%</span>
       </div>
+
+      {/* Discordancia: so aparece quando alguem de verdade palpitou diferente. */}
+      {disagreesWith && (
+        <div
+          style={{
+            position: 'absolute', left: -2, right: -2, bottom: -14,
+            background: 'var(--warn)', color: '#1b1006', borderRadius: 2,
+            fontSize: 11, fontWeight: 700, letterSpacing: '0.03em',
+            padding: '3px 6px', textAlign: 'center', whiteSpace: 'nowrap',
+            overflow: 'hidden', textOverflow: 'ellipsis',
+          }}
+        >
+          {disagreesWith.who}: {label.bucket(disagreesWith.theirs, lang)}
+        </div>
+      )}
     </div>
   );
 }
 
-function BucketGroup({ bucket, teams, x, y, names }: {
+function BucketGroup({ bucket, teams, x, y, names, disagreements }: {
   readonly bucket: Bucket; readonly teams: readonly string[];
   readonly x: number; readonly y: number; readonly names: ReadonlyMap<string, string>;
+  readonly disagreements: ReadonlyMap<string, { readonly who: string; readonly theirs: Bucket }>;
 }) {
   const { lang, t } = useLang();
   const width = BUCKET_SLOTS[bucket] * CARD_W + (BUCKET_SLOTS[bucket] - 1) * GAP;
@@ -91,6 +110,7 @@ function BucketGroup({ bucket, teams, x, y, names }: {
           name={names.get(teamId) ?? teamId}
           x={x + i * (CARD_W + GAP)}
           y={y + 56}
+          disagreesWith={disagreements.get(teamId)}
         />
       ))}
     </>
@@ -121,6 +141,24 @@ export function PredictionsScene() {
   const randomBaseline = BUCKET_ORDER
     .reduce((acc, b) => acc + BUCKET_SLOTS[b] ** 2, 0) / 16;
 
+  /**
+   * Comparacao com palpite de profissional.
+   *
+   * So aparece quando ha dado REAL em proPicks.json. Enquanto ninguem tiver
+   * publicado, a tela nao muda em nada — melhor ausencia que invencao.
+   */
+  const comparisons = useMemo(
+    () => loadProPicks().map((pro) => compareWithPro(picks, pro)),
+    [],
+  );
+  const disagreements = useMemo(() => {
+    const out = new Map<string, { who: string; theirs: Bucket }>();
+    for (const c of comparisons) {
+      for (const d of c.disagreements) out.set(d.teamId, { who: c.pro.name, theirs: d.theirs });
+    }
+    return out;
+  }, [comparisons]);
+
   let x = 60;
   const topPositions = TOP_ROW.map((g) => {
     const pos = x;
@@ -146,10 +184,10 @@ export function PredictionsScene() {
       </div>
 
       {TOP_ROW.map((b, i) => (
-        <BucketGroup key={b} bucket={b} teams={byBucket(b)} x={topPositions[i]} y={78} names={names} />
+        <BucketGroup key={b} bucket={b} teams={byBucket(b)} x={topPositions[i]} y={78} names={names} disagreements={disagreements} />
       ))}
       {BOTTOM_ROW.map((b, i) => (
-        <BucketGroup key={b} bucket={b} teams={byBucket(b)} x={bottomPositions[i]} y={452} names={names} />
+        <BucketGroup key={b} bucket={b} teams={byBucket(b)} x={bottomPositions[i]} y={452} names={names} disagreements={disagreements} />
       ))}
 
       {/*
@@ -213,6 +251,19 @@ export function PredictionsScene() {
           <div style={{ marginTop: 9, fontSize: 16, color: 'var(--warn)' }}>
             <b>4-0</b> / <b>4-1</b> {t.weakestLead} {t.weakestBody}
           </div>
+
+          {comparisons.map((c) => (
+            <div key={c.pro.id} style={{ marginTop: 10, fontSize: 16, color: 'var(--text)' }}>
+              <b style={{ color: 'var(--gold-bright)' }}>{c.pro.name}:</b>{' '}
+              {c.agreements}/16 {lang === 'pt' ? 'iguais aos nossos' : 'the same as ours'}
+              {c.disagreements.length > 0 && (
+                <span style={{ color: 'var(--warn)' }}>
+                  {' '}· {c.disagreements.length} {lang === 'pt' ? 'em amarelo na grade' : 'in yellow on the grid'}
+                </span>
+              )}
+              <span style={{ fontSize: 12, color: 'var(--text-faint)' }}> ({c.pro.source})</span>
+            </div>
+          ))}
         </div>
       </div>
     </>
