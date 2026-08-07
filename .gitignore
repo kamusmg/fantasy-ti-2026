@@ -28,3 +28,6 @@ dist-ssr
 #   fetch-portraits.mjs baixa  ->  optimize-images.mjs reduz  ->  commita
 public/players/*.png
 public/teams/*.png
+
+# Grafo gerado pelo cerebro (artefato local, nao e codigo do projeto)
+graphify-out/
