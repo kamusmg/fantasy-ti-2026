@@ -135,12 +135,11 @@ function RolePanel({
 }
 
 export function DreamScene() {
-  const { data, ranked, teamRanking, elapsedMs, candidateCount } = useEngine();
+  const { data, teamRanking, recommendedTitle, recommendedTotal, elapsedMs, candidateCount } = useEngine();
   const countdown = useCountdown();
-  const best = ranked[0];
 
-  const prefix = best.title.prefix ? PREFIX_DEFINITIONS[best.title.prefix] : null;
-  const suffix = best.title.suffix ? SUFFIX_DEFINITIONS[best.title.suffix] : null;
+  const prefix = recommendedTitle.prefix ? PREFIX_DEFINITIONS[recommendedTitle.prefix] : null;
+  const suffix = recommendedTitle.suffix ? SUFFIX_DEFINITIONS[recommendedTitle.suffix] : null;
 
   // A funcao de maior alavanca ganha o painel grande. Hoje e o Suporte (35%).
   const ordered = (['core', 'mid', 'support'] as RoleSlot[])
@@ -203,7 +202,7 @@ export function DreamScene() {
       <div className="panel" style={{ position: 'absolute', left: 968, top: 726, width: 892, height: 272, padding: '22px 28px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
           <span style={{ fontSize: 12, letterSpacing: '0.18em', color: 'var(--text-faint)' }}>AS 40 FICHAS DE REROLL</span>
-          <span style={{ fontSize: 13, color: 'var(--gold-dim)' }}>nota do modelo {fmt(best.total.mean)}</span>
+          <span style={{ fontSize: 13, color: 'var(--gold-dim)' }}>nota do modelo {fmt(recommendedTotal)}</span>
         </div>
 
         <div style={{ display: 'flex', gap: 14, marginTop: 16 }}>

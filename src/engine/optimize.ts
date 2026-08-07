@@ -228,6 +228,42 @@ export function optimizeFromCandidates(
 }
 
 /**
+ * Melhor titulo para times JA ESCOLHIDOS.
+ *
+ * Necessario porque a tela recomenda o time pelo p75 dos estandartes possiveis,
+ * enquanto `optimizeLineup` escolhe time e titulo juntos no melhor estandarte.
+ * Se os dois discordarem, o titulo mostrado estaria otimizado pra outra
+ * escalacao — e o prefixo depende de QUAIS cinco jogadores voce tem, entao seria
+ * conselho errado sobre a unica outra decisao livre do jogo.
+ */
+export function bestTitleForTeams(
+  teamBySlot: Readonly<Record<RoleSlot, string>>,
+  roleScores: Readonly<Record<RoleSlot, number>>,
+  ctx: EngineContext,
+): { readonly title: CoachTitle; readonly gain: number } {
+  const prefixFactors = prefixFactorByTeam(ctx);
+  let bestTitle: CoachTitle = { prefix: null, suffix: null };
+  let bestGain = 0;
+
+  for (const prefix of ALL_PREFIX_IDS) {
+    for (const suffix of ALL_SUFFIX_IDS) {
+      let gain = 0;
+      for (const slot of ALL_ROLE_SLOTS) {
+        const factor =
+          (prefixFactors[`${teamBySlot[slot]}:${slot}:${prefix}`] ?? 0) + suffixFactor(suffix, slot, ctx);
+        gain += roleScores[slot] * factor;
+      }
+      if (gain > bestGain) {
+        bestGain = gain;
+        bestTitle = { prefix, suffix };
+      }
+    }
+  }
+
+  return { title: bestTitle, gain: bestGain };
+}
+
+/**
  * Melhores candidatos de UMA funcao, sem titulo. E o que a tela mostra quando o
  * Kamus quer discutir "e se eu trocar so o Suporte?".
  */

@@ -3,8 +3,10 @@ import { loadDataset } from '../data/load';
 import type { LoadedData } from '../data/load';
 import { buildContext } from '../engine/context';
 import type { ContextOptions } from '../engine/context';
-import { bestPerTeam, evaluateRoleCandidates, optimizeFromCandidates } from '../engine/optimize';
+import { bestPerTeam, bestTitleForTeams, evaluateRoleCandidates, optimizeFromCandidates } from '../engine/optimize';
 import type { RankedLineup, RoleCandidate } from '../engine/optimize';
+import type { CoachTitle } from '../domain/titles';
+import { byRoleSlot } from '../domain/roles';
 import type { Objective } from '../engine/objectives';
 import { expectedScore } from '../engine/objectives';
 import { ALL_ROLE_SLOTS } from '../domain/roles';
@@ -19,6 +21,11 @@ export interface EngineResult {
   readonly perTeam: Readonly<Record<RoleSlot, readonly RoleCandidate[]>>;
   /** Ranking de TIME por funcao — a decisao copiavel, com alvos de reroll juntos. */
   readonly teamRanking: Readonly<Record<RoleSlot, RoleRanking>>;
+  /** Titulo otimo PARA OS TIMES RECOMENDADOS (p75), nao pro melhor estandarte. */
+  readonly recommendedTitle: CoachTitle;
+  readonly recommendedTitleGain: number;
+  /** Soma das notas p75 dos times recomendados, ja com o titulo. */
+  readonly recommendedTotal: number;
   readonly elapsedMs: number;
   readonly candidateCount: number;
 }
@@ -50,12 +57,24 @@ export function useEngine(options: ContextOptions = {}, objective: Objective = e
       ALL_ROLE_SLOTS.map((slot) => [slot, bestPerTeam(candidates[slot], objective)]),
     ) as Record<RoleSlot, readonly RoleCandidate[]>;
 
+    const teamRanking = rankTeams(candidates, data.roleUnits, ctx.period);
+
+    // O titulo tem que casar com os times QUE ESTAO NA TELA (lideres no p75),
+    // nao com os que o otimizador de melhor-estandarte teria escolhido.
+    const recommendedTeams = byRoleSlot((slot) => teamRanking[slot].teams[0].teamId);
+    const recommendedScores = byRoleSlot((slot) => teamRanking[slot].teams[0].p75Score);
+    const title = bestTitleForTeams(recommendedTeams, recommendedScores, ctx);
+    const baseTotal = ALL_ROLE_SLOTS.reduce((acc, slot) => acc + recommendedScores[slot], 0);
+
     return {
       data,
       ranked,
       candidates,
       perTeam,
-      teamRanking: rankTeams(candidates, data.roleUnits, ctx.period),
+      teamRanking,
+      recommendedTitle: title.title,
+      recommendedTitleGain: title.gain,
+      recommendedTotal: baseTotal + title.gain,
       elapsedMs,
       candidateCount: ALL_ROLE_SLOTS.reduce((acc, s) => acc + candidates[s].length, 0),
     };
