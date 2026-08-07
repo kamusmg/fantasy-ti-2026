@@ -83,7 +83,10 @@ export const STAT_DEFINITIONS: Readonly<Record<StatId, StatDefinition>> = {
   stuns: def('stuns', 'green', 'Stuns', 'Stuns', { kind: 'perUnit', pointsPerUnit: 10 }, 0.40),
   tormentor: def('tormentor', 'green', 'Tormentor', 'Tormentor', { kind: 'perUnit', pointsPerUnit: 879 }, 0.75),
   firstBlood: def('firstBlood', 'green', 'First Blood', 'First Blood', { kind: 'flat', points: 1934 }, 2.00, true),
-  courier: def('courier', 'green', 'Abates de Coruja', 'Courier Kills', { kind: 'perUnit', pointsPerUnit: 703 }, 1.30, true),
+  // "Entregador" e o nome do courier no cliente em portugues: o glossario diz
+  // "ENTREGADORES MORTOS, +703,00 por entregador morto". Ja esteve como "Abates
+  // de Coruja" aqui, que nao e nome de nada no jogo.
+  courier: def('courier', 'green', 'Entregadores', 'Courier Kills', { kind: 'perUnit', pointsPerUnit: 703 }, 1.30, true),
 } as const;
 
 export const ALL_STAT_IDS: readonly StatId[] = Object.keys(STAT_DEFINITIONS) as StatId[];
