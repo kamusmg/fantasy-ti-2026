@@ -37,7 +37,12 @@ function Shell() {
         quando a janela nao era 16:9 — e a segunda cena so existe se alguem
         souber que ela existe.
       */}
-      <div style={{ position: 'absolute', top: 26, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 10, zIndex: 10 }}>
+      {/*
+        Linha 1 do topo: cenas e idioma. A linha 2 (seletor de autor, dentro da
+        cena de Palpites) fica em y=64 — antes as duas dividiam a mesma faixa e
+        os botoes se cobriam.
+      */}
+      <div style={{ position: 'absolute', top: 18, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 10, zIndex: 10 }}>
         {scenes.map((s) => (
           <button
             key={s.id}

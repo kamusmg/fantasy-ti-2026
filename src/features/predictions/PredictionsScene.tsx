@@ -19,8 +19,21 @@ const TOP_ROW: readonly Bucket[] = ['4-0', '4-1', 'elimWin'];
 const BOTTOM_ROW: readonly Bucket[] = ['elimLose', '1-4', '0-4'];
 
 const CARD_W = 206;
-const CARD_H = 268;
+const CARD_H = 248;
 const GAP = 12;
+
+/**
+ * Ritmo vertical somado a mao, com as DUAS faixas de botao no topo:
+ *   18   abas de cena + idioma (nivel do App)
+ *   64   titulo + seletor de autor
+ *  114   linha 1: 54 de cabecalho de balde + 248 de card = 302  -> 416
+ *  432   linha 2                                                -> 734
+ *  754   rodape, 180 de altura                                  -> 934
+ */
+const HEADER_H = 54;
+const ROW1_Y = 114;
+const ROW2_Y = ROW1_Y + HEADER_H + CARD_H + 30;
+const FOOTER_Y = ROW2_Y + HEADER_H + CARD_H + 20;
 
 /**
  * Um autor de palpite: nos, um profissional, ou "quem nao mexeu".
@@ -79,20 +92,20 @@ function TeamCard({ teamId, bucket, name, x, y, author, ourBucket, overlay }: {
         >
           {stable ? t.badgeFirm : shaky ? t.badgeGuess : t.badgeLikely}
         </div>
-      ) : overlay ? (
+      ) : differs && ourBucket ? (
+        // So marca a DISCORDANCIA. Carimbar "igual ao nosso" em 12 dos 16 cards
+        // era poluicao — o olho tem que ir direto pro que e diferente.
         <div
           style={{
-            fontSize: 11, fontWeight: 700, letterSpacing: '0.05em', padding: '4px 9px', borderRadius: 2,
+            fontSize: 11, fontWeight: 700, letterSpacing: '0.04em', padding: '4px 9px', borderRadius: 2,
             maxWidth: CARD_W - 24, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-            background: differs ? 'var(--warn)' : 'transparent',
-            border: `1px solid ${differs ? 'var(--warn)' : 'var(--ok)'}`,
-            color: differs ? '#1b1006' : 'var(--ok)',
+            background: 'var(--warn)', border: '1px solid var(--warn)', color: '#1b1006',
           }}
         >
-          {differs && ourBucket ? `${t.weSay}: ${label.bucket(ourBucket, lang)}` : t.sameAsUs}
+          {t.weSay}: {label.bucket(ourBucket, lang)}
         </div>
       ) : (
-        <div style={{ height: 22 }} />
+        <div style={{ height: 24 }} />
       )}
 
       <TeamLogo teamId={teamId} size={70} />
@@ -132,7 +145,7 @@ function BucketGroup({ bucket, teams, x, y, names, author, overlay }: {
           bucket={bucket}
           name={names.get(teamId) ?? teamId}
           x={x + i * (CARD_W + GAP)}
-          y={y + 56}
+          y={y + HEADER_H}
           author={author}
           ourBucket={ourPicks[teamId]}
           overlay={overlay}
@@ -209,8 +222,9 @@ export function PredictionsScene() {
 
   return (
     <>
-      <div style={{ position: 'absolute', top: 24, left: 60, right: 60, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span className="display" style={{ fontSize: 20, letterSpacing: '0.2em', color: 'var(--gold-bright)' }}>
+      {/* Linha 2: seletor de autor. As abas de cena e idioma ficam em y=18. */}
+      <div style={{ position: 'absolute', top: 64, left: 60, right: 60, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span className="display" style={{ fontSize: 19, letterSpacing: '0.18em', color: 'var(--gold-bright)' }}>
           {t.predictionsTitle} &nbsp;·&nbsp; {t.groupStage}
         </span>
 
@@ -255,16 +269,16 @@ export function PredictionsScene() {
       </div>
 
       {TOP_ROW.map((b, i) => (
-        <BucketGroup key={b} bucket={b} teams={byBucket(b)} x={topPositions[i]} y={78} names={names} author={author} overlay={overlay} />
+        <BucketGroup key={b} bucket={b} teams={byBucket(b)} x={topPositions[i]} y={ROW1_Y} names={names} author={author} overlay={overlay} />
       ))}
       {BOTTOM_ROW.map((b, i) => (
-        <BucketGroup key={b} bucket={b} teams={byBucket(b)} x={bottomPositions[i]} y={452} names={names} author={author} overlay={overlay} />
+        <BucketGroup key={b} bucket={b} teams={byBucket(b)} x={bottomPositions[i]} y={ROW2_Y} names={names} author={author} overlay={overlay} />
       ))}
 
       <div
         className="panel"
         style={{
-          position: 'absolute', left: 60, top: 820, width: 1800, height: 180, padding: '18px 28px',
+          position: 'absolute', left: 60, top: FOOTER_Y, width: 1800, height: 180, padding: '18px 28px',
           display: 'flex', gap: 24, alignItems: 'stretch',
           background: 'linear-gradient(180deg, var(--bg-panel-hi) 0%, var(--bg-panel) 100%)',
         }}
