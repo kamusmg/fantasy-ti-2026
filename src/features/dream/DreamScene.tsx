@@ -50,15 +50,17 @@ function useCountdown(): string {
  * minha (barra de "errar aqui custa", selo de procedencia, p10/p90) saiu.
  */
 function RoleCard({
-  slot, ranking, data, x, y, w,
+  slot, ranking, data, x, y, w, teamId,
 }: {
   readonly slot: RoleSlot;
   readonly ranking: RoleRanking;
   readonly data: LoadedData;
   readonly x: number; readonly y: number; readonly w: number;
+  /** Time do autor selecionado. Ausente = o lider do nosso modelo. */
+  readonly teamId?: string;
 }) {
   const { lang, t } = useLang();
-  const leader = ranking.teams[0];
+  const leader = (teamId ? ranking.teams.find((tm) => tm.teamId === teamId) : undefined) ?? ranking.teams[0];
   const team = data.teams.get(leader.teamId);
   const unit = data.roleUnits.get(`${leader.teamId}:${slot}`);
   const roster = (unit?.playerIds ?? []).map((id) => ({ id, nick: data.players.get(id)?.nick ?? id }));
@@ -162,12 +164,30 @@ function RoleCard({
 }
 
 export function DreamScene() {
-  const { data, teamRanking, recommendedTitle } = useEngine();
+  const { data, teamRanking, recommendedTitle, dreamAuthors } = useEngine();
   const countdown = useCountdown();
   const { lang, t } = useLang();
 
-  const prefix = recommendedTitle.prefix ? PREFIX_DEFINITIONS[recommendedTitle.prefix] : null;
-  const suffix = recommendedTitle.suffix ? SUFFIX_DEFINITIONS[recommendedTitle.suffix] : null;
+  /** Autor selecionado. null = o modelo (nossa escalacao calculada). */
+  const [authorId, setAuthorId] = useState<string | null>(null);
+  const author = dreamAuthors.find((a) => a.id === authorId) ?? null;
+
+  // Teclas 3, 4, 5... trocam de autor; 0 volta pro modelo.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === '0') setAuthorId(null);
+      const n = Number(e.key);
+      if (Number.isInteger(n) && n >= 3 && n - 3 < dreamAuthors.length) {
+        setAuthorId(dreamAuthors[n - 3].id);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [dreamAuthors]);
+
+  const shownTitle = author ? author.title : recommendedTitle;
+  const prefix = shownTitle?.prefix ? PREFIX_DEFINITIONS[shownTitle.prefix] : null;
+  const suffix = shownTitle?.suffix ? SUFFIX_DEFINITIONS[shownTitle.suffix] : null;
 
   const payoffOrder = (['core', 'mid', 'support'] as RoleSlot[])
     .sort((a, b) => teamRanking[b].rerollPayoff - teamRanking[a].rerollPayoff);
@@ -194,18 +214,41 @@ export function DreamScene() {
   return (
     <>
       <div style={{ position: 'absolute', top: 32, left: 60, right: 60, display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-        <span className="display" style={{ fontSize: 24, letterSpacing: '0.2em', color: 'var(--gold-bright)' }}>
-          DOTA DOS SONHOS
+        <span className="display" style={{ fontSize: 22, letterSpacing: '0.18em', color: 'var(--gold-bright)' }}>
+          {t.dreamTitle}
         </span>
+
+        {/* Seletor de autor: mesma logica da tela de Palpites. */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontSize: 12, letterSpacing: '0.12em', color: 'var(--text-dim)' }}>{t.whosePicks}</span>
+          {[{ id: null, name: t.ourModelName }, ...dreamAuthors.map((a) => ({ id: a.id, name: a.name }))]
+            .map((a, i) => (
+              <button
+                key={a.id ?? 'model'}
+                type="button"
+                onClick={() => setAuthorId(a.id)}
+                style={{
+                  font: 'inherit', cursor: 'pointer', fontSize: 14, letterSpacing: '0.05em',
+                  padding: '7px 16px', borderRadius: 3,
+                  border: `2px solid ${authorId === a.id ? 'var(--gold-bright)' : 'var(--gold-line)'}`,
+                  color: authorId === a.id ? 'var(--bg-deep)' : 'var(--gold)',
+                  background: authorId === a.id ? 'var(--gold-bright)' : 'rgba(0,0,0,0.30)',
+                  fontWeight: authorId === a.id ? 700 : 500,
+                }}
+              >
+                {i === 0 ? '0' : i + 2} · {a.name.toUpperCase()}
+              </button>
+            ))}
+        </div>
         <span style={{ fontSize: 16, letterSpacing: '0.1em', color: 'var(--text-dim)' }}>
           FECHA EM <span className="numeral" style={{ color: 'var(--warn)', fontSize: 26, letterSpacing: 0 }}>{countdown}</span>
         </span>
       </div>
 
       {/* PRINCIPAL, MEIO, SUPORTE — na ordem do cliente, pra bater com o que a pessoa ve la */}
-      <RoleCard slot="core" ranking={teamRanking.core} data={data} x={60} y={CARD_Y} w={588} />
-      <RoleCard slot="mid" ranking={teamRanking.mid} data={data} x={666} y={CARD_Y} w={588} />
-      <RoleCard slot="support" ranking={teamRanking.support} data={data} x={1272} y={CARD_Y} w={588} />
+      <RoleCard slot="core" ranking={teamRanking.core} data={data} x={60} y={CARD_Y} w={588} teamId={author?.teams.core} />
+      <RoleCard slot="mid" ranking={teamRanking.mid} data={data} x={666} y={CARD_Y} w={588} teamId={author?.teams.mid} />
+      <RoleCard slot="support" ranking={teamRanking.support} data={data} x={1272} y={CARD_Y} w={588} teamId={author?.teams.support} />
 
       {/* TREINADOR */}
       <div

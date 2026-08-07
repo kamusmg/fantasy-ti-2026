@@ -6,6 +6,8 @@ import type { ContextOptions } from '../engine/context';
 import { bestPerTeam, bestTitleForTeams, evaluateRoleCandidates, optimizeFromCandidates } from '../engine/optimize';
 import type { RankedLineup, RoleCandidate } from '../engine/optimize';
 import type { CoachTitle } from '../domain/titles';
+import { loadDreamTeamAuthors } from '../data/dreamTeams';
+import type { DreamTeamAuthor } from '../data/dreamTeams';
 import { byRoleSlot } from '../domain/roles';
 import type { Objective } from '../engine/objectives';
 import { expectedScore } from '../engine/objectives';
@@ -21,6 +23,8 @@ export interface EngineResult {
   readonly perTeam: Readonly<Record<RoleSlot, readonly RoleCandidate[]>>;
   /** Ranking de TIME por funcao — a decisao copiavel, com alvos de reroll juntos. */
   readonly teamRanking: Readonly<Record<RoleSlot, RoleRanking>>;
+  /** Escalacoes de outras pessoas, pontuadas pelo mesmo motor. */
+  readonly dreamAuthors: readonly DreamTeamAuthor[];
   /** Titulo otimo PARA OS TIMES RECOMENDADOS (p75), nao pro melhor estandarte. */
   readonly recommendedTitle: CoachTitle;
   readonly recommendedTitleGain: number;
@@ -72,6 +76,7 @@ export function useEngine(options: ContextOptions = {}, objective: Objective = e
       candidates,
       perTeam,
       teamRanking,
+      dreamAuthors: loadDreamTeamAuthors(new Set(data.teams.keys())),
       recommendedTitle: title.title,
       recommendedTitleGain: title.gain,
       recommendedTotal: baseTotal + title.gain,

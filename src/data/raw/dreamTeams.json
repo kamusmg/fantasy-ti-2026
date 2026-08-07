@@ -1,0 +1,66 @@
+{
+  "_meta": {
+    "proposito": "Escalacoes de Dota dos Sonhos de outras pessoas, pra comparar com a do modelo na mesma tela. Cada uma e pontuada pelo NOSSO motor, entao a comparacao e justa: mesma regua pra todo mundo.",
+    "REGRA_INVIOLAVEL": "So entra escalacao REALMENTE VISTA — video, print, post. Nunca extrapolada. O campo `source` vai pra tela junto e precisa dizer de onde veio.",
+    "CAMPO_title": "Se a pessoa nao escolheu titulo de treinador, deixe `null`. NAO preencha com o que 'ela provavelmente escolheria' — o Desleal, por exemplo, explicou a mecanica e disse que ia estudar depois, e nunca voltou. Null e a informacao correta.",
+    "teamIds": "core/mid/support usam os ids de teams.json. O jogo escolhe TIME, nao jogador: Principal leva pos 1+3 daquele time, Meio a pos 2, Suporte as pos 4+5."
+  },
+  "authors": [
+    {
+      "id": "desleal",
+      "name": "Desleal Dota",
+      "source": "video de 06/08/2026 (51 min)",
+      "url": "https://www.youtube.com/watch?v=YLWSjs5rYng",
+      "capturedAt": "2026-08-06",
+      "core": "vision",
+      "mid": "liquid",
+      "support": "ironwing",
+      "title": { "prefix": "royal", "suffix": "lucky" },
+      "titleNote": "No video ele explicou a mecanica e disse que ia estudar depois. O print da tela dele, posterior, mostra 'o Sortudo Real' — Real (+10% heroi roxo) + o Sortudo (+21%).",
+      "bannerFromScreenshot": {
+        "_nota": "Estandarte real dele, lido do print. Serve de teste-ouro: as nove porcentagens batem com o motor.",
+        "core": [
+          { "stat": "gpm", "quality": 4, "trait": "fractal", "clientTotal": 280 },
+          { "stat": "stuns", "quality": 5, "trait": "benevolent", "clientTotal": 240 },
+          { "stat": "madstone", "quality": 3, "trait": "vampiric", "clientTotal": 230 }
+        ],
+        "mid": [
+          { "stat": "gpm", "quality": 3, "trait": "fractal", "clientTotal": 180 },
+          { "stat": "runes", "quality": 5, "trait": "benevolent", "clientTotal": 240 },
+          { "stat": "teamfight", "quality": 3, "trait": "vampiric", "clientTotal": 230 }
+        ],
+        "support": [
+          { "stat": "wardsPlaced", "quality": 5, "trait": "unique", "clientTotal": 300 },
+          { "stat": "stuns", "quality": 5, "trait": "benevolent", "clientTotal": 240 },
+          { "stat": "smokes", "quality": 3, "trait": "vampiric", "clientTotal": 230 }
+        ]
+      },
+      "notes": [
+        "Meta realista e o percentil 95, e pra isso basta NAO ZERAR nenhum emblema — nao precisa acertar o pick otimo.",
+        "Escolhe a dupla em que os DOIS pontuam, nunca uma carregada por um so. O formato de duplas de 2026 derruba a media historica de quem vinha sozinho.",
+        "Prefere atributo de valor VARIAVEL (GPM, last hits, que crescem com a duracao) a valor FIXO (torres, first blood, Roshan, que tem teto e dependem do ultimo golpe).",
+        "Nivele antes de otimizar: o fantasy e a SOMA dos tres estandartes, entao gastar as 40 fichas polindo um so e desperdicio.",
+        "Benevolente sempre no emblema do MEIO (buffa os dois lados); vampirico sempre nas PONTAS (o -10% so atinge um vizinho).",
+        "Amigavel fica pra fase 2, quando houver 4-5 emblemas — com 3 e inviavel de completar."
+      ]
+    },
+    {
+      "id": "gemini",
+      "name": "Gemini 2.5",
+      "source": "analise em EQUIPE_DOS_SONHOS_2026.md",
+      "capturedAt": "2026-08-07",
+      "core": "yandex",
+      "mid": "falcons",
+      "support": "falcons",
+      "title": null,
+      "titleNote": "A analise nao escolheu titulo de treinador.",
+      "notes": [
+        "Aposta na Yandex como time do 4-0, com a tese de que cor de time invicto infla GPM e abates.",
+        "Triplo Amigavel no Principal — testado por busca exaustiva: E o otimo dos 216 arranjos.",
+        "Vampirico no centro do Meio pra concentrar em Runas — testado: 32o de 216, 9,1% abaixo do otimo.",
+        "Evitar Fractal, porque ele exige qualidades diferentes e obriga a segurar emblema de nivel baixo. Correto."
+      ],
+      "correcaoDeDado": "A analise original escreveu 'Pure & MieRo (Yandex)' no Principal. Pure e do Iron Wing e MieRo do BoomBoys; a dupla core da Yandex e watson + DM. Como o jogo escolhe TIME e o texto dele defende a Yandex, registramos Yandex — o erro estava nos nomes dos jogadores, nao no time."
+    }
+  ]
+}
