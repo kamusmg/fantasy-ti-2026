@@ -39,10 +39,10 @@ interface ClientEmblem {
 
 describe('estandarte real do cliente (print do Desleal Dota)', () => {
   const desleal = dreamTeams.authors.find((a) => a.id === 'desleal');
-  const banner = desleal?.bannerFromScreenshot as Record<string, ClientEmblem[]> | undefined;
+  const banner = desleal?.banner as Record<string, ClientEmblem[]> | undefined;
 
   it('o print esta registrado nos dados', () => {
-    expect(banner, 'bannerFromScreenshot ausente em dreamTeams.json').toBeDefined();
+    expect(banner, 'banner ausente em dreamTeams.json').toBeDefined();
   });
 
   for (const slot of ['core', 'mid', 'support'] as const) {

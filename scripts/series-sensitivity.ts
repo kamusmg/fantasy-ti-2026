@@ -21,13 +21,16 @@ import { rankTeams } from '../src/engine/teamRanking';
 import { ALL_ROLE_SLOTS, ROLE_LABEL_PT_BR, byRoleSlot } from '../src/domain/roles';
 import type { PeriodSchedule } from '../src/engine/aggregate';
 import type { RoleSlot } from '../src/domain/roles';
+import teamStrengthRaw from '../src/data/raw/teamStrength.json';
+
+const MARKET = teamStrengthRaw.polymarketTitleProbability as unknown as Record<string, number>;
 
 const data = loadDataset();
 const fixed = (k: number): PeriodSchedule => ({ seriesCountDistribution: new Map([[k, 1]]) });
 
 function leaderAt(schedule: Readonly<Record<RoleSlot, PeriodSchedule>>) {
   const ctx = buildContext(data, { schedule });
-  const ranking = rankTeams(evaluateRoleCandidates(ctx), data.roleUnits, ctx.period);
+  const ranking = rankTeams(evaluateRoleCandidates(ctx), data.roleUnits, ctx.period, MARKET);
   return byRoleSlot((slot) => ({
     teamId: ranking[slot].teams[0].teamId,
     margin: ranking[slot].leaderMargin,
@@ -66,8 +69,8 @@ console.log('-'.repeat(76));
  */
 const ctxSix = buildContext(data, { schedule: byRoleSlot(() => fixed(6)) });
 const ctxFour = buildContext(data, { schedule: byRoleSlot(() => fixed(4)) });
-const atSix = rankTeams(evaluateRoleCandidates(ctxSix), data.roleUnits, 'groupStage');
-const atFour = rankTeams(evaluateRoleCandidates(ctxFour), data.roleUnits, 'groupStage');
+const atSix = rankTeams(evaluateRoleCandidates(ctxSix), data.roleUnits, 'groupStage', MARKET);
+const atFour = rankTeams(evaluateRoleCandidates(ctxFour), data.roleUnits, 'groupStage', MARKET);
 
 for (const slot of ALL_ROLE_SLOTS) {
   const leaderId = results[5][slot].teamId;

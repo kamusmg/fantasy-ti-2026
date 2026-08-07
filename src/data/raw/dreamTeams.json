@@ -1,24 +1,24 @@
 {
   "_meta": {
-    "proposito": "Escalacoes de Dota dos Sonhos de outras pessoas, pra comparar com a do modelo na mesma tela. Cada uma e pontuada pelo NOSSO motor, entao a comparacao e justa: mesma regua pra todo mundo.",
-    "REGRA_INVIOLAVEL": "So entra escalacao REALMENTE VISTA — video, print, post. Nunca extrapolada. O campo `source` vai pra tela junto e precisa dizer de onde veio.",
-    "CAMPO_title": "Se a pessoa nao escolheu titulo de treinador, deixe `null`. NAO preencha com o que 'ela provavelmente escolheria' — o Desleal, por exemplo, explicou a mecanica e disse que ia estudar depois, e nunca voltou. Null e a informacao correta.",
-    "teamIds": "core/mid/support usam os ids de teams.json. O jogo escolhe TIME, nao jogador: Principal leva pos 1+3 daquele time, Meio a pos 2, Suporte as pos 4+5."
+    "proposito": "Este site COMPARA escalacoes de Fantasy. Cada entrada e de um autor e vai como ELE fez — nao e material pra auditar nem corrigir. O que compara e a pontuacao pelo mesmo motor; o numero fala, o texto nao precisa opinar.",
+    "REGRA_1": "So entra escalacao REALMENTE VISTA — video, print, post, ou produzida pelo proprio autor. Nunca extrapolada. O `source` vai pra tela.",
+    "REGRA_2": "Nao editorializar dentro da entrada dos outros. Se eu discordo, faco a MINHA diferente e deixo a regua decidir.",
+    "REGRA_3": "`title` fica null quando a pessoa nao escolheu. Nao se preenche com o que ela 'provavelmente escolheria'.",
+    "teamIds": "core/mid/support usam os ids de teams.json. O jogo escolhe TIME: Principal leva pos 1+3, Meio a pos 2, Suporte as pos 4+5."
   },
   "authors": [
     {
       "id": "desleal",
       "name": "Desleal Dota",
-      "source": "video de 06/08/2026 (51 min)",
+      "source": "video de 06/08 (51 min) + print do estandarte dele",
       "url": "https://www.youtube.com/watch?v=YLWSjs5rYng",
       "capturedAt": "2026-08-06",
       "core": "vision",
       "mid": "liquid",
       "support": "ironwing",
       "title": { "prefix": "royal", "suffix": "lucky" },
-      "titleNote": "No video ele explicou a mecanica e disse que ia estudar depois. O print da tela dele, posterior, mostra 'o Sortudo Real' — Real (+10% heroi roxo) + o Sortudo (+21%).",
-      "bannerFromScreenshot": {
-        "_nota": "Estandarte real dele, lido do print. Serve de teste-ouro: as nove porcentagens batem com o motor.",
+      "banner": {
+        "_nota": "Estandarte REAL dele, lido do print. As nove porcentagens batem com o motor — vira teste-ouro em clientBanner.test.ts.",
         "core": [
           { "stat": "gpm", "quality": 4, "trait": "fractal", "clientTotal": 280 },
           { "stat": "stuns", "quality": 5, "trait": "benevolent", "clientTotal": 240 },
@@ -36,34 +36,24 @@
         ]
       },
       "notes": [
-        "Meta realista e o percentil 95, e pra isso basta NAO ZERAR nenhum emblema — nao precisa acertar o pick otimo.",
-        "Escolhe a dupla em que os DOIS pontuam, nunca uma carregada por um so. O formato de duplas de 2026 derruba a media historica de quem vinha sozinho.",
-        "Prefere atributo de valor VARIAVEL (GPM, last hits, que crescem com a duracao) a valor FIXO (torres, first blood, Roshan, que tem teto e dependem do ultimo golpe).",
-        "Nivele antes de otimizar: o fantasy e a SOMA dos tres estandartes, entao gastar as 40 fichas polindo um so e desperdicio.",
-        "Benevolente sempre no emblema do MEIO (buffa os dois lados); vampirico sempre nas PONTAS (o -10% so atinge um vizinho).",
-        "Amigavel fica pra fase 2, quando houver 4-5 emblemas — com 3 e inviavel de completar."
+        "Meta realista e o percentil 95, e pra isso basta NAO ZERAR nenhum emblema.",
+        "Escolha a dupla em que os DOIS pontuam, nunca uma carregada por um so.",
+        "Prefira atributo de valor VARIAVEL (GPM, last hits) a valor FIXO (torres, first blood, Roshan).",
+        "Nivele os tres estandartes antes de otimizar um: a nota e a SOMA dos tres.",
+        "Benevolente no emblema do MEIO; vampirico nas PONTAS."
       ]
     },
     {
       "id": "gemini",
       "name": "Gemini 3.1 Pro",
-      "source": "analise em EQUIPE_DOS_SONHOS_2026.md",
+      "source": "analise propria (EQUIPE_DOS_SONHOS_2026.md)",
       "capturedAt": "2026-08-07",
       "core": "yandex",
       "mid": "falcons",
       "support": "falcons",
       "title": null,
-      "titleNote": "A analise nao escolheu titulo de treinador.",
-      "notes": [
-        "Aposta na Yandex como time do 4-0, com a tese de que cor de time invicto infla GPM e abates.",
-        "Triplo Amigavel no Principal — testado por busca exaustiva: E o otimo dos 216 arranjos.",
-        "Vampirico no centro do Meio pra concentrar em Runas — testado: 32o de 216, 9,1% abaixo do otimo.",
-        "Evitar Fractal, porque ele exige qualidades diferentes e obriga a segurar emblema de nivel baixo. Correto."
-      ],
-      "correcaoDeDado": "A analise original escreveu 'Pure & MieRo (Yandex)' no Principal. Pure e do Iron Wing e MieRo do BoomBoys; a dupla core da Yandex e watson + DM. Como o jogo escolhe TIME e o texto dele defende a Yandex, registramos Yandex — o erro estava nos nomes dos jogadores, nao no time.",
-      "notaDeConvencao": "A analise dele escreve o BONUS ('+200%', '+240%'); o cliente do Dota escreve o TOTAL (bonus + 100). Sao o mesmo valor em escalas diferentes: o triplo Amigavel Nivel V dele da 200 de bonus = 300% no cliente. As contas dele batem entre si; so a escala difere.",
-      "bannerProposto": {
-        "_nota": "Montagem proposta em EQUIPE_DOS_SONHOS_2026.md, tudo Nivel V. Testada por busca exaustiva em scripts/trait-optimum.ts.",
+      "banner": {
+        "_nota": "Montagem proposta por ele, tudo Nivel V.",
         "core": [
           { "stat": "creepScore", "quality": 5, "trait": "friendly" },
           { "stat": "teamfight", "quality": 5, "trait": "friendly" },
@@ -78,9 +68,15 @@
           { "stat": "wardsPlaced", "quality": 5, "trait": "vampiric" },
           { "stat": "teamfight", "quality": 5, "trait": "benevolent" },
           { "stat": "campsStacked", "quality": 5, "trait": "vampiric" }
-        ],
-        "vereditoDaBuscaExaustiva": "Core: triplo Amigavel e o OTIMO (1o de 216). Suporte: 2o de 216, 4,4% abaixo. Meio: 32o de 216, 9,1% abaixo — concentrar o multiplicador em Runas so compensaria se o emblema do meio tivesse base muito maior que as pontas, e no Meio as tres sao parecidas (1243/1434/1479)."
-      }
+        ]
+      },
+      "notes": [
+        "Yandex como aposta pro 4-0: cor de time invicto infla GPM e abates.",
+        "Triplo Amigavel no Principal: com tudo Nivel V, o bonus plano de +50% em todos.",
+        "Vampirico no centro do Meio pra concentrar em Runas, que valem 141 por unidade.",
+        "Evitar Fractal, porque ele exige qualidades diferentes e obriga a segurar nivel baixo."
+      ],
+      "notaDeDado": "A analise escreveu 'Pure & MieRo' no Principal, mas defende a Yandex como time — e o jogo escolhe TIME, nao jogador. Registrado o time que o texto defende."
     }
   ]
 }

@@ -27,6 +27,34 @@ export interface TraitPlan {
   readonly score: number;
   /** Ganho sobre o pior arranjo possivel — o quanto o traco pesa nesta funcao. */
   readonly gainOverWorst: number;
+  /** Melhor traco quando as tres qualidades saem TODAS DIFERENTES. */
+  readonly whenDistinct: readonly TraitId[];
+  /** Melhor traco quando duas ou mais qualidades se REPETEM. */
+  readonly whenRepeated: readonly TraitId[];
+}
+
+/**
+ * A recomendacao CONDICIONAL, que e o que serve na pratica.
+ *
+ * Qualidade vem sorteada, entao nao existe "o estandarte otimo" — existe o
+ * otimo DADO O QUE CAIU. E a resposta vira, porque Fractal exige as tres
+ * qualidades diferentes:
+ *
+ *   niveis todos diferentes  -> Fractal ganha (medido nos 216 arranjos)
+ *   duas ou mais repetidas   -> Fractal vale ZERO, e Amigavel ganha
+ *
+ * Testar so no cenario "tudo Nivel V" esconde metade da resposta: la as tres
+ * qualidades sao iguais por construcao e o Fractal nem pode ativar.
+ */
+export function conditionalTraitRule(
+  unit: RoleUnit,
+  statIds: readonly StatId[],
+  period: Period,
+  rules: ScoringRuleSet,
+): { readonly distinct: readonly TraitId[]; readonly repeated: readonly TraitId[] } {
+  const distinct = bestTraitPlan(unit, statIds, period, rules, [5, 4, 3]);
+  const repeated = bestTraitPlan(unit, statIds, period, rules, [4, 4, 3]);
+  return { distinct: distinct.traits, repeated: repeated.traits };
 }
 
 const CANDIDATE_TRAITS: readonly TraitId[] = [...ALL_TRAIT_IDS, 'none'];
@@ -36,15 +64,16 @@ export function bestTraitPlan(
   statIds: readonly StatId[],
   period: Period,
   rules: ScoringRuleSet,
-  quality: QualityTier = 5,
+  quality: QualityTier | readonly QualityTier[] = 5,
 ): TraitPlan {
+  const tiers = Array.isArray(quality) ? quality : statIds.map(() => quality as QualityTier);
   const slotCount = statIds.length;
   let best: TraitPlan | null = null;
   let worst = Number.POSITIVE_INFINITY;
 
   const walk = (index: number, chosen: TraitId[]): void => {
     if (index === slotCount) {
-      const banner = buildBanner(unit.slot, period, statIds, chosen.map((trait) => ({ quality, trait })));
+      const banner = buildBanner(unit.slot, period, statIds, chosen.map((trait, i) => ({ quality: tiers[i], trait })));
       const scored = scoreBannerPerMap(banner, unit, rules);
       const score = scored.dist.mean;
       if (score < worst) worst = score;
@@ -54,6 +83,8 @@ export function bestTraitPlan(
           bonuses: scored.emblems.map((e) => e.multiplier - 1),
           score,
           gainOverWorst: 0,
+          whenDistinct: [],
+          whenRepeated: [],
         };
       }
       return;
@@ -69,7 +100,7 @@ export function bestTraitPlan(
 
   const found = best as TraitPlan | null;
   if (!found) {
-    return { traits: [], bonuses: [], score: 0, gainOverWorst: 0 };
+    return { traits: [], bonuses: [], score: 0, gainOverWorst: 0, whenDistinct: [], whenRepeated: [] };
   }
   return { ...found, gainOverWorst: worst > 0 ? found.score / worst - 1 : 0 };
 }

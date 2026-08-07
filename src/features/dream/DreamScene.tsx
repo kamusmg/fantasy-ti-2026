@@ -155,20 +155,24 @@ function RoleCard({
             fontSize: 13, color: 'var(--text-dim)', lineHeight: 1.4,
           }}
         >
-          <span style={{ color: 'var(--gold)' }}>{t.traitTargetLead}</span>{' '}
-          <b style={{ color: 'var(--text)' }}>
-            {t.tierV} · {leader.traitPlan.traits.map((tr) => TRAIT_DEFINITIONS[tr].labelPtBr).join(' + ')}
-          </b>{' '}
           {/*
-            Convencao do CLIENTE: ele mostra o TOTAL (100 base + nivel + traco),
-            nao o bonus. O print do Desleal marca "OPM 280%" pra 100+100+80.
-            Mostrar o bonus aqui faria a pessoa achar que uma das duas telas esta
-            errada quando as duas estao certas.
+            A regra CONDICIONAL. Qualidade vem sorteada, entao nao existe "o
+            estandarte otimo" — existe o otimo DADO O QUE CAIU. E a resposta
+            vira, porque Fractal exige as tres qualidades diferentes.
           */}
-          <span style={{ color: 'var(--gold-bright)' }}>
-            ({Math.round(((leader.traitPlan.bonuses[0] ?? 0) + 1) * 100)}%{' '}
-            {t.eachEmblem})
-          </span>
+          <div style={{ color: 'var(--gold)', marginBottom: 4 }}>{t.traitTargetLead}</div>
+          <div>
+            {t.tiersDistinct}{' '}
+            <b style={{ color: 'var(--text)' }}>
+              {leader.traitPlan.whenDistinct.map((tr) => TRAIT_DEFINITIONS[tr].labelPtBr).join(' + ')}
+            </b>
+          </div>
+          <div>
+            {t.tiersRepeated}{' '}
+            <b style={{ color: 'var(--text)' }}>
+              {leader.traitPlan.whenRepeated.map((tr) => TRAIT_DEFINITIONS[tr].labelPtBr).join(' + ')}
+            </b>
+          </div>
         </div>
       </div>
     </div>

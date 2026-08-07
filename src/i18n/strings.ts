@@ -56,6 +56,8 @@ interface Strings {
   readonly agreesWithUs: (n: number) => string;
   readonly traitTargetLead: string;
   readonly tierV: string;
+  readonly tiersDistinct: string;
+  readonly tiersRepeated: string;
   readonly eachEmblem: string;
   readonly bucketSubtitle: Readonly<Record<Bucket, string>>;
 }
@@ -103,6 +105,8 @@ const PT: Strings = {
   agreesWithUs: (n) => `${n} de 16 iguais aos do Claude`,
   traitTargetLead: 'ALVO DE ROLL:',
   tierV: 'tudo Nivel V',
+  tiersDistinct: 'niveis TODOS diferentes ->',
+  tiersRepeated: 'dois ou mais REPETIDOS ->',
   eachEmblem: 'em cada emblema',
   bucketSubtitle: {
     '4-0': 'Uma equipe invicta.',
@@ -157,6 +161,8 @@ const EN: Strings = {
   agreesWithUs: (n) => `${n} of 16 match Claude's`,
   traitTargetLead: 'ROLL TARGET:',
   tierV: 'all Tier V',
+  tiersDistinct: 'all tiers DIFFERENT ->',
+  tiersRepeated: 'two or more REPEATED ->',
   eachEmblem: 'on every emblem',
   bucketSubtitle: {
     '4-0': 'One undefeated team.',

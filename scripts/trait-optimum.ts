@@ -20,10 +20,13 @@ import type { TraitId } from '../src/domain/emblems';
 import { STAT_DEFINITIONS } from '../src/domain/stats';
 import { DEFAULT_RULES } from '../src/domain/rules';
 import { roleUnitKey } from '../src/domain/roster';
+import teamStrengthRaw from '../src/data/raw/teamStrength.json';
+
+const MARKET = teamStrengthRaw.polymarketTitleProbability as unknown as Record<string, number>;
 
 const data = loadDataset();
 const ctx = buildContext(data);
-const ranking = rankTeams(evaluateRoleCandidates(ctx), data.roleUnits, 'groupStage');
+const ranking = rankTeams(evaluateRoleCandidates(ctx), data.roleUnits, 'groupStage', MARKET);
 
 /** Inclui 'none' porque nem sempre um traco e melhor que nenhum. */
 const TRAITS: readonly TraitId[] = [...ALL_TRAIT_IDS, 'none'];

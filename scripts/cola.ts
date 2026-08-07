@@ -11,10 +11,13 @@ import { isTechnicalTie, rankTeams } from '../src/engine/teamRanking';
 import { ALL_ROLE_SLOTS, ROLE_LABEL_PT_BR, ROLE_POSITIONS, byRoleSlot } from '../src/domain/roles';
 import { PREFIX_DEFINITIONS, SUFFIX_DEFINITIONS } from '../src/domain/titles';
 import { COLOR_LABEL_PT_BR } from '../src/domain/stats';
+import teamStrengthRaw from '../src/data/raw/teamStrength.json';
+
+const MARKET = teamStrengthRaw.polymarketTitleProbability as unknown as Record<string, number>;
 
 const data = loadDataset();
 const ctx = buildContext(data);
-const ranking = rankTeams(evaluateRoleCandidates(ctx), data.roleUnits, ctx.period);
+const ranking = rankTeams(evaluateRoleCandidates(ctx), data.roleUnits, ctx.period, MARKET);
 
 const teams = byRoleSlot((slot) => ranking[slot].teams[0].teamId);
 const scores = byRoleSlot((slot) => ranking[slot].teams[0].p75Score);
@@ -42,11 +45,14 @@ for (const slot of byLeverage) {
   console.log(`\n  ${ROLE_LABEL_PT_BR[slot].toUpperCase()}  (pos ${ROLE_POSITIONS[slot].join('+')})   errar aqui custa ate -${(r.spread * 100).toFixed(0)}%`);
   console.log(`     >>> ${data.teams.get(leader.teamId)?.name?.toUpperCase()}`);
   console.log(`         ${nicks}`);
-  console.log(
-    tie
-      ? `         EMPATE TECNICO com ${data.teams.get(second.teamId)?.name} (${(r.leaderMargin * 100).toFixed(1)}%) — tanto faz`
-      : `         ${(r.leaderMargin * 100).toFixed(0)}% a frente de ${data.teams.get(second.teamId)?.name}`,
-  );
+  if (r.tiebrokenByMarket) {
+    console.log(`         EMPATE com ${data.teams.get(r.scoreLeaderId)?.name} (${Math.abs(r.leaderMargin * 100).toFixed(1)}%)`);
+    console.log(`         -> desempatado pelo MERCADO: o modelo nao distingue, e as odds sim`);
+  } else if (tie) {
+    console.log(`         EMPATE TECNICO com ${data.teams.get(second.teamId)?.name} (${(r.leaderMargin * 100).toFixed(1)}%) — tanto faz`);
+  } else {
+    console.log(`         ${(r.leaderMargin * 100).toFixed(0)}% a frente de ${data.teams.get(second.teamId)?.name}`);
+  }
   if (leader.robust) console.log('         vale pra QUALQUER estandarte que voce tirar');
 }
 

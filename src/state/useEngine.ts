@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import teamStrengthRaw from "../data/raw/teamStrength.json";
 import { loadDataset } from '../data/load';
 import type { LoadedData } from '../data/load';
 import { buildContext } from '../engine/context';
@@ -15,6 +16,8 @@ import { ALL_ROLE_SLOTS } from '../domain/roles';
 import type { RoleSlot } from '../domain/roles';
 import { rankTeams } from '../engine/teamRanking';
 import type { RoleRanking } from '../engine/teamRanking';
+
+const MARKET = teamStrengthRaw.polymarketTitleProbability as unknown as Record<string, number>;
 
 export interface EngineResult {
   readonly data: LoadedData;
@@ -61,7 +64,7 @@ export function useEngine(options: ContextOptions = {}, objective: Objective = e
       ALL_ROLE_SLOTS.map((slot) => [slot, bestPerTeam(candidates[slot], objective)]),
     ) as Record<RoleSlot, readonly RoleCandidate[]>;
 
-    const teamRanking = rankTeams(candidates, data.roleUnits, ctx.period);
+    const teamRanking = rankTeams(candidates, data.roleUnits, ctx.period, MARKET);
 
     // O titulo tem que casar com os times QUE ESTAO NA TELA (lideres no p75),
     // nao com os que o otimizador de melhor-estandarte teria escolhido.
