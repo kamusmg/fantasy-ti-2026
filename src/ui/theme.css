@@ -86,12 +86,41 @@ body {
   height: 1080px;
   transform-origin: center center;
   overflow: hidden;
+
+  /*
+    Nada de selecao de texto no palco.
+
+    Clicar numa aba e arrastar dois pixels pinta o rotulo de AZUL DE SELECAO, e a
+    mancha FICA ate alguem clicar fora — atravessa troca de cena e vai pro ar
+    parecendo site quebrado. Aconteceu ao vivo, em "G · ATRIBUTOS" e "PT".
+
+    Isto aqui e um painel de transmissao, nao um documento: ninguem le pra copiar.
+    Quem quiser os dados tem o repositorio, o GUIA_ATRIBUTOS_2026.md e os JSON
+    crus em src/data/raw — todos melhores de copiar do que a tela.
+  */
+  user-select: none;
+  -webkit-user-select: none;
   background:
     radial-gradient(ellipse 120% 80% at 50% 0%, #5c3d1a 0%, transparent 60%),
     radial-gradient(ellipse 100% 100% at 50% 50%, #33200c 0%, #1b1006 100%);
 }
 
 /* vinheta leve — o suficiente pra dar profundidade sem comer o contraste */
+/*
+  O anel de foco do navegador e branco e grosso, e fica no botao clicado depois
+  que a mao sai do mouse. No tema ouro-sobre-ambar ele grita. Trocado por um de
+  ouro, e so no foco por TECLADO — quem navega por Tab continua enxergando onde
+  esta, e o clique de mouse nao deixa marca no ar.
+*/
+.broadcast-stage button:focus {
+  outline: none;
+}
+
+.broadcast-stage button:focus-visible {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 2px;
+}
+
 .broadcast-stage::after {
   content: '';
   position: absolute;
