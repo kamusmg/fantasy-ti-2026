@@ -177,6 +177,8 @@ npm test             # 54 testes
 npx vite-node scripts/cola.ts       # a cola no terminal
 npx vite-node scripts/palpites.ts   # os 16 palpites com estabilidade
 npx vite-node scripts/report.ts     # auditoria dos dados
+npx vite-node scripts/gen-guia.ts   # reescreve GUIA_ATRIBUTOS_2026.md pelo motor
+node scripts/gen-social.mjs         # favicon + imagem de preview do link
 node scripts/fetch-portraits.mjs    # rebaixa fotos do CDN da Valve
 node scripts/optimize-images.mjs    # reduz 71 MB -> 1,4 MB
 ```

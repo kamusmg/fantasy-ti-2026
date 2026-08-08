@@ -1,3 +1,13 @@
+> **ENTRADA DE UM AUTOR, NÃO A RECOMENDAÇÃO DO SITE.** Este documento é a análise
+> do **Gemini 3.1 Pro**, registrada como um dos autores comparados em
+> `src/data/raw/dreamTeams.json` (id `gemini`). Ele vai **como o autor escreveu** —
+> não é editado nem corrigido, porque o que compara os autores é a pontuação pelo
+> mesmo motor, não o texto.
+>
+> A escalação que o motor recomenda está no `README.md` e na tela `#sonhos`.
+> Os nomes de atributo aqui são os do autor, não os da localização oficial da Valve
+> (que estão em `GUIA_ATRIBUTOS_2026.md`, gerado pelo motor).
+
 # 🏆 Equipe dos Sonhos (Dream Team) - O Min-Max Matemático do TI 2026
 
 Aplicando as regras de pontuação exatas extraídas do glossário e a projeção de desempenho do algoritmo (que prevê **Yandex** e **Falcons** dominando a fase de grupos), esta é a montagem **matematicamente perfeita** para o Fantasy de 2026.

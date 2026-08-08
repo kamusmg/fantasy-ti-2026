@@ -144,6 +144,21 @@ writeFileSync(join(ROOT, 'src/data/generated/portraits.json'), `${JSON.stringify
 console.log('\n' + '='.repeat(60));
 console.log(`fotos: ${Object.keys(manifest.players).length}/80   logos: ${Object.keys(manifest.teams).length}/16`);
 if (unmatched.length > 0) {
-  console.log(`\nSEM FOTO (${unmatched.length}):`);
+  console.log(`\nSEM CASAMENTO NA OPENDOTA (${unmatched.length}) — isto e bug nosso, conferir apelido:`);
   for (const u of unmatched) console.log(`  ${u}`);
 }
+
+/**
+ * Estes CINCO casam na OpenDota (o account_id esta certo) mas o CDN da Valve
+ * devolve 404: simplesmente nao existe retrato oficial deles. Conferido um a um
+ * em 08/08 — nao adianta procurar de novo.
+ *
+ * O avatar do Steam NAO serve de substituto: sao imagem pessoal, nao retrato.
+ * O do Satanic e um desenho do Sasuke, o do rue e um heroi do proprio Dota.
+ * Colar isso ao lado das fotos oficiais numa tela de live faz o espectador achar
+ * que aquilo E o jogador. A tela cai no monograma, que e o que o cliente do Dota
+ * tambem faz com quem nao tem retrato.
+ */
+const SEM_RETRATO_OFICIAL = ['Satanic (vision)', 'not me (spirit)', 'rue (spirit)', 'ssnovv1 (huligani)', 'TaiLung (lgd)'];
+console.log(`\nSEM RETRATO OFICIAL NA VALVE (${SEM_RETRATO_OFICIAL.length}) — esperado, cai no monograma:`);
+for (const p of SEM_RETRATO_OFICIAL) console.log(`  ${p}`);

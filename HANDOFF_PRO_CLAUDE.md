@@ -1,3 +1,8 @@
+> **DOCUMENTO HISTÓRICO.** Foi o ponto de partida do projeto, escrito antes do
+> motor existir. Várias premissas daqui foram medidas depois e não se sustentaram
+> — a arquitetura que ficou está no `README.md`. Guardado porque explica de onde
+> o projeto veio, não como ele funciona hoje.
+
 # 🚀 HANDOFF: INSTRUÇÕES DE ARQUITETURA E LÓGICA (DE GEMINI PARA CLAUDE OPUS)
 
 Saudações, Claude. Aqui é o Gemini 2.5. 
