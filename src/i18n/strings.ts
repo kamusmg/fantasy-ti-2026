@@ -94,11 +94,36 @@ interface Strings {
   readonly onNeighbours: string;
   /** Conjuncao pra juntar dois nomes: 'Satanic E Noticed'. */
   readonly andWord: string;
+  readonly noTitleChosen: string;
   readonly bannerConditions: string;
   readonly condFractal: (tiers: string) => string;
   readonly condUnique: (n: number) => string;
   readonly condFriendly: (n: number) => string;
+
+  // ---------- ranking de montagens: seguranca x teto ----------
+  readonly rankingTitle: string;
+  readonly safestTitle: string;
+  readonly ceilingTitle: string;
+  readonly avoidTitle: string;
+  readonly safest: readonly AdviceItem[];
+  readonly ceiling: readonly AdviceItem[];
+  readonly avoid: Readonly<Record<AvoidId, string>>;
 }
+
+/** Um item do ranking: o nome da montagem em negrito, e por que ela e assim. */
+interface AdviceItem {
+  readonly lead: string;
+  readonly body: string;
+}
+
+/**
+ * Os quatro erros do "Evite".
+ *
+ * Sao ID e nao posicao numa lista porque o simulador ACENDE o que estiver
+ * acontecendo agora no estandarte montado — e casar texto com regra por indice
+ * quebra calado no dia em que alguem reordenar a lista.
+ */
+export type AvoidId = 'friendlyIncomplete' | 'twoUniques' | 'fractalRepeated' | 'vampiricMiddle';
 
 const PT: Strings = {
   dreamTitle: 'DOTA DOS SONHOS',
@@ -180,6 +205,7 @@ const PT: Strings = {
   simHowTo: 'Escolha o nível e o traço de cada emblema, do jeito que caíram no seu jogo. A porcentagem sai na hora, pela mesma conta do cliente — e serve pra testar um roll ANTES de gastar a ficha.',
   bannerTotal: 'SOMA DOS TRÊS',
   andWord: 'e',
+  noTitleChosen: 'esta pessoa não escolheu título',
   bannerConditions: 'CONDIÇÕES DO ESTANDARTE',
   condFractal: (tiers) => `Fractal — níveis ${tiers}`,
   condUnique: (n) => `Único — ${n} no estandarte`,
@@ -187,6 +213,27 @@ const PT: Strings = {
   onItself: 'no próprio emblema',
   onNeighbours: 'nos vizinhos',
   bannerTotalNote: 'Só serve pra comparar estandartes entre si — não é a sua pontuação.',
+
+  rankingTitle: 'POR SEGURANÇA E POR TETO',
+  safestTitle: 'MAIS SEGURAS',
+  ceilingTitle: 'MAIOR TETO, MAIOR CONDIÇÃO',
+  avoidTitle: 'EVITE',
+  safest: [
+    { lead: 'Vampírico na ponta', body: 'cobra de um vizinho só, não de dois.' },
+    { lead: 'Benevolente no meio', body: 'daí ele alcança os dois vizinhos.' },
+    { lead: 'Um Único só', body: 'a condição mais fácil de manter ligada.' },
+  ],
+  ceiling: [
+    { lead: 'Três Amigáveis', body: 'o pacote mais forte, mas exige os TRÊS.' },
+    { lead: 'Fractal ligado', body: 'ótimo se os níveis já caíram diferentes.' },
+    { lead: 'Vampírico no melhor atributo', body: 'aposta tudo num emblema só.' },
+  ],
+  avoid: {
+    friendlyIncomplete: 'Amigável incompleto: 1 ou 2 valem ZERO',
+    twoUniques: 'Dois Únicos: os DOIS zeram, não só o segundo',
+    fractalRepeated: 'Fractal com dois níveis repetidos',
+    vampiricMiddle: 'Vampírico no meio, cobrando dos dois vizinhos',
+  },
 };
 
 const EN: Strings = {
@@ -269,6 +316,7 @@ const EN: Strings = {
   simHowTo: 'Pick the tier and trait of each emblem, exactly as they came up in your game. The percentage updates live, using the same maths as the client — so you can test a roll BEFORE spending the token.',
   bannerTotal: 'SUM OF THE THREE',
   andWord: 'and',
+  noTitleChosen: 'this person picked no title',
   bannerConditions: 'BANNER-WIDE CONDITIONS',
   condFractal: (tiers) => `Fractal — tiers ${tiers}`,
   condUnique: (n) => `Unique — ${n} on the banner`,
@@ -276,6 +324,27 @@ const EN: Strings = {
   onItself: 'on itself',
   onNeighbours: 'on neighbours',
   bannerTotalNote: 'Only useful to compare banners against each other — it is not your score.',
+
+  rankingTitle: 'BY SAFETY AND BY CEILING',
+  safestTitle: 'SAFEST',
+  ceilingTitle: 'HIGHER CEILING, HARDER CONDITION',
+  avoidTitle: 'AVOID',
+  safest: [
+    { lead: 'Vampiric on an end', body: 'it taxes one neighbour, not two.' },
+    { lead: 'Benevolent in the middle', body: 'from there it reaches both neighbours.' },
+    { lead: 'A single Unique', body: 'the easiest condition to keep switched on.' },
+  ],
+  ceiling: [
+    { lead: 'Three Friendly', body: 'the strongest package, but it needs all THREE.' },
+    { lead: 'Fractal switched on', body: 'great if the tiers already came up different.' },
+    { lead: 'Vampiric on your best stat', body: 'stakes everything on one emblem.' },
+  ],
+  avoid: {
+    friendlyIncomplete: 'An incomplete Friendly: 1 or 2 are worth ZERO',
+    twoUniques: 'Two Uniques: BOTH go to zero, not just the second',
+    fractalRepeated: 'Fractal with two repeated tiers',
+    vampiricMiddle: 'Vampiric in the middle, taxing both neighbours',
+  },
 };
 
 export const STRINGS: Readonly<Record<Lang, Strings>> = { pt: PT, en: EN };

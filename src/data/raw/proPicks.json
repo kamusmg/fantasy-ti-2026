@@ -32,6 +32,55 @@
       }
     },
     {
+      "id": "4nalog",
+      "name": "4nalog",
+      "source": "print da tela dele na live de 08/08",
+      "capturedAt": "2026-08-08",
+      "picks": {
+        "vision": "4-0",
+        "yandex": "4-1",
+        "falcons": "4-1",
+        "liquid": "elimWin",
+        "boomboys": "elimWin",
+        "spirit": "elimWin",
+        "aurora": "elimWin",
+        "ironwing": "elimWin",
+        "xtreme": "elimLose",
+        "lgd": "elimLose",
+        "nigma": "elimLose",
+        "og": "elimLose",
+        "vici": "elimLose",
+        "resilience": "1-4",
+        "gamerlegion": "1-4",
+        "huligani": "0-4"
+      }
+    },
+    {
+      "id": "nsart",
+      "name": "NS_Art",
+      "source": "print da tela dele na live de 08/08",
+      "capturedAt": "2026-08-08",
+      "_nota": "Igual ao do 4nalog em 14 das 16 vagas. A unica divergencia entre os dois: quem fica no 4-1 — o 4nalog poe a Falcons, o NS_Art poe a Spirit.",
+      "picks": {
+        "vision": "4-0",
+        "yandex": "4-1",
+        "spirit": "4-1",
+        "falcons": "elimWin",
+        "boomboys": "elimWin",
+        "liquid": "elimWin",
+        "aurora": "elimWin",
+        "ironwing": "elimWin",
+        "xtreme": "elimLose",
+        "lgd": "elimLose",
+        "nigma": "elimLose",
+        "og": "elimLose",
+        "vici": "elimLose",
+        "resilience": "1-4",
+        "gamerlegion": "1-4",
+        "huligani": "0-4"
+      }
+    },
+    {
       "id": "topson",
       "name": "Topson",
       "source": "palpites dele na live de 06/08",

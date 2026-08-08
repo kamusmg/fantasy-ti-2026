@@ -44,6 +44,40 @@
       ]
     },
     {
+      "id": "nsart",
+      "name": "NS_Art",
+      "source": "print da tela dele na live de 08/08",
+      "capturedAt": "2026-08-08",
+      "core": "vision",
+      "mid": "liquid",
+      "support": "vision",
+      "title": { "prefix": "elemental", "suffix": "clutch" },
+      "banner": {
+        "_nota": "Estandarte REAL dele, lido do print. Titulo no cliente: 'o Decisivo Elemental'. As nove porcentagens batem com o motor — e a terceira validacao independente, junto com a do Desleal.",
+        "core": [
+          { "stat": "gpm", "quality": 5, "trait": "unique", "clientTotal": 300 },
+          { "stat": "roshan", "quality": 3, "trait": "benevolent", "clientTotal": 150 },
+          { "stat": "creepScore", "quality": 5, "trait": "vampiric", "clientTotal": 320 }
+        ],
+        "mid": [
+          { "stat": "creepScore", "quality": 3, "trait": "fractal", "clientTotal": 220 },
+          { "stat": "smokes", "quality": 4, "trait": "fractal", "clientTotal": 250 },
+          { "stat": "teamfight", "quality": 5, "trait": "vampiric", "clientTotal": 300 }
+        ],
+        "support": [
+          { "stat": "smokes", "quality": 5, "trait": "fractal", "clientTotal": 310 },
+          { "stat": "teamfight", "quality": 1, "trait": "unique", "clientTotal": 110 },
+          { "stat": "wardsPlaced", "quality": 4, "trait": "unique", "clientTotal": 200 }
+        ]
+      },
+      "notes": [
+        "Principal e Suporte na mesma equipe: a TEAM VISION entra duas vezes, com Satanic e Noticed de um lado e 9Class e Dukalis do outro.",
+        "O Suporte dele mostra o custo dos DOIS Unicos: os dois valem zero, e o emblema de Nivel I fica em 110%.",
+        "O Meio dele e o caso bonito do Fractal: niveis III/IV/V, todos diferentes, entao o traco paga nos dois emblemas onde caiu."
+      ],
+      "notaDeDado": "O emblema que o cliente chama de FINALIZACOES e o atributo Criaturas (Creep Score) — 'finalizacao' e o termo do jogo pra last hit, e a chave oficial DOTA_PlayerCardBonusStatName2 confirma."
+    },
+    {
       "id": "gemini",
       "name": "Gemini 3.1 Pro",
       "source": "analise propria (EQUIPE_DOS_SONHOS_2026.md)",

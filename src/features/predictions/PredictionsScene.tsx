@@ -230,12 +230,18 @@ export function PredictionsScene() {
 
       {/*
         O SELETOR DE AUTOR: o coracao da apresentacao, entao vai no MEIO da tela.
-        Com `space-between` e so dois filhos ele era empurrado pro canto direito —
-        centralizado de verdade so com `left: 50%` + `translateX(-50%)`, que
-        independe da largura do titulo ao lado.
+        Com `space-between` e so dois filhos ele era empurrado pro canto direito.
+
+        Centralizado por `left/right: 0` + `justifyContent: center`, NAO por
+        `left: 50%` + translate: naquele jeito a caixa so pode ocupar da metade
+        da tela pra direita (960px), e com cinco autores MAIS o botao COMPARAR a
+        fileira passa de 1000px e quebra em duas linhas. Ela so quebraria ao
+        escolher um autor que nao o modelo, entao a tela parecia inteira ate
+        alguem clicar no ar. `pointerEvents` volta a existir so nos botoes, pra
+        faixa invisivel nao cobrir o titulo ao lado.
       */}
-      <div style={{ position: 'absolute', top: 64, left: '50%', transform: 'translateX(-50%)', zIndex: 5 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+      <div style={{ position: 'absolute', top: 64, left: 0, right: 0, display: 'flex', justifyContent: 'center', zIndex: 5, pointerEvents: 'none' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 9, pointerEvents: 'auto', whiteSpace: 'nowrap' }}>
           <span style={{ fontSize: 12, letterSpacing: '0.14em', color: 'var(--text-dim)' }}>{t.whosePicks}</span>
           {authors.map((a, i) => (
             <button

@@ -244,9 +244,13 @@ export function DreamScene() {
         {t.locksIn} <span className="numeral" style={{ color: 'var(--warn)', fontSize: 22, letterSpacing: 0 }}>{countdown}</span>
       </span>
 
-      {/* Seletor de autor CENTRALIZADO, igual ao da tela de Palpites. */}
-      <div style={{ position: 'absolute', top: 64, left: '50%', transform: 'translateX(-50%)', zIndex: 5 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      {/*
+        Seletor de autor CENTRALIZADO, igual ao da tela de Palpites — e pelo
+        mesmo jeito: `left/right: 0` + `justifyContent: center`. Com `left: 50%`
+        a fileira so podia ocupar 960px, e cada autor novo aproxima a quebra.
+      */}
+      <div style={{ position: 'absolute', top: 64, left: 0, right: 0, display: 'flex', justifyContent: 'center', zIndex: 5, pointerEvents: 'none' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, pointerEvents: 'auto', whiteSpace: 'nowrap' }}>
           <span style={{ fontSize: 12, letterSpacing: '0.12em', color: 'var(--text-dim)' }}>{t.whosePicks}</span>
           {[{ id: null, name: t.ourModelName }, ...dreamAuthors.map((a) => ({ id: a.id, name: a.name }))]
             .map((a, i) => (
@@ -283,21 +287,31 @@ export function DreamScene() {
         }}
       >
         <div style={{ fontSize: 14, letterSpacing: '0.14em', color: 'var(--gold)' }}>{t.coachTitle}</div>
+        {/*
+          O titulo do AUTOR selecionado, nao o nosso.
+          Antes o nome grande vinha de `recommendedTitle` e as duas condicoes
+          embaixo vinham do autor — entao escolher o Desleal Dota mostrava o
+          nosso titulo com os bonus dele. Como as duas fontes quase sempre
+          coincidiam no prefixo, dava pra olhar a tela e nao ver.
+        */}
         <div className="display" style={{ fontSize: 56, color: 'var(--gold-bright)', marginTop: 10, lineHeight: 1 }}>
-          {label.coachTitle(recommendedTitle.prefix ?? null, recommendedTitle.suffix ?? null, lang)}
+          {label.coachTitle(shownTitle?.prefix ?? null, shownTitle?.suffix ?? null, lang)}
         </div>
         <div style={{ display: 'flex', gap: 44, marginTop: 16, fontSize: 19, color: 'var(--text)' }}>
-          {prefix && recommendedTitle.prefix && (
+          {prefix && shownTitle?.prefix && (
             <span>
               <b style={{ color: 'var(--gold-bright)' }}>+{Math.round(prefix.bonus * 100)}%</b>{' '}
-              {label.prefixCondition(recommendedTitle.prefix, lang)}
+              {label.prefixCondition(shownTitle.prefix, lang)}
             </span>
           )}
-          {suffix && recommendedTitle.suffix && (
+          {suffix && shownTitle?.suffix && (
             <span>
               <b style={{ color: 'var(--gold-bright)' }}>+{Math.round(suffix.bonus * 100)}%</b>{' '}
-              {label.suffixCondition(recommendedTitle.suffix, lang)}
+              {label.suffixCondition(shownTitle.suffix, lang)}
             </span>
+          )}
+          {!shownTitle?.prefix && !shownTitle?.suffix && (
+            <span style={{ color: 'var(--text-dim)' }}>{t.noTitleChosen}</span>
           )}
         </div>
       </div>

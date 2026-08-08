@@ -69,6 +69,16 @@ const def = (
   color: EmblemColor,
   labelPtBr: string,
   labelEn: string,
+  /**
+   * Nome CURTO — o que o cliente escreve na plaquinha do emblema.
+   *
+   * Nao e abreviacao nossa: sao as chaves `DOTA_PlayerCardBonusStatName0..17` da
+   * localizacao da Valve. O cliente usa duas grafias pro mesmo atributo — no
+   * glossario de pontuacao "Criaturas (Creep Score)", na plaquinha do estandarte
+   * "Finalizacoes" — e quem monta estandarte le a PLAQUINHA. Eu tinha inventado
+   * abreviacoes ("Criaturas", "Sentinelas", "Batalhas") que nao aparecem em lugar
+   * nenhum do jogo.
+   */
   shortPtBr: string,
   shortEn: string,
   rule: ScoringRule,
@@ -89,26 +99,26 @@ export const STAT_DEFINITIONS: Readonly<Record<StatId, StatDefinition>> = {
   // ---------- VERMELHO ----------
   kills: def('kills', 'red', 'Vítimas', 'Kills', 'Vítimas', 'Kills', { kind: 'perUnit', pointsPerUnit: 107 }, 0.55),
   deaths: def('deaths', 'red', 'Mortes', 'Deaths', 'Mortes', 'Deaths', { kind: 'baseMinus', base: 1950, perUnit: 195 }, 0.35),
-  creepScore: def('creepScore', 'red', 'Criaturas', 'Creep Score', 'Criaturas', 'Creep Score', { kind: 'perUnit', pointsPerUnit: 3 }, 0.20),
+  creepScore: def('creepScore', 'red', 'Criaturas', 'Creep Score', 'Finalizações', 'Creep Score', { kind: 'perUnit', pointsPerUnit: 3 }, 0.20),
   gpm: def('gpm', 'red', 'OPM', 'GPM', 'OPM', 'GPM', { kind: 'perUnit', pointsPerUnit: 2 }, 0.20),
-  madstone: def('madstone', 'red', 'Lascas de Insanite', 'Madstones Collected', 'Lascas', 'Madstones', { kind: 'perUnit', pointsPerUnit: 13 }, 0.40),
-  towerKills: def('towerKills', 'red', 'Torres Destruídas', 'Tower Kills', 'Torres', 'Towers', { kind: 'perUnit', pointsPerUnit: 352 }, 0.70),
+  madstone: def('madstone', 'red', 'Lascas de Insanite', 'Madstones Collected', 'Lascas de insanite', 'Madstone Collected', { kind: 'perUnit', pointsPerUnit: 13 }, 0.40),
+  towerKills: def('towerKills', 'red', 'Torres Destruídas', 'Tower Kills', 'Torres destr.', 'Tower Kills', { kind: 'perUnit', pointsPerUnit: 352 }, 0.70),
 
   // ---------- AZUL ----------
-  wardsPlaced: def('wardsPlaced', 'blue', 'Sentinelas Posicionadas', 'Wards Placed', 'Sentinelas', 'Wards', { kind: 'perUnit', pointsPerUnit: 117 }, 0.25),
-  campsStacked: def('campsStacked', 'blue', 'Acampamentos Acumulados', 'Camps Stacked', 'Acampamentos', 'Camps', { kind: 'perUnit', pointsPerUnit: 234 }, 0.40),
-  runes: def('runes', 'blue', 'Runas Obtidas', 'Runes Grabbed', 'Runas', 'Runes', { kind: 'perUnit', pointsPerUnit: 141 }, 0.35),
-  watchers: def('watchers', 'blue', 'Vigias Ativados', 'Watchers Taken', 'Vigias', 'Watchers', { kind: 'perUnit', pointsPerUnit: 147 }, 0.45),
-  smokes: def('smokes', 'blue', 'Fumaças Usadas', 'Smokes Used', 'Fumaças', 'Smokes', { kind: 'perUnit', pointsPerUnit: 293 }, 0.45),
-  lotuses: def('lotuses', 'blue', 'Lótus Obtidos', 'Lotuses Grabbed', 'Lótus', 'Lotuses', { kind: 'perUnit', pointsPerUnit: 176 }, 0.50),
+  wardsPlaced: def('wardsPlaced', 'blue', 'Sentinelas Posicionadas', 'Wards Placed', 'Sent. Obs.', 'Obs Wards Planted', { kind: 'perUnit', pointsPerUnit: 117 }, 0.25),
+  campsStacked: def('campsStacked', 'blue', 'Acampamentos Acumulados', 'Camps Stacked', 'Acamp. acu.', 'Camps Stacked', { kind: 'perUnit', pointsPerUnit: 234 }, 0.40),
+  runes: def('runes', 'blue', 'Runas Obtidas', 'Runes Grabbed', 'Runas obtidas', 'Runes Grabbed', { kind: 'perUnit', pointsPerUnit: 141 }, 0.35),
+  watchers: def('watchers', 'blue', 'Vigias Ativados', 'Watchers Taken', 'Vigias ativados', 'Watchers Taken', { kind: 'perUnit', pointsPerUnit: 147 }, 0.45),
+  smokes: def('smokes', 'blue', 'Fumaças Usadas', 'Smokes Used', 'Fumaças usadas', 'Smokes Used', { kind: 'perUnit', pointsPerUnit: 293 }, 0.45),
+  lotuses: def('lotuses', 'blue', 'Lótus Obtidos', 'Lotuses Grabbed', 'Lótus obtidos', 'Lotuses Gained', { kind: 'perUnit', pointsPerUnit: 176 }, 0.50),
 
   // ---------- VERDE ----------
-  roshan: def('roshan', 'green', 'Roshans Mortos', 'Roshan Kills', 'Roshans', 'Roshan', { kind: 'perUnit', pointsPerUnit: 1172 }, 1.10, true),
-  teamfight: def('teamfight', 'green', 'Participação em Batalhas', 'Teamfight Participation', 'Batalhas', 'Teamfight', { kind: 'capped', max: 2124 }, 0.15),
-  stuns: def('stuns', 'green', 'Atordoamentos', 'Stuns', 'Atordoamentos', 'Stuns', { kind: 'perUnit', pointsPerUnit: 10 }, 0.40),
-  tormentor: def('tormentor', 'green', 'Tormentas Destruídas', 'Tormentor Kills', 'Tormentas', 'Tormentor', { kind: 'perUnit', pointsPerUnit: 879 }, 0.75),
-  firstBlood: def('firstBlood', 'green', 'Primeira Vítima', 'First Blood', 'Primeira Vítima', 'First Blood', { kind: 'flat', points: 1934 }, 2.00, true),
-  courier: def('courier', 'green', 'Entregadores Mortos', 'Courier Kills', 'Entregadores', 'Courier', { kind: 'perUnit', pointsPerUnit: 703 }, 1.30, true),
+  roshan: def('roshan', 'green', 'Roshans Mortos', 'Roshan Kills', 'Roshans mortos', 'Roshan Kills', { kind: 'perUnit', pointsPerUnit: 1172 }, 1.10, true),
+  teamfight: def('teamfight', 'green', 'Participação em Batalhas', 'Teamfight Participation', 'Bat. equipes', 'Teamfight', { kind: 'capped', max: 2124 }, 0.15),
+  stuns: def('stuns', 'green', 'Atordoamentos', 'Stuns', 'Atordoam.', 'Stuns', { kind: 'perUnit', pointsPerUnit: 10 }, 0.40),
+  tormentor: def('tormentor', 'green', 'Tormentas Destruídas', 'Tormentor Kills', 'Tormentas destruídas', 'Tormentor Kills', { kind: 'perUnit', pointsPerUnit: 879 }, 0.75),
+  firstBlood: def('firstBlood', 'green', 'Primeira Vítima', 'First Blood', '1ª vítima', 'First Blood', { kind: 'flat', points: 1934 }, 2.00, true),
+  courier: def('courier', 'green', 'Entregadores Mortos', 'Courier Kills', 'Entregadores mortos', 'Courier Kills', { kind: 'perUnit', pointsPerUnit: 703 }, 1.30, true),
 } as const;
 
 export const ALL_STAT_IDS: readonly StatId[] = Object.keys(STAT_DEFINITIONS) as StatId[];

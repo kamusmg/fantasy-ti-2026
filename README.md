@@ -52,18 +52,24 @@ duas consequências que ninguém precifica:
 
 | tecla | URL | o que faz |
 |---|---|---|
-| **1** | `#sonhos` | **Dota dos Sonhos** — a cola: três equipes e o título, com seletor de autor (Claude / Desleal Dota / Gemini 3.1 Pro) |
-| **2** | `#palpites` | **Palpites** — as 16 equipes encaixadas nas vagas do Suíço, com seletor de autor e sobreposição de comparação |
+| **1** | `#sonhos` | **Dota dos Sonhos** — a cola: três equipes e o título, com seletor de autor (Claude / Desleal Dota / NS_Art / Gemini 3.1 Pro) |
+| **2** | `#palpites` | **Palpites** — as 16 equipes encaixadas nas vagas do Suíço, com seletor de autor (Claude / Gemini / 4nalog / NS_Art / Topson) e sobreposição de comparação |
 | **G** | `#guia` | **Guia de Atributos** — os 18 atributos em ordem de valor por função e por cor, com seletor de equipe |
-| **T** | `#tracos` | **Meu Estandarte** — simulador: escolha o nível e o traço que caíram e veja a porcentagem, pela conta do cliente |
+| **T** | `#tracos` | **Meu Estandarte** — simulador: escolha o nível e o traço que caíram e veja a porcentagem, pela conta do cliente. Embaixo, o ranking das montagens **por segurança e por teto**, com o "Evite" acendendo quando o erro está no estandarte montado |
 
 `L` troca o idioma. Os endereços com `#` abrem direto na tela, o que serve pra
 uma fonte de navegador por cena no OBS.
 
 **Todo nome de jogo vem da localização oficial da Valve** — `dota_brazilian.txt`
-e `dota_english.txt` para traços e títulos, e o glossário do cliente
-(`GLOSSARIO_PONTUACAO_2026.md`) para os 18 atributos. Não há tradução nossa em
-nenhum termo do jogo.
+e `dota_english.txt` para traços, títulos e os nomes curtos de atributo, e o
+glossário do cliente (`GLOSSARIO_PONTUACAO_2026.md`) para os nomes longos. Não há
+tradução nossa em nenhum termo do jogo.
+
+O cliente usa **duas grafias** para o mesmo atributo, e nós usamos as duas onde
+ele usa: no glossário de pontuação é *Criaturas (Creep Score)*, na plaquinha do
+emblema é *Finalizações* (`DOTA_PlayerCardBonusStatName2` — "finalização" é o
+termo do jogo para last hit). O Guia mostra o nome do glossário; a cola e o
+simulador mostram o da plaquinha, que é o que se lê no estandarte.
 
 ## Os dados
 
@@ -131,11 +137,16 @@ média. A validação cruzada mais forte: a taxa de herói azul implicada pelo g
 (battlepass, 0,3234) bate com a média da nossa tabela do Reddit (0,3153) — **2,5% entre
 fontes que não se falam**.
 
-44 testes. Guarda de NaN na enumeração inteira, saída determinística bit a bit,
+54 testes. Guarda de NaN na enumeração inteira, saída determinística bit a bit,
 `Math.random` e `Date.now` proibidos em `engine/`.
 
-A validacao mais forte veio de fora: o print do estandarte real de um jogador reproduz
-as **nove porcentagens** exatamente, incluindo o mesmo traco Fractal valendo +80% num
+A validacao mais forte veio de fora: **dois** prints de estandarte real, de jogadores
+diferentes, reproduzem as **nove porcentagens cada um** — dezoito numeros, zero
+ajuste. O segundo (NS_Art) traz o caso que separa modelo certo de modelo quase certo:
+com **dois Únicos** no mesmo estandarte, o cliente mostra os **dois** valendo zero.
+Um modelo que premiasse o primeiro acertaria oito dos nove numeros dele.
+
+O primeiro print ja mostrava o mesmo traco Fractal valendo +80% num
 estandarte e +20% noutro — porque num os tres niveis sao distintos e no outro nao.
 
 Duas armadilhas do jogo foram **descobertas por teste de propriedade** e estão fixadas:
@@ -161,7 +172,7 @@ Benevolente pode piorar os vizinhos (quebra o degrau do Amigável).
 ```bash
 npm install
 npm run dev          # tela cheia; teclas 1 2 G T trocam de cena, L troca o idioma
-npm test             # 44 testes
+npm test             # 54 testes
 
 npx vite-node scripts/cola.ts       # a cola no terminal
 npx vite-node scripts/palpites.ts   # os 16 palpites com estabilidade

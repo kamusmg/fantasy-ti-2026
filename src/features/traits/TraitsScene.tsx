@@ -7,6 +7,7 @@ import type { Emblem, QualityTier, TraitId } from '../../domain/emblems';
 import { DEFAULT_RULES } from '../../domain/rules';
 import { emblemBonuses } from '../../engine/multipliers';
 import { useLang } from '../../i18n/LangContext';
+import type { AvoidId } from '../../i18n/strings';
 
 /**
  * MEU ESTANDARTE — a mesma conta do cliente, com o que caiu pra voce.
@@ -19,21 +20,55 @@ import { useLang } from '../../i18n/LangContext';
  *
  * Ritmo vertical, somado:
  *    64  titulo
- *   108  simulador        (h 470)  -> 578
- *   594  os cinco tracos  (h 400)  -> 994
+ *   108  simulador          (h 404)  ->  512
+ *   526  seguranca x teto   (h 146)  ->  672
+ *   686  os cinco tracos    (h 366)  -> 1052
  *
- * O simulador cresceu de 420 pra 470 quando entrou o painel de condicoes: a
- * coluna da esquerda passou a somar 425px de conteudo e vazava por baixo.
+ * O simulador tinha crescido pra 470 porque a coluna da esquerda somava 425px de
+ * conteudo numa largura de 320. Alargando a coluna pra 400 o paragrafo perde uma
+ * linha e o painel volta a caber em 404 — foi assim que sobrou espaco pro
+ * ranking sem espremer as cartas de referencia.
+ *
+ * A carta mais alta e a do AMIGAVEL: a dica dele tem quatro linhas contra duas ou
+ * tres das outras, e como a dica e ancorada por `marginTop: auto`, faltar altura
+ * nao corta por baixo — ela SOBE e cobre a linha "nos vizinhos". Com 340 ela
+ * vazava 17px nos dois idiomas. Medir sempre por esta carta, nunca pela primeira.
  */
 const SIM_Y = 108;
-const SIM_H = 470;
-const REF_Y = SIM_Y + SIM_H + 16;
-const REF_H = 400;
+const SIM_H = 404;
+const SIM_ASIDE_W = 400;
+const RANK_Y = SIM_Y + SIM_H + 14;
+const RANK_H = 146;
+const REF_Y = RANK_Y + RANK_H + 14;
+const REF_H = 366;
 
 const REF_W = 348;
 const REF_GAP = 16;
 
-type Slot = { readonly quality: QualityTier; readonly trait: TraitId };
+/** Largura de um emblema no simulador: o que sobra da faixa depois da coluna da esquerda. */
+const SLOT_W = Math.floor((1800 - 48 - SIM_ASIDE_W - 49 - 32) / 3);
+
+export type Slot = { readonly quality: QualityTier; readonly trait: TraitId };
+
+/**
+ * Quais erros do "Evite" estao acontecendo no estandarte montado.
+ *
+ * Funcao pura e exportada de proposito: e a unica logica desta tela que da pra
+ * errar em silencio. Um acender trocado nao quebra layout nem lanca excecao —
+ * so ensina a coisa errada, em tela cheia.
+ */
+export function activeAvoids(slots: readonly Slot[]): ReadonlySet<AvoidId> {
+  const uniques = slots.filter((s) => s.trait === 'unique').length;
+  const friendlies = slots.filter((s) => s.trait === 'friendly').length;
+  const distinct = new Set(slots.map((s) => s.quality)).size === slots.length;
+
+  const active = new Set<AvoidId>();
+  if (friendlies > 0 && friendlies < 3) active.add('friendlyIncomplete');
+  if (uniques > 1) active.add('twoUniques');
+  if (slots.some((s) => s.trait === 'fractal') && !distinct) active.add('fractalRepeated');
+  if (slots[1]?.trait === 'vampiric') active.add('vampiricMiddle');
+  return active;
+}
 
 /**
  * Um estado inicial que ja mostra a graca da coisa: tres niveis DIFERENTES com
@@ -178,6 +213,73 @@ function EmblemSlot({
   );
 }
 
+/**
+ * POR SEGURANCA E POR TETO — o ranking das montagens.
+ *
+ * As duas primeiras colunas sao referencia fixa. A terceira NAO e: cada linha do
+ * "Evite" acende quando o erro esta acontecendo no estandarte montado logo acima.
+ * Sem isso seria mais um cartaz; com isso a tela diz "voce esta fazendo ISTO
+ * agora", que e a unica coisa que muda a mao de quem esta com a ficha na mao.
+ */
+function RankingBand({ active }: { readonly active: ReadonlySet<AvoidId> }) {
+  const { t } = useLang();
+
+  const column = (title: string, items: readonly { readonly lead: string; readonly body: string }[]) => (
+    <div style={{ flex: 1, minWidth: 0 }}>
+      <div style={{ fontSize: 12, letterSpacing: '0.14em', color: 'var(--gold)' }}>{title}</div>
+      <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 6 }}>
+        {items.map((item, i) => (
+          <div key={item.lead} style={{ display: 'flex', gap: 8, fontSize: 14, lineHeight: 1.35, color: 'var(--text-dim)' }}>
+            <span className="numeral" style={{ color: 'var(--gold-dim)', flexShrink: 0 }}>{i + 1}.</span>
+            <span>
+              <b style={{ color: 'var(--text)' }}>{item.lead}</b> — {item.body}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  return (
+    <div
+      className="panel"
+      style={{
+        position: 'absolute', left: 60, top: RANK_Y, width: 1800, height: RANK_H,
+        padding: '14px 26px', display: 'flex', gap: 22, alignItems: 'stretch', overflow: 'hidden',
+        background: 'linear-gradient(180deg, var(--bg-panel-hi) 0%, var(--bg-panel) 100%)',
+      }}
+    >
+      {column(t.safestTitle, t.safest)}
+      <div style={{ width: 1, background: 'var(--gold-line)' }} />
+      {column(t.ceilingTitle, t.ceiling)}
+      <div style={{ width: 1, background: 'var(--gold-line)' }} />
+
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: 12, letterSpacing: '0.14em', color: 'var(--warn)' }}>{t.avoidTitle}</div>
+        <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {(Object.keys(t.avoid) as AvoidId[]).map((id) => {
+            const on = active.has(id);
+            return (
+              <div
+                key={id}
+                style={{
+                  display: 'flex', gap: 8, alignItems: 'baseline',
+                  fontSize: 14, lineHeight: 1.35,
+                  color: on ? 'var(--warn)' : 'var(--text-dim)',
+                  fontWeight: on ? 700 : 400,
+                }}
+              >
+                <span style={{ flexShrink: 0, color: on ? 'var(--warn)' : 'var(--text-faint)' }}>{on ? '▶' : '·'}</span>
+                <span>{t.avoid[id]}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function TraitCard({ trait, x }: { readonly trait: TraitId; readonly x: number }) {
   const { lang, t } = useLang();
   const def = TRAIT_DEFINITIONS[trait];
@@ -261,6 +363,8 @@ export function TraitsScene() {
     { on: friendlies >= 3, label: t.condFriendly(friendlies) },
   ];
 
+  const active = activeAvoids(slots);
+
   return (
     <>
       <div style={{ position: 'absolute', top: 64, left: 60, right: 60, display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
@@ -282,7 +386,7 @@ export function TraitsScene() {
         }}
       >
         <div style={{ position: 'absolute', inset: '20px 24px', display: 'flex', gap: 24 }}>
-          <div style={{ width: 320, flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ width: SIM_ASIDE_W, flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
             <div className="display" style={{ fontSize: 23, color: 'var(--gold-bright)', lineHeight: 1.2 }}>
               {t.simTitle}
             </div>
@@ -306,7 +410,14 @@ export function TraitsScene() {
               ))}
             </div>
 
-            <div style={{ marginTop: 'auto' }}>
+            {/*
+              Espaco FIXO, nao `marginTop: auto`.
+              Ancorado no rodape, este bloco descolava bonito em portugues e
+              grudava no "Amigavel — 0 de 3" em ingles, onde o paragrafo e uma
+              linha maior: o auto vira zero exatamente quando a coluna enche.
+              Separacao garantida vale mais que alinhamento no rodape.
+            */}
+            <div style={{ marginTop: 18 }}>
               <div style={{ fontSize: 12, letterSpacing: '0.14em', color: 'var(--gold)' }}>{t.bannerTotal}</div>
               <div className="numeral" style={{ fontSize: 46, fontWeight: 700, color: 'var(--gold-bright)', lineHeight: 1.1 }}>
                 {Math.round(total * 100)}%
@@ -321,11 +432,13 @@ export function TraitsScene() {
 
           <div style={{ flex: 1, position: 'relative' }}>
             {[0, 1, 2].map((i) => (
-              <EmblemSlot key={i} index={i} slots={slots} onChange={change} x={i * (453 + 16)} w={453} />
+              <EmblemSlot key={i} index={i} slots={slots} onChange={change} x={i * (SLOT_W + 16)} w={SLOT_W} />
             ))}
           </div>
         </div>
       </div>
+
+      <RankingBand active={active} />
 
       {/* OS CINCO TRACOS, como referencia */}
       {ALL_TRAIT_IDS.map((trait, i) => (

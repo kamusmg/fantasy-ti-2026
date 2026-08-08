@@ -115,11 +115,16 @@ strongest cross-check: the blue-hero rate implied by the Cerulean gain (battlepa
 matches the mean of our Reddit frequency table (0.3153) — **2.5% apart, between sources that
 never talk to each other**.
 
-44 tests. NaN guard across the full enumeration, bit-identical deterministic output,
+54 tests. NaN guard across the full enumeration, bit-identical deterministic output,
 `Math.random` and `Date.now` banned inside `engine/`.
 
-The strongest validation came from outside: a real player's banner screenshot reproduces
-all **nine percentages** exactly, including the same Fractal trait worth +80% on one
+The strongest validation came from outside: **two** real banner screenshots, from two
+different players, each reproduce all **nine percentages** exactly — eighteen numbers,
+zero fitting. The second one carries the case that separates a correct model from an
+almost-correct one: with **two Uniques** on the same banner, the client shows **both**
+worth zero. A model that rewarded the first would get eight of his nine numbers right.
+
+The first screenshot already showed the same Fractal trait worth +80% on one
 banner and +20% on another — because on one the three tiers are distinct and on the
 other they are not.
 
@@ -147,7 +152,7 @@ lower the banner (it breaks Fractal), and swapping a trait for Benevolent can hu
 ```bash
 npm install
 npm run dev          # full screen; keys 1 2 G T switch scenes, L switches language
-npm test             # 44 tests
+npm test             # 54 tests
 
 npx vite-node scripts/cola.ts       # the cheat sheet, in the terminal
 npx vite-node scripts/palpites.ts   # the 16 predictions with stability
