@@ -1,8 +1,9 @@
 import { BANNER_LAYOUT } from '../domain/roles';
-import type { Period } from '../domain/roles';
+import type { Period, RoleSlot } from '../domain/roles';
 import { STATS_BY_COLOR, STAT_DEFINITIONS } from '../domain/stats';
 import type { EmblemColor, StatId } from '../domain/stats';
 import type { RoleUnit } from '../domain/roster';
+import { estimate } from '../domain/estimate';
 import type { Estimate } from '../domain/estimate';
 
 /**
@@ -53,14 +54,17 @@ function verdictFor(share: number): RerollTarget['verdict'] {
   return 'rerolar';
 }
 
-/** Valor de cada stat de cada cor pro estandarte daquela funcao, naquele time. */
-export function rerollTargets(unit: RoleUnit, period: Period): readonly ColorTargets[] {
-  const colors = BANNER_LAYOUT[unit.slot][period];
+function buildTargets(
+  slot: RoleSlot,
+  period: Period,
+  estimateOf: (statId: StatId) => Estimate,
+): readonly ColorTargets[] {
+  const colors = BANNER_LAYOUT[slot][period];
   const distinct = [...new Set(colors)];
 
   return distinct.map((color) => {
     const ranked = STATS_BY_COLOR[color]
-      .map((statId) => ({ statId, estimate: unit.perMapStat[statId] }))
+      .map((statId) => ({ statId, estimate: estimateOf(statId) }))
       .sort((a, b) => b.estimate.mean - a.estimate.mean);
 
     const best = ranked[0]?.estimate.mean ?? 0;
@@ -68,20 +72,61 @@ export function rerollTargets(unit: RoleUnit, period: Period): readonly ColorTar
     return {
       color,
       emblemCount: colors.filter((c) => c === color).length,
-      targets: ranked.map(({ statId, estimate }) => {
-        const share = best > 0 ? estimate.mean / best : 0;
+      targets: ranked.map(({ statId, estimate: est }) => {
+        const share = best > 0 ? est.mean / best : 0;
         return {
           statId,
           labelPtBr: STAT_DEFINITIONS[statId].labelPtBr,
-          value: estimate.mean,
-          estimate,
-          lossVsBest: best - estimate.mean,
+          value: est.mean,
+          estimate: est,
+          lossVsBest: best - est.mean,
           shareOfBest: share,
           verdict: verdictFor(share),
         };
       }),
     };
   });
+}
+
+/** Valor de cada stat de cada cor pro estandarte daquela funcao, naquele time. */
+export function rerollTargets(unit: RoleUnit, period: Period): readonly ColorTargets[] {
+  return buildTargets(unit.slot, period, (statId) => unit.perMapStat[statId]);
+}
+
+/**
+ * O MESMO ranking, mas na MEDIA DA LIGA — sem time nenhum.
+ *
+ * Existe porque a tela abria travada na equipe recomendada, e uma equipe pode ser
+ * atipica: no azul do Suporte a LGD e um dos dois times (de 16) em que Vigias
+ * Ativados passa Sentinelas Posicionadas. Quem batia o olho lia "Vigias e o
+ * melhor azul do Suporte", que e falso na liga e verdade so ali — e eu mesmo
+ * repeti esse erro por escrito.
+ *
+ * Lei: quando a tela abre num CASO, ela ensina o caso como se fosse a regra. O
+ * padrao tem que ser a regra, e o caso tem que ser escolhido de proposito.
+ */
+export function leagueTargets(
+  slot: RoleSlot,
+  period: Period,
+  leagueMean: Readonly<Record<RoleSlot, Readonly<Record<StatId, number>>>>,
+): readonly ColorTargets[] {
+  return buildTargets(slot, period, (statId) =>
+    estimate(leagueMean[slot][statId], 0, 'battlepass-ru', null, 0));
+}
+
+/**
+ * Quantos atributos do TOPO estao empatados tecnicamente.
+ *
+ * Todo 'guardar' esta a menos de 10% do melhor da cor — dentro do erro do
+ * proprio modelo. Mostrar 100% / 95% / 92% numa fila faz o primeiro parecer A
+ * resposta, quando os tres sao a mesma resposta. Zero = nao ha empate.
+ *
+ * Como a lista vem ordenada e o veredito e monotono na fracao, os 'guardar' sao
+ * sempre o prefixo da lista.
+ */
+export function tieCount(targets: ColorTargets): number {
+  const n = targets.targets.filter((t) => t.verdict === 'guardar').length;
+  return n >= 2 ? n : 0;
 }
 
 /**

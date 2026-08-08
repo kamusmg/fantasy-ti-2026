@@ -56,6 +56,12 @@ interface Strings {
   readonly weSay: string;
   readonly sameAsUs: string;
   readonly agreesWithUs: (n: number) => string;
+  readonly scoresAgainst: (theirs: string, ours: string) => string;
+  readonly comparePrompt: string;
+  readonly compareTitle: string;
+  readonly compareNone: string;
+  readonly compareMore: (n: number) => string;
+  readonly compareNeedsAuthor: string;
   readonly traitTargetLead: string;
   readonly tierV: string;
   readonly tiersDistinct: string;
@@ -68,6 +74,11 @@ interface Strings {
   readonly guideSubtitle: string;
   readonly bannerOrder: string;
   readonly guideMeasuredOn: string;
+  /** Opcao PADRAO do seletor de equipe: a regra geral, nao um caso. */
+  readonly leagueAverage: string;
+  readonly leagueAverageNote: string;
+  /** Selo de empate tecnico: N atributos do topo dentro de 10% um do outro. */
+  readonly tieLabel: (n: number) => string;
   readonly guideColorAbsent: string;
   readonly verdictLabel: Readonly<Record<'guardar' | 'aceitavel' | 'rerolar', string>>;
   readonly guideFooterLead: string;
@@ -166,6 +177,12 @@ const PT: Strings = {
   weSay: 'Claude',
   sameAsUs: 'igual ao nosso',
   agreesWithUs: (n) => `${n} de 16 iguais aos do Claude`,
+  scoresAgainst: (theirs, ours) => `acerta ${theirs} contra ${ours} do Claude Opus, pelo nosso modelo.`,
+  comparePrompt: 'Aperte C pra ver onde os dois discordam, e o que o modelo acha de cada lado.',
+  compareTitle: 'ONDE OS DOIS DISCORDAM',
+  compareNone: 'Nenhuma discordância: os 16 palpites são idênticos aos nossos.',
+  compareMore: (n) => `+${n} discordância${n > 1 ? 's' : ''} menor${n > 1 ? 'es' : ''}`,
+  compareNeedsAuthor: 'escolha outro autor para comparar',
   traitTargetLead: 'ALVO DE RENOVAÇÃO:',
   tierV: 'tudo Nível V',
   tiersDistinct: 'níveis TODOS diferentes ->',
@@ -181,14 +198,17 @@ const PT: Strings = {
   },
 
   guideTitle: 'GUIA DE ATRIBUTOS',
-  guideSubtitle: 'os 18 atributos em ordem de valor — 100% = o melhor da cor',
+  guideSubtitle: 'os 18 atributos em ordem de valor — 100% = o melhor da cor · abre na média da liga',
   bannerOrder: 'ORDEM DO ESTANDARTE',
-  guideMeasuredOn: 'equipe',
+  guideMeasuredOn: 'medido em',
+  leagueAverage: 'MÉDIA DA LIGA',
+  leagueAverageNote: '2.888 replays de 14 ligas — a regra geral, sem equipe nenhuma',
+  tieLabel: (n) => `EMPATE ×${n}`,
   guideColorAbsent: 'Esta função não tem emblema desta cor no estandarte.',
   verdictLabel: { guardar: 'GUARDAR', aceitavel: 'ACEITÁVEL', rerolar: 'RENOVAR' },
   guideFooterLead: 'A cor vem TRAVADA pela função.',
   guideFooterBody:
-    'Você não escolhe a cor do emblema nem o atributo que cai nele — a lista acima diz o que MANTER e o que renovar. O bloco apagado é a cor que aquela função NÃO tem: o Principal não tem azul, o Suporte não tem vermelho.',
+    'Você não escolhe a cor do emblema nem o atributo que cai nele — a lista diz o que MANTER e o que renovar. O bloco apagado é a cor que aquela função NÃO tem: o Principal não tem azul, o Suporte não tem vermelho. Os atributos na faixa verde estão EMPATADOS: a diferença entre eles é menor que o erro do modelo, então ali não existe "o melhor" — fique com o que caiu.',
 
   traitsTitle: 'MEU ESTANDARTE',
   guideTab: 'ATRIBUTOS',
@@ -277,6 +297,12 @@ const EN: Strings = {
   weSay: 'Claude',
   sameAsUs: 'same as ours',
   agreesWithUs: (n) => `${n} of 16 match Claude's`,
+  scoresAgainst: (theirs, ours) => `scores ${theirs} against Claude Opus's ${ours}, by our model.`,
+  comparePrompt: 'Press C to see where the two disagree, and what the model thinks of each side.',
+  compareTitle: 'WHERE THE TWO DISAGREE',
+  compareNone: 'No disagreements: all 16 picks are identical to ours.',
+  compareMore: (n) => `+${n} smaller disagreement${n > 1 ? 's' : ''}`,
+  compareNeedsAuthor: 'pick another author to compare',
   traitTargetLead: 'ROLL TARGET:',
   tierV: 'all Tier V',
   tiersDistinct: 'all tiers DIFFERENT ->',
@@ -292,14 +318,17 @@ const EN: Strings = {
   },
 
   guideTitle: 'STAT GUIDE',
-  guideSubtitle: 'all 18 stats ranked by value — 100% = best of that colour',
+  guideSubtitle: 'all 18 stats ranked by value — 100% = best of that colour · opens on the league average',
   bannerOrder: 'BANNER ORDER',
-  guideMeasuredOn: 'team',
+  guideMeasuredOn: 'measured on',
+  leagueAverage: 'LEAGUE AVERAGE',
+  leagueAverageNote: '2,888 replays across 14 leagues — the general rule, no team involved',
+  tieLabel: (n) => `TIE ×${n}`,
   guideColorAbsent: 'This role has no emblem of this colour on its banner.',
   verdictLabel: { guardar: 'KEEP', aceitavel: 'ACCEPTABLE', rerolar: 'REROLL' },
   guideFooterLead: 'The colour is LOCKED by the role.',
   guideFooterBody:
-    'You pick neither the emblem colour nor the stat that lands on it — the list above says what to KEEP and what to reroll. The dimmed block is the colour that role does NOT have: Core has no blue, Support has no red.',
+    'You pick neither the emblem colour nor the stat that lands on it — the list says what to KEEP and what to reroll. The dimmed block is the colour that role does NOT have: Core has no blue, Support has no red. The stats inside the green band are TIED: the gap between them is smaller than the model\'s own error, so there is no "best" there — keep whatever you rolled.',
 
   traitsTitle: 'MY WAR BANNER',
   guideTab: 'STATS',

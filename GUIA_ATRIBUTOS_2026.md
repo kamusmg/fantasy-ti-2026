@@ -36,6 +36,202 @@ A cor vem **travada pela função** — você não escolhe. O Principal não tem
 e o Suporte não tem emblema vermelho, então atributo daquela cor simplesmente não pode
 cair no estandarte deles.
 
+# Parte 1 — A REGRA GERAL (média da liga)
+
+**É por aqui que se começa.** São 2.888 replays de 14 ligas, sem equipe nenhuma no meio.
+Foi o que a versão escrita à mão tentava dizer, e é o que o site agora mostra por padrão.
+
+---
+
+## PRINCIPAL
+
+Média da liga — **2.888 replays de 14 ligas**, sem equipe nenhuma.
+
+### Vermelho ×2
+
+**Top:** Criaturas, OPM, Mortes · **Ruim:** Lascas de Insanite, Vítimas, Torres Destruídas
+
+> **Empate técnico entre os 3 primeiros.** A diferença entre eles é menor que o erro
+> do próprio modelo — ali não existe "o melhor", fique com o que caiu.
+
+| # | Atributo | Na plaquinha | valor/mapa | % do melhor | veredito |
+|---|---|---|---|---|---|
+| 1 = | Criaturas | Finalizações | 1311 | 100% | Top |
+| 2 = | OPM | OPM | 1296 | 99% | Top |
+| 3 = | Mortes | Mortes | 1203 | 92% | Top |
+| 4 | Lascas de Insanite | Lascas de insanite | 733 | 56% | Ruim |
+| 5 | Vítimas | Vítimas | 717 | 55% | Ruim |
+| 6 | Torres Destruídas | Torres destr. | 687 | 52% | Ruim |
+
+### Verde ×1
+
+**Top:** Participação em Batalhas · **Ruim:** Tormentas Destruídas, Roshans Mortos, Atordoamentos, Primeira Vítima, Entregadores Mortos
+
+| # | Atributo | Na plaquinha | valor/mapa | % do melhor | veredito |
+|---|---|---|---|---|---|
+| 1 | Participação em Batalhas | Bat. equipes | 1315 | 100% | Top |
+| 2 | Tormentas Destruídas | Tormentas destruídas | 684 | 52% | Ruim |
+| 3 | Roshans Mortos | Roshans mortos | 528 | 40% | Ruim |
+| 4 | Atordoamentos | Atordoam. | 298 | 23% | Ruim |
+| 5 | Primeira Vítima | 1ª vítima | 199 | 15% | Ruim |
+| 6 | Entregadores Mortos | Entregadores mortos | 175 | 13% | Ruim |
+
+### Ranking geral da função
+
+Todas as cores do estandarte juntas, em ordem de valor por mapa. **Não é uma lista de
+escolha:** a cor de cada emblema é fixa, então não existe trocar um vermelho por um
+verde. Serve pra saber o que dá mais alegria ver cair.
+
+| # | Atributo | Cor | valor/mapa |
+|---|---|---|---|
+| 1 | Participação em Batalhas | Verde | 1315 |
+| 2 | Criaturas | Vermelho | 1311 |
+| 3 | OPM | Vermelho | 1296 |
+| 4 | Mortes | Vermelho | 1203 |
+| 5 | Lascas de Insanite | Vermelho | 733 |
+| 6 | Vítimas | Vermelho | 717 |
+| 7 | Torres Destruídas | Vermelho | 687 |
+| 8 | Tormentas Destruídas | Verde | 684 |
+| 9 | Roshans Mortos | Verde | 528 |
+| 10 | Atordoamentos | Verde | 298 |
+| 11 | Primeira Vítima | Verde | 199 |
+| 12 | Entregadores Mortos | Verde | 175 |
+
+---
+
+## MEIO
+
+Média da liga — **2.888 replays de 14 ligas**, sem equipe nenhuma.
+
+### Vermelho ×1
+
+**Top:** Mortes, OPM, Criaturas · **Ruim:** Vítimas, Lascas de Insanite, Torres Destruídas
+
+> **Empate técnico entre os 3 primeiros.** A diferença entre eles é menor que o erro
+> do próprio modelo — ali não existe "o melhor", fique com o que caiu.
+
+| # | Atributo | Na plaquinha | valor/mapa | % do melhor | veredito |
+|---|---|---|---|---|---|
+| 1 = | Mortes | Mortes | 1225 | 100% | Top |
+| 2 = | OPM | OPM | 1220 | 100% | Top |
+| 3 = | Criaturas | Finalizações | 1193 | 97% | Top |
+| 4 | Vítimas | Vítimas | 787 | 64% | Ruim |
+| 5 | Lascas de Insanite | Lascas de insanite | 494 | 40% | Ruim |
+| 6 | Torres Destruídas | Torres destr. | 387 | 32% | Ruim |
+
+### Azul ×1
+
+**Top:** Runas Obtidas · **Ruim:** Acampamentos Acumulados, Lótus Obtidos, Vigias Ativados, Sentinelas Posicionadas, Fumaças Usadas
+
+| # | Atributo | Na plaquinha | valor/mapa | % do melhor | veredito |
+|---|---|---|---|---|---|
+| 1 | Runas Obtidas | Runas obtidas | 1434 | 100% | Top |
+| 2 | Acampamentos Acumulados | Acamp. acu. | 465 | 32% | Ruim |
+| 3 | Lótus Obtidos | Lótus obtidos | 212 | 15% | Ruim |
+| 4 | Vigias Ativados | Vigias ativados | 178 | 12% | Ruim |
+| 5 | Sentinelas Posicionadas | Sent. Obs. | 175 | 12% | Ruim |
+| 6 | Fumaças Usadas | Fumaças usadas | 14 | 1% | Ruim |
+
+### Verde ×1
+
+**Top:** Participação em Batalhas · **Ruim:** Tormentas Destruídas, Atordoamentos, Roshans Mortos, Entregadores Mortos, Primeira Vítima
+
+| # | Atributo | Na plaquinha | valor/mapa | % do melhor | veredito |
+|---|---|---|---|---|---|
+| 1 | Participação em Batalhas | Bat. equipes | 1484 | 100% | Top |
+| 2 | Tormentas Destruídas | Tormentas destruídas | 464 | 31% | Ruim |
+| 3 | Atordoamentos | Atordoam. | 348 | 23% | Ruim |
+| 4 | Roshans Mortos | Roshans mortos | 289 | 19% | Ruim |
+| 5 | Entregadores Mortos | Entregadores mortos | 206 | 14% | Ruim |
+| 6 | Primeira Vítima | 1ª vítima | 115 | 8% | Ruim |
+
+### Ranking geral da função
+
+Todas as cores do estandarte juntas, em ordem de valor por mapa. **Não é uma lista de
+escolha:** a cor de cada emblema é fixa, então não existe trocar um vermelho por um
+verde. Serve pra saber o que dá mais alegria ver cair.
+
+| # | Atributo | Cor | valor/mapa |
+|---|---|---|---|
+| 1 | Participação em Batalhas | Verde | 1484 |
+| 2 | Runas Obtidas | Azul | 1434 |
+| 3 | Mortes | Vermelho | 1225 |
+| 4 | OPM | Vermelho | 1220 |
+| 5 | Criaturas | Vermelho | 1193 |
+| 6 | Vítimas | Vermelho | 787 |
+| 7 | Lascas de Insanite | Vermelho | 494 |
+| 8 | Acampamentos Acumulados | Azul | 465 |
+| 9 | Tormentas Destruídas | Verde | 464 |
+| 10 | Torres Destruídas | Vermelho | 387 |
+| 11 | Atordoamentos | Verde | 348 |
+| 12 | Roshans Mortos | Verde | 289 |
+| 13 | Lótus Obtidos | Azul | 212 |
+| 14 | Entregadores Mortos | Verde | 206 |
+| 15 | Vigias Ativados | Azul | 178 |
+| 16 | Sentinelas Posicionadas | Azul | 175 |
+| 17 | Primeira Vítima | Verde | 115 |
+| 18 | Fumaças Usadas | Azul | 14 |
+
+---
+
+## SUPORTE
+
+Média da liga — **2.888 replays de 14 ligas**, sem equipe nenhuma.
+
+### Azul ×2
+
+**Top:** Sentinelas Posicionadas · **Médio:** Fumaças Usadas, Acampamentos Acumulados, Vigias Ativados · **Ruim:** Lótus Obtidos, Runas Obtidas
+
+| # | Atributo | Na plaquinha | valor/mapa | % do melhor | veredito |
+|---|---|---|---|---|---|
+| 1 | Sentinelas Posicionadas | Sent. Obs. | 1049 | 100% | Top |
+| 2 | Fumaças Usadas | Fumaças usadas | 942 | 90% | Médio |
+| 3 | Acampamentos Acumulados | Acamp. acu. | 893 | 85% | Médio |
+| 4 | Vigias Ativados | Vigias ativados | 872 | 83% | Médio |
+| 5 | Lótus Obtidos | Lótus obtidos | 629 | 60% | Ruim |
+| 6 | Runas Obtidas | Runas obtidas | 419 | 40% | Ruim |
+
+### Verde ×1
+
+**Top:** Participação em Batalhas · **Ruim:** Tormentas Destruídas, Atordoamentos, Entregadores Mortos, Primeira Vítima, Roshans Mortos
+
+| # | Atributo | Na plaquinha | valor/mapa | % do melhor | veredito |
+|---|---|---|---|---|---|
+| 1 | Participação em Batalhas | Bat. equipes | 1410 | 100% | Top |
+| 2 | Tormentas Destruídas | Tormentas destruídas | 428 | 30% | Ruim |
+| 3 | Atordoamentos | Atordoam. | 407 | 29% | Ruim |
+| 4 | Entregadores Mortos | Entregadores mortos | 299 | 21% | Ruim |
+| 5 | Primeira Vítima | 1ª vítima | 222 | 16% | Ruim |
+| 6 | Roshans Mortos | Roshans mortos | 55 | 4% | Ruim |
+
+### Ranking geral da função
+
+Todas as cores do estandarte juntas, em ordem de valor por mapa. **Não é uma lista de
+escolha:** a cor de cada emblema é fixa, então não existe trocar um vermelho por um
+verde. Serve pra saber o que dá mais alegria ver cair.
+
+| # | Atributo | Cor | valor/mapa |
+|---|---|---|---|
+| 1 | Participação em Batalhas | Verde | 1410 |
+| 2 | Sentinelas Posicionadas | Azul | 1049 |
+| 3 | Fumaças Usadas | Azul | 942 |
+| 4 | Acampamentos Acumulados | Azul | 893 |
+| 5 | Vigias Ativados | Azul | 872 |
+| 6 | Lótus Obtidos | Azul | 629 |
+| 7 | Tormentas Destruídas | Verde | 428 |
+| 8 | Runas Obtidas | Azul | 419 |
+| 9 | Atordoamentos | Verde | 407 |
+| 10 | Entregadores Mortos | Verde | 299 |
+| 11 | Primeira Vítima | Verde | 222 |
+| 12 | Roshans Mortos | Verde | 55 |
+
+# Parte 2 — O CASO DE CADA EQUIPE RECOMENDADA
+
+Os mesmos atributos, medidos na equipe que o motor recomenda para cada função. **Isto é
+um caso, não a regra** — e a diferença importa: no azul do Suporte, a LGD é uma das DUAS
+equipes (de 16) em que Vigias Ativados passa Sentinelas Posicionadas. Ler o caso como se
+fosse a regra é exatamente o erro que este arquivo já cometeu.
+
 ---
 
 ## PRINCIPAL
@@ -46,11 +242,14 @@ Medido em **TEAM VISION** — Satanic e Noticed.
 
 **Top:** OPM, Criaturas, Mortes · **Ruim:** Lascas de Insanite, Vítimas, Torres Destruídas
 
+> **Empate técnico entre os 3 primeiros.** A diferença entre eles é menor que o erro
+> do próprio modelo — ali não existe "o melhor", fique com o que caiu.
+
 | # | Atributo | Na plaquinha | valor/mapa | % do melhor | veredito |
 |---|---|---|---|---|---|
-| 1 | OPM | OPM | 1338 | 100% | Top |
-| 2 | Criaturas | Finalizações | 1334 | 100% | Top |
-| 3 | Mortes | Mortes | 1303 | 97% | Top |
+| 1 = | OPM | OPM | 1338 | 100% | Top |
+| 2 = | Criaturas | Finalizações | 1334 | 100% | Top |
+| 3 = | Mortes | Mortes | 1303 | 97% | Top |
 | 4 | Lascas de Insanite | Lascas de insanite | 770 | 58% | Ruim |
 | 5 | Vítimas | Vítimas | 764 | 57% | Ruim |
 | 6 | Torres Destruídas | Torres destr. | 713 | 53% | Ruim |
@@ -99,11 +298,14 @@ Medido em **Team Falcons** — Malr1ne.
 
 **Top:** OPM, Criaturas, Mortes · **Ruim:** Vítimas, Lascas de Insanite, Torres Destruídas
 
+> **Empate técnico entre os 3 primeiros.** A diferença entre eles é menor que o erro
+> do próprio modelo — ali não existe "o melhor", fique com o que caiu.
+
 | # | Atributo | Na plaquinha | valor/mapa | % do melhor | veredito |
 |---|---|---|---|---|---|
-| 1 | OPM | OPM | 1228 | 100% | Top |
-| 2 | Criaturas | Finalizações | 1220 | 99% | Top |
-| 3 | Mortes | Mortes | 1165 | 95% | Top |
+| 1 = | OPM | OPM | 1228 | 100% | Top |
+| 2 = | Criaturas | Finalizações | 1220 | 99% | Top |
+| 3 = | Mortes | Mortes | 1165 | 95% | Top |
 | 4 | Vítimas | Vítimas | 838 | 68% | Ruim |
 | 5 | Lascas de Insanite | Lascas de insanite | 558 | 45% | Ruim |
 | 6 | Torres Destruídas | Torres destr. | 416 | 34% | Ruim |
@@ -171,11 +373,14 @@ Medido em **LGD Gaming** — Thiolicor e KJ.
 
 **Top:** Vigias Ativados, Acampamentos Acumulados, Sentinelas Posicionadas · **Médio:** Fumaças Usadas · **Ruim:** Lótus Obtidos, Runas Obtidas
 
+> **Empate técnico entre os 3 primeiros.** A diferença entre eles é menor que o erro
+> do próprio modelo — ali não existe "o melhor", fique com o que caiu.
+
 | # | Atributo | Na plaquinha | valor/mapa | % do melhor | veredito |
 |---|---|---|---|---|---|
-| 1 | Vigias Ativados | Vigias ativados | 1233 | 100% | Top |
-| 2 | Acampamentos Acumulados | Acamp. acu. | 1171 | 95% | Top |
-| 3 | Sentinelas Posicionadas | Sent. Obs. | 1132 | 92% | Top |
+| 1 = | Vigias Ativados | Vigias ativados | 1233 | 100% | Top |
+| 2 = | Acampamentos Acumulados | Acamp. acu. | 1171 | 95% | Top |
+| 3 = | Sentinelas Posicionadas | Sent. Obs. | 1132 | 92% | Top |
 | 4 | Fumaças Usadas | Fumaças usadas | 954 | 77% | Médio |
 | 5 | Lótus Obtidos | Lótus obtidos | 880 | 71% | Ruim |
 | 6 | Runas Obtidas | Runas obtidas | 711 | 58% | Ruim |
@@ -223,7 +428,6 @@ precisa saber o que trocar de ideia.
 
 | onde | a tabela dizia | o motor mede |
 |---|---|---|
-| Suporte, azul | não citava **Vigias Ativados** | é o **melhor da cor** |
 | Suporte, azul | listava "Lascas" | Lascas é **vermelho** — não existe nesse estandarte |
 | Meio, vermelho | Vítimas Top, Mortes Médio | **Mortes** vale mais que **Vítimas** |
 | Meio, azul | Acampamentos Ruim, Vigias Médio | **Acampamentos** vale mais que **Vigias** |
@@ -231,6 +435,19 @@ precisa saber o que trocar de ideia.
 | Principal, vermelho | Lascas Ruim, Torres Médio | **Lascas** vale mais que **Torres** |
 | Suporte, verde | não citava Entregadores | é o **segundo** da cor |
 | geral | "Ruim: RNG" | RNG não é atributo |
+
+### E o que EU errei ao corrigi-la
+
+Numa versão anterior deste arquivo eu escrevi que a tabela errava por **não citar Vigias
+Ativados como o melhor azul do Suporte**. Isso está errado, e o erro é meu: eu li o número
+da LGD — a equipe recomendada, e portanto a que a tela abria — e o apresentei como fato da
+liga. Na média das 14 ligas o melhor azul do Suporte é **Sentinelas Posicionadas**, e
+Vigias lidera em apenas **2 das 16** equipes. A tabela escrita à mão estava CERTA nesse
+ponto.
+
+A causa não era o cálculo: era a tela abrir travada numa equipe. Por isso o padrão do
+seletor virou a média da liga, e a lista de equipes virou ordem alfabética, sem estrela.
+**Lei: quando a tela abre num caso, ela ensina o caso como se fosse a regra.**
 
 Nomes trocados: *Pedras Loucas* → **Lascas de Insanite**, *Abates* → **Vítimas**,
 *Poucas Mortes* → **Mortes**, *Stacks* → **Acampamentos Acumulados**,

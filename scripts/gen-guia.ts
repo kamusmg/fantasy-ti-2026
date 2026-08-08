@@ -21,9 +21,11 @@ import { buildContext } from '../src/engine/context';
 import { evaluateRoleCandidates } from '../src/engine/optimize';
 import { rankTeams } from '../src/engine/teamRanking';
 import { ALL_ROLE_SLOTS, BANNER_LAYOUT, ROLE_LABEL_PT_BR } from '../src/domain/roles';
+import type { RoleSlot } from '../src/domain/roles';
 import { COLOR_LABEL_PT_BR, STAT_DEFINITIONS } from '../src/domain/stats';
 import type { StatId } from '../src/domain/stats';
-import type { RerollTarget } from '../src/engine/rerollTargets';
+import { leagueTargets, tieCount } from '../src/engine/rerollTargets';
+import type { ColorTargets, RerollTarget } from '../src/engine/rerollTargets';
 import teamStrengthRaw from '../src/data/raw/teamStrength.json';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -99,29 +101,31 @@ out('e o Suporte não tem emblema vermelho, então atributo daquela cor simplesm
 out('cair no estandarte deles.');
 out();
 
-for (const slot of ALL_ROLE_SLOTS) {
-  const leader = ranking[slot].teams[0];
-  const team = data.teams.get(leader.teamId);
-  const unit = data.roleUnits.get(`${leader.teamId}:${slot}`);
-  const roster = (unit?.playerIds ?? []).map((id) => data.players.get(id)?.nick ?? id);
-
+function section(slot: RoleSlot, subtitle: string, colors: readonly ColorTargets[]) {
   out('---');
   out();
   out(`## ${ROLE_LABEL_PT_BR[slot].toUpperCase()}`);
   out();
-  out(`Medido em **${team?.name ?? leader.teamId}** — ${roster.join(' e ')}.`);
+  out(subtitle);
   out();
 
-  for (const color of leader.rerollTargets) {
+  for (const color of colors) {
     out(`### ${COLOR_LABEL_PT_BR[color.color]} ×${color.emblemCount}`);
     out();
     out(tiersLine(color.targets));
     out();
+    const tied = tieCount(color);
+    if (tied > 0) {
+      out(`> **Empate técnico entre os ${tied} primeiros.** A diferença entre eles é menor que o erro`);
+      out('> do próprio modelo — ali não existe "o melhor", fique com o que caiu.');
+      out();
+    }
     out('| # | Atributo | Na plaquinha | valor/mapa | % do melhor | veredito |');
     out('|---|---|---|---|---|---|');
     color.targets.forEach((t, i) => {
       const n = names(t.statId);
-      out(`| ${i + 1} | ${n.full} | ${n.chip} | ${t.value.toFixed(0)} | ${pct(t)} | ${VERDICT_WORD[t.verdict]} |`);
+      const mark = i < tied ? ' =' : '';
+      out(`| ${i + 1}${mark} | ${n.full} | ${n.chip} | ${t.value.toFixed(0)} | ${pct(t)} | ${VERDICT_WORD[t.verdict]} |`);
     });
     out();
   }
@@ -132,7 +136,7 @@ for (const slot of ALL_ROLE_SLOTS) {
    * Serve pra saber o que da mais alegria ver cair, NAO pra decidir troca — a cor
    * do emblema e fixa, entao nao existe trocar um vermelho por um verde.
    */
-  const all = leader.rerollTargets
+  const all = colors
     .flatMap((c) => c.targets.map((t) => ({ ...t, color: c.color })))
     .sort((a, b) => b.value - a.value);
 
@@ -150,6 +154,31 @@ for (const slot of ALL_ROLE_SLOTS) {
   out();
 }
 
+out('# Parte 1 — A REGRA GERAL (média da liga)');
+out();
+out('**É por aqui que se começa.** São 2.888 replays de 14 ligas, sem equipe nenhuma no meio.');
+out('Foi o que a versão escrita à mão tentava dizer, e é o que o site agora mostra por padrão.');
+out();
+for (const slot of ALL_ROLE_SLOTS) {
+  section(slot, 'Média da liga — **2.888 replays de 14 ligas**, sem equipe nenhuma.',
+    leagueTargets(slot, 'groupStage', data.leagueMean));
+}
+
+out('# Parte 2 — O CASO DE CADA EQUIPE RECOMENDADA');
+out();
+out('Os mesmos atributos, medidos na equipe que o motor recomenda para cada função. **Isto é');
+out('um caso, não a regra** — e a diferença importa: no azul do Suporte, a LGD é uma das DUAS');
+out('equipes (de 16) em que Vigias Ativados passa Sentinelas Posicionadas. Ler o caso como se');
+out('fosse a regra é exatamente o erro que este arquivo já cometeu.');
+out();
+for (const slot of ALL_ROLE_SLOTS) {
+  const leader = ranking[slot].teams[0];
+  const team = data.teams.get(leader.teamId);
+  const unit = data.roleUnits.get(`${leader.teamId}:${slot}`);
+  const roster = (unit?.playerIds ?? []).map((id) => data.players.get(id)?.nick ?? id);
+  section(slot, `Medido em **${team?.name ?? leader.teamId}** — ${roster.join(' e ')}.`, leader.rerollTargets);
+}
+
 out('---');
 out();
 out('## O que a versão escrita à mão errava');
@@ -159,7 +188,6 @@ out('precisa saber o que trocar de ideia.');
 out();
 out('| onde | a tabela dizia | o motor mede |');
 out('|---|---|---|');
-out('| Suporte, azul | não citava **Vigias Ativados** | é o **melhor da cor** |');
 out('| Suporte, azul | listava "Lascas" | Lascas é **vermelho** — não existe nesse estandarte |');
 out('| Meio, vermelho | Vítimas Top, Mortes Médio | **Mortes** vale mais que **Vítimas** |');
 out('| Meio, azul | Acampamentos Ruim, Vigias Médio | **Acampamentos** vale mais que **Vigias** |');
@@ -167,6 +195,19 @@ out('| Meio, azul | não citava Fumaças | é o **piso** da cor |');
 out('| Principal, vermelho | Lascas Ruim, Torres Médio | **Lascas** vale mais que **Torres** |');
 out('| Suporte, verde | não citava Entregadores | é o **segundo** da cor |');
 out('| geral | "Ruim: RNG" | RNG não é atributo |');
+out();
+out('### E o que EU errei ao corrigi-la');
+out();
+out('Numa versão anterior deste arquivo eu escrevi que a tabela errava por **não citar Vigias');
+out('Ativados como o melhor azul do Suporte**. Isso está errado, e o erro é meu: eu li o número');
+out('da LGD — a equipe recomendada, e portanto a que a tela abria — e o apresentei como fato da');
+out('liga. Na média das 14 ligas o melhor azul do Suporte é **Sentinelas Posicionadas**, e');
+out('Vigias lidera em apenas **2 das 16** equipes. A tabela escrita à mão estava CERTA nesse');
+out('ponto.');
+out();
+out('A causa não era o cálculo: era a tela abrir travada numa equipe. Por isso o padrão do');
+out('seletor virou a média da liga, e a lista de equipes virou ordem alfabética, sem estrela.');
+out('**Lei: quando a tela abre num caso, ela ensina o caso como se fosse a regra.**');
 out();
 out('Nomes trocados: *Pedras Loucas* → **Lascas de Insanite**, *Abates* → **Vítimas**,');
 out('*Poucas Mortes* → **Mortes**, *Stacks* → **Acampamentos Acumulados**,');

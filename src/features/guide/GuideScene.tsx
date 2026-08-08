@@ -4,6 +4,7 @@ import { GoldRule } from '../../ui/primitives';
 import { BANNER_LAYOUT, ROLE_POSITIONS } from '../../domain/roles';
 import type { RoleSlot } from '../../domain/roles';
 import type { EmblemColor } from '../../domain/stats';
+import { leagueTargets, tieCount } from '../../engine/rerollTargets';
 import type { ColorTargets, RerollTarget } from '../../engine/rerollTargets';
 import { useLang } from '../../i18n/LangContext';
 import { label } from '../../i18n/strings';
@@ -29,7 +30,10 @@ import { label } from '../../i18n/strings';
 const CARD_Y = 108;
 const CARD_H = 796;
 const FOOT_Y = CARD_Y + CARD_H + 14;
-const FOOT_H = 110;
+const FOOT_H = 140;
+
+/** Valor sentinela do seletor: a media da liga nao e uma equipe. */
+const LEAGUE_OPTION = '__liga__';
 
 const VERDICT_COLOR = {
   guardar: '#8fd46e',
@@ -49,13 +53,29 @@ const EMBLEM_VAR: Readonly<Record<EmblemColor, string>> = {
  * A barra e o numero sao a mesma informacao — a barra pra quem esta assistindo e
  * so bate o olho, o numero pra quem esta decidindo se gasta ficha.
  */
-function StatRow({ target }: { readonly target: RerollTarget }) {
+function StatRow({ target, tied }: { readonly target: RerollTarget; readonly tied: boolean }) {
   const { lang } = useLang();
-  const pct = Math.round(target.shareOfBest * 100);
+  /**
+   * FLOOR, nao round. Com arredondamento, 89,8% aparecia como "90%" pintado de
+   * ACEITAVEL — e a legenda logo abaixo diz que 90% e GUARDAR. O numero e a cor
+   * se contradiziam na mesma linha. Como os dois cortes (90% e 72%) sao inteiros,
+   * truncar faz o numero exibido cair sempre do mesmo lado da regra.
+   */
+  const raw = target.shareOfBest * 100;
+  const pct = raw > 0 ? Math.max(1, Math.floor(raw)) : 0;
   const color = VERDICT_COLOR[target.verdict];
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 10, height: 20 }}>
+    <div
+      style={{
+        display: 'flex', alignItems: 'center', gap: 10, height: 20,
+        // A faixa amarra os empatados visualmente: eles sao UMA resposta, nao
+        // um pódio. Sem isto o olho le a ordem da lista como hierarquia.
+        borderLeft: tied ? `3px solid ${VERDICT_COLOR.guardar}` : '3px solid transparent',
+        background: tied ? 'rgba(143,212,110,0.08)' : 'transparent',
+        paddingLeft: 7, marginLeft: -10,
+      }}
+    >
       <span
         style={{
           flex: 1, minWidth: 0, fontSize: 15, color: 'var(--text)',
@@ -86,6 +106,7 @@ function StatRow({ target }: { readonly target: RerollTarget }) {
  */
 function ColorBlock({ color, targets }: { readonly color: EmblemColor; readonly targets?: ColorTargets }) {
   const { lang, t } = useLang();
+  const tied = targets ? tieCount(targets) : 0;
 
   return (
     <div
@@ -93,11 +114,29 @@ function ColorBlock({ color, targets }: { readonly color: EmblemColor; readonly 
       data-color={color}
       style={{ display: 'block', padding: '12px 14px', flexShrink: 0, opacity: targets ? 1 : 0.55 }}
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 8 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 8, gap: 10 }}>
         <span style={{ fontSize: 13, letterSpacing: '0.12em', fontWeight: 600, color: EMBLEM_VAR[color] }}>
           {label.color(color, lang).toUpperCase()}
         </span>
-        <span style={{ fontSize: 13, letterSpacing: '0.06em', color: targets ? 'var(--gold)' : 'var(--text-faint)' }}>
+
+        {/*
+          O selo de empate vai na LINHA DO CABECALHO, que ja existe — assim ele
+          custa zero altura. O card do Guia soma 796px na unha e nao tem folga
+          pra mais uma linha em cada bloco de cor.
+        */}
+        {tied > 0 && (
+          <span
+            style={{
+              fontSize: 11, fontWeight: 700, letterSpacing: '0.08em',
+              color: VERDICT_COLOR.guardar, border: `1px solid ${VERDICT_COLOR.guardar}`,
+              borderRadius: 2, padding: '1px 7px', whiteSpace: 'nowrap',
+            }}
+          >
+            {t.tieLabel(tied)}
+          </span>
+        )}
+
+        <span style={{ fontSize: 13, letterSpacing: '0.06em', color: targets ? 'var(--gold)' : 'var(--text-faint)', marginLeft: 'auto' }}>
           {targets ? `×${targets.emblemCount}` : '×0'}
         </span>
       </div>
@@ -105,7 +144,9 @@ function ColorBlock({ color, targets }: { readonly color: EmblemColor; readonly 
       {targets
         ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-            {targets.targets.map((tg) => <StatRow key={tg.statId} target={tg} />)}
+            {targets.targets.map((tg, i) => (
+              <StatRow key={tg.statId} target={tg} tied={i < tied} />
+            ))}
           </div>
         )
         : (
@@ -163,7 +204,27 @@ function RoleGuideCard({
   const { lang, t } = useLang();
 
   const ranked = teamRanking[slot].teams;
-  const leader = (teamId ? ranked.find((tm) => tm.teamId === teamId) : undefined) ?? ranked[0];
+  const nameOf = (id: string) => data.teams.get(id)?.name ?? id;
+
+  /**
+   * Ordem ALFABETICA, sem estrela e sem numero.
+   *
+   * Antes vinha na ordem do nosso ranking, com ★ na recomendada. Duas coisas
+   * erradas nisso: o seletor e "qual equipe eu quero OLHAR", nao um podio; e a
+   * estrela empurrava todo mundo pra equipe recomendada, que pode ser atipica —
+   * era ela que fazia a tela ensinar o caso da LGD como se fosse a regra.
+   */
+  const teamsAZ = [...ranked].sort((a, b) => nameOf(a.teamId).localeCompare(nameOf(b.teamId), 'pt-BR'));
+
+  const selected = teamId ? ranked.find((tm) => tm.teamId === teamId) : undefined;
+  const targets = selected
+    ? selected.rerollTargets
+    : leagueTargets(slot, 'groupStage', data.leagueMean);
+  const roster = selected
+    ? (data.roleUnits.get(`${selected.teamId}:${slot}`)?.playerIds ?? [])
+      .map((id) => data.players.get(id)?.nick ?? id)
+      .join(` ${t.andWord} `)
+    : t.leagueAverageNote;
 
   return (
     <div
@@ -187,17 +248,16 @@ function RoleGuideCard({
       {/*
         De QUEM sao esses numeros — e trocavel.
         O valor de um atributo depende da equipe: Runas no Meio do Falcons nao
-        vale o mesmo que no de outra. Sem poder trocar, a tela so servia pra quem
-        fosse seguir a recomendacao. As opcoes vem na ordem do ranking, e a
-        primeira (★) e a que o modelo recomenda.
+        vale o mesmo que no de outra. O PADRAO e a media da liga, que e a regra
+        geral; equipe se escolhe de proposito.
       */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 }}>
         <span style={{ fontSize: 12, letterSpacing: '0.12em', color: 'var(--text-faint)' }}>
           {t.guideMeasuredOn.toUpperCase()}
         </span>
         <select
-          value={leader.teamId}
-          onChange={(e) => onPickTeam(e.target.value === ranked[0].teamId ? null : e.target.value)}
+          value={selected?.teamId ?? LEAGUE_OPTION}
+          onChange={(e) => onPickTeam(e.target.value === LEAGUE_OPTION ? null : e.target.value)}
           style={{
             font: 'inherit', fontSize: 15, fontWeight: 600, cursor: 'pointer',
             padding: '3px 8px', borderRadius: 3,
@@ -205,9 +265,12 @@ function RoleGuideCard({
             background: 'rgba(0,0,0,0.35)', color: 'var(--gold-bright)',
           }}
         >
-          {ranked.map((tm, i) => (
+          <option value={LEAGUE_OPTION} style={{ background: 'var(--bg-panel)', color: 'var(--text)' }}>
+            {t.leagueAverage}
+          </option>
+          {teamsAZ.map((tm) => (
             <option key={tm.teamId} value={tm.teamId} style={{ background: 'var(--bg-panel)', color: 'var(--text)' }}>
-              {i === 0 ? '★ ' : `${i + 1}. `}{data.teams.get(tm.teamId)?.name ?? tm.teamId}
+              {nameOf(tm.teamId)}
             </option>
           ))}
         </select>
@@ -220,9 +283,7 @@ function RoleGuideCard({
         confere as duas telas lado a lado precisa dos dois pra fechar.
       */}
       <div style={{ fontSize: 15, color: 'var(--text-dim)', marginTop: 6, minHeight: 20, letterSpacing: '0.02em' }}>
-        {(data.roleUnits.get(`${leader.teamId}:${slot}`)?.playerIds ?? [])
-          .map((id) => data.players.get(id)?.nick ?? id)
-          .join(` ${t.andWord} `)}
+        {roster}
       </div>
 
 
@@ -242,7 +303,7 @@ function RoleGuideCard({
         }}
       >
         {(['red', 'blue', 'green'] as const).map((color) => (
-          <ColorBlock key={color} color={color} targets={leader.rerollTargets.find((c) => c.color === color)} />
+          <ColorBlock key={color} color={color} targets={targets.find((c) => c.color === color)} />
         ))}
       </div>
     </div>
@@ -279,7 +340,7 @@ export function GuideScene() {
           background: 'linear-gradient(180deg, var(--bg-panel-hi) 0%, var(--bg-panel) 100%)',
         }}
       >
-        <div style={{ display: 'flex', gap: 14, flexShrink: 0 }}>
+        <div style={{ display: 'flex', gap: 14, flexShrink: 0, flexWrap: 'wrap', maxWidth: 400 }}>
           {(['guardar', 'aceitavel', 'rerolar'] as const).map((v) => (
             <span
               key={v}
@@ -291,6 +352,15 @@ export function GuideScene() {
               {t.verdictLabel[v]}
             </span>
           ))}
+          <span
+            style={{
+              fontSize: 13, fontWeight: 700, letterSpacing: '0.1em', color: VERDICT_COLOR.guardar,
+              borderLeft: `3px solid ${VERDICT_COLOR.guardar}`, borderRadius: 2, padding: '5px 12px',
+              background: 'rgba(143,212,110,0.08)',
+            }}
+          >
+            {t.tieLabel(3).split(' ')[0]}
+          </span>
         </div>
         <div style={{ width: 1, alignSelf: 'stretch', background: 'var(--gold-line)' }} />
         <div style={{ flex: 1, fontSize: 19, color: 'var(--text)', lineHeight: 1.45 }}>

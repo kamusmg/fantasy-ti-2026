@@ -200,6 +200,26 @@ export function PredictionsScene() {
     .filter(([id, b]) => ourPicks[id] === b).length;
 
   /**
+   * As discordancias, com a probabilidade que o NOSSO modelo da a cada lado.
+   *
+   * Ordenadas pelo tamanho da divergencia, nao por nome: numa live so da tempo
+   * de falar das duas ou tres que decidem, e sao essas que explicam o placar.
+   */
+  const disagreements = Object.entries(author.picks)
+    .flatMap(([teamId, theirBucket]) => {
+      const ourBucket = ourPicks[teamId];
+      if (ourBucket === undefined || ourBucket === theirBucket) return [];
+      return [{
+        teamId,
+        theirBucket,
+        ourBucket,
+        theirs: probability[teamId]?.[theirBucket] ?? 0,
+        ours: probability[teamId]?.[ourBucket] ?? 0,
+      }];
+    })
+    .sort((a, b) => Math.abs(b.ours - b.theirs) - Math.abs(a.ours - a.theirs));
+
+  /**
    * Quanto acerta quem sorteia os 16 times nas 16 vagas: soma de vagas^2 / 16 =
    * (1+4+25+25+4+1)/16 = 3,75. Sem essa regua, "5,1 de 16" parece derrota.
    */
@@ -261,22 +281,31 @@ export function PredictionsScene() {
             </button>
           ))}
 
-          {!author.isModel && (
-            <button
-              type="button"
-              onClick={() => setOverlay((v) => !v)}
-              style={{
-                font: 'inherit', cursor: 'pointer', fontSize: 14, letterSpacing: '0.06em',
-                padding: '8px 14px', borderRadius: 3, marginLeft: 6,
-                border: `2px solid ${overlay ? 'var(--warn)' : 'var(--gold-line)'}`,
-                color: overlay ? '#1b1006' : 'var(--gold)',
-                background: overlay ? 'var(--warn)' : 'rgba(0,0,0,0.30)',
-                fontWeight: overlay ? 700 : 500,
-              }}
-            >
-              C · {lang === 'pt' ? 'COMPARAR' : 'COMPARE'}
-            </button>
-          )}
+          {/*
+            SEMPRE renderizado, mesmo sem servir.
+            Ele aparecia so em autor nao-modelo, e como a fileira e centralizada,
+            surgir um botao de 140px empurrava os outros cinco pro lado no meio
+            da apresentacao. Botao que entra e sai muda o layout dos vizinhos;
+            botao desabilitado nao muda nada e ainda ensina o que ele faz.
+          */}
+          <button
+            type="button"
+            disabled={author.isModel}
+            title={author.isModel ? t.compareNeedsAuthor : undefined}
+            onClick={() => setOverlay((v) => !v)}
+            style={{
+              font: 'inherit', fontSize: 14, letterSpacing: '0.06em',
+              padding: '8px 14px', borderRadius: 3, marginLeft: 6,
+              cursor: author.isModel ? 'not-allowed' : 'pointer',
+              opacity: author.isModel ? 0.35 : 1,
+              border: `2px solid ${overlay && !author.isModel ? 'var(--warn)' : 'var(--gold-line)'}`,
+              color: overlay && !author.isModel ? '#1b1006' : 'var(--gold)',
+              background: overlay && !author.isModel ? 'var(--warn)' : 'rgba(0,0,0,0.30)',
+              fontWeight: overlay && !author.isModel ? 700 : 500,
+            }}
+          >
+            C · {lang === 'pt' ? 'COMPARAR' : 'COMPARE'}
+          </button>
         </div>
       </div>
 
@@ -334,26 +363,68 @@ export function PredictionsScene() {
           </div>
         </div>
 
-        <div style={{ flex: 1, fontSize: 17, color: 'var(--text)', lineHeight: 1.45, alignSelf: 'center' }}>
-          {author.isModel ? (
+        <div style={{ flex: 1, minWidth: 0, fontSize: 17, color: 'var(--text)', lineHeight: 1.45, alignSelf: 'center' }}>
+          {author.isModel && (
             <>
               <b style={{ color: 'var(--gold-bright)' }}>{t.ceilingLead}</b> {t.ceilingBody}
               <div style={{ marginTop: 8, fontSize: 15, color: 'var(--warn)' }}>
                 <b>4-0</b> / <b>4-1</b> {t.weakestLead} {t.weakestBody}
               </div>
             </>
-          ) : (
+          )}
+
+          {!author.isModel && !overlay && (
             <>
               <b style={{ color: 'var(--gold-bright)' }}>{author.name}</b>{' '}
-              {lang === 'pt'
-                ? `acerta ${expectedHits.toFixed(1)} contra ${ourHits.toFixed(1)} do Claude Opus, pelo nosso modelo.`
-                : `scores ${expectedHits.toFixed(1)} against Claude Opus's ${ourHits.toFixed(1)}, by our model.`}
-              <div style={{ marginTop: 8, fontSize: 15, color: 'var(--warn)' }}>
-                {lang === 'pt'
-                  ? 'Os cards em amarelo sao onde ele discorda de nos — o rotulo mostra onde nos colocamos aquele time.'
-                  : 'Yellow cards are where they disagree with us — the label shows where we put that team.'}
+              {t.scoresAgainst(expectedHits.toFixed(1), ourHits.toFixed(1))}
+              <div style={{ marginTop: 8, fontSize: 15, color: 'var(--text-dim)' }}>
+                {t.comparePrompt}
               </div>
             </>
+          )}
+
+          {/*
+            O COMPARE de verdade: nao basta pintar o card de amarelo. A pergunta
+            que se faz no ar e "e quem esta certo?" — entao cada discordancia
+            mostra os DOIS palpites com a probabilidade que o modelo da a cada um.
+            A soma dessas diferencas E a diferenca de acertos esperados dos dois,
+            entao o rodape para de ser opiniao e vira a conta aberta.
+          */}
+          {!author.isModel && overlay && (
+            <div>
+              {/* A contagem de iguais ja esta no card do meio — aqui seria eco. */}
+              <div style={{ fontSize: 12, letterSpacing: '0.14em', color: 'var(--warn)', marginBottom: 7 }}>
+                {t.compareTitle}
+              </div>
+
+              {disagreements.length === 0 ? (
+                <div style={{ fontSize: 16, color: 'var(--text-dim)' }}>{t.compareNone}</div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  {disagreements.slice(0, 4).map((d) => (
+                    <div key={d.teamId} style={{ display: 'flex', alignItems: 'baseline', gap: 10, fontSize: 15, whiteSpace: 'nowrap' }}>
+                      <span style={{ width: 168, flexShrink: 0, overflow: 'hidden', textOverflow: 'ellipsis', color: 'var(--gold-bright)', fontWeight: 600 }}>
+                        {names.get(d.teamId) ?? d.teamId}
+                      </span>
+                      <span style={{ color: d.theirs > d.ours ? '#8fd46e' : 'var(--text-dim)' }}>
+                        {author.name}: <b>{label.bucketShort(d.theirBucket, lang)}</b>{' '}
+                        <span className="numeral">{(d.theirs * 100).toFixed(0)}%</span>
+                      </span>
+                      <span style={{ color: 'var(--text-faint)' }}>·</span>
+                      <span style={{ color: d.ours > d.theirs ? '#8fd46e' : 'var(--text-dim)' }}>
+                        {t.weSay}: <b>{label.bucketShort(d.ourBucket, lang)}</b>{' '}
+                        <span className="numeral">{(d.ours * 100).toFixed(0)}%</span>
+                      </span>
+                    </div>
+                  ))}
+                  {disagreements.length > 4 && (
+                    <div style={{ fontSize: 14, color: 'var(--text-faint)' }}>
+                      {t.compareMore(disagreements.length - 4)}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           )}
         </div>
       </div>
