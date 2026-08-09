@@ -296,19 +296,19 @@ Medido em **Team Falcons** — Malr1ne.
 
 ### Vermelho ×1
 
-**Top:** OPM, Criaturas, Mortes · **Ruim:** Vítimas, Lascas de Insanite, Torres Destruídas
+**Top:** Criaturas, OPM, Mortes · **Ruim:** Vítimas, Lascas de Insanite, Torres Destruídas
 
 > **Empate técnico entre os 3 primeiros.** A diferença entre eles é menor que o erro
 > do próprio modelo — ali não existe "o melhor", fique com o que caiu.
 
 | # | Atributo | Na plaquinha | valor/mapa | % do melhor | veredito |
 |---|---|---|---|---|---|
-| 1 = | OPM | OPM | 1228 | 100% | Top |
-| 2 = | Criaturas | Finalizações | 1220 | 99% | Top |
-| 3 = | Mortes | Mortes | 1165 | 95% | Top |
-| 4 | Vítimas | Vítimas | 838 | 68% | Ruim |
-| 5 | Lascas de Insanite | Lascas de insanite | 558 | 45% | Ruim |
-| 6 | Torres Destruídas | Torres destr. | 416 | 34% | Ruim |
+| 1 = | Criaturas | Finalizações | 1229 | 100% | Top |
+| 2 = | OPM | OPM | 1229 | 100% | Top |
+| 3 = | Mortes | Mortes | 1193 | 97% | Top |
+| 4 | Vítimas | Vítimas | 833 | 68% | Ruim |
+| 5 | Lascas de Insanite | Lascas de insanite | 559 | 45% | Ruim |
+| 6 | Torres Destruídas | Torres destr. | 426 | 35% | Ruim |
 
 ### Azul ×1
 
@@ -329,12 +329,12 @@ Medido em **Team Falcons** — Malr1ne.
 
 | # | Atributo | Na plaquinha | valor/mapa | % do melhor | veredito |
 |---|---|---|---|---|---|
-| 1 | Participação em Batalhas | Bat. equipes | 1493 | 100% | Top |
-| 2 | Tormentas Destruídas | Tormentas destruídas | 684 | 46% | Ruim |
-| 3 | Atordoamentos | Atordoam. | 502 | 34% | Ruim |
-| 4 | Roshans Mortos | Roshans mortos | 333 | 22% | Ruim |
-| 5 | Primeira Vítima | 1ª vítima | 186 | 12% | Ruim |
-| 6 | Entregadores Mortos | Entregadores mortos | 186 | 12% | Ruim |
+| 1 | Participação em Batalhas | Bat. equipes | 1487 | 100% | Top |
+| 2 | Tormentas Destruídas | Tormentas destruídas | 682 | 46% | Ruim |
+| 3 | Atordoamentos | Atordoam. | 499 | 34% | Ruim |
+| 4 | Roshans Mortos | Roshans mortos | 340 | 23% | Ruim |
+| 5 | Primeira Vítima | 1ª vítima | 184 | 12% | Ruim |
+| 6 | Entregadores Mortos | Entregadores mortos | 182 | 12% | Ruim |
 
 ### Ranking geral da função
 
@@ -344,21 +344,21 @@ verde. Serve pra saber o que dá mais alegria ver cair.
 
 | # | Atributo | Cor | valor/mapa |
 |---|---|---|---|
-| 1 | Participação em Batalhas | Verde | 1493 |
+| 1 | Participação em Batalhas | Verde | 1487 |
 | 2 | Runas Obtidas | Azul | 1434 |
-| 3 | OPM | Vermelho | 1228 |
-| 4 | Criaturas | Vermelho | 1220 |
-| 5 | Mortes | Vermelho | 1165 |
-| 6 | Vítimas | Vermelho | 838 |
-| 7 | Tormentas Destruídas | Verde | 684 |
-| 8 | Lascas de Insanite | Vermelho | 558 |
-| 9 | Atordoamentos | Verde | 502 |
+| 3 | Criaturas | Vermelho | 1229 |
+| 4 | OPM | Vermelho | 1229 |
+| 5 | Mortes | Vermelho | 1193 |
+| 6 | Vítimas | Vermelho | 833 |
+| 7 | Tormentas Destruídas | Verde | 682 |
+| 8 | Lascas de Insanite | Vermelho | 559 |
+| 9 | Atordoamentos | Verde | 499 |
 | 10 | Acampamentos Acumulados | Azul | 465 |
-| 11 | Torres Destruídas | Vermelho | 416 |
-| 12 | Roshans Mortos | Verde | 333 |
+| 11 | Torres Destruídas | Vermelho | 426 |
+| 12 | Roshans Mortos | Verde | 340 |
 | 13 | Lótus Obtidos | Azul | 212 |
-| 14 | Primeira Vítima | Verde | 186 |
-| 15 | Entregadores Mortos | Verde | 186 |
+| 14 | Primeira Vítima | Verde | 184 |
+| 15 | Entregadores Mortos | Verde | 182 |
 | 16 | Vigias Ativados | Azul | 178 |
 | 17 | Sentinelas Posicionadas | Azul | 175 |
 | 18 | Fumaças Usadas | Azul | 14 |

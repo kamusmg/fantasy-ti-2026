@@ -119,7 +119,30 @@ export const prefixFrequencySchema = z.object({
   byPlayer: z.record(z.string(), prefixFrequencyRecord),
 });
 
+/**
+ * Troca de elenco posterior a publicacao das tabelas.
+ *
+ * `slot` e validado contra os tres nomes reais: uma funcao escrita errada aqui
+ * invalidaria silenciosamente nada, e o site seguiria mostrando o jogador que
+ * saiu. Erro de digitacao neste arquivo tem que estourar na fronteira.
+ */
+export const rosterChangesSchema = z.object({
+  changes: z.array(
+    z.object({
+      teamId: z.string().min(1),
+      slot: z.enum(['core', 'mid', 'support']),
+      date: z.string().min(1),
+      out: z.object({ id: z.string().min(1), nick: z.string().min(1) }),
+      in: z.object({ id: z.string().min(1), nick: z.string().min(1), position: positionSchema }),
+      reasonPtBr: z.string().min(1),
+      source: z.string().min(1),
+      invalidatesTeamData: z.boolean(),
+    }).passthrough(),
+  ),
+});
+
 export type TeamsFile = z.infer<typeof teamsFileSchema>;
+export type RosterChangesFile = z.infer<typeof rosterChangesSchema>;
 export type RedditRoleStats = z.infer<typeof redditRoleStatsSchema>;
 export type BattlepassLeague = z.infer<typeof battlepassLeagueSchema>;
 export type BattlepassTopRoles = z.infer<typeof battlepassTopRolesSchema>;

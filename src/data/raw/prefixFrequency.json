@@ -4,7 +4,8 @@
     "fetchedAt": "2026-08-06",
     "UNIDADES": "Fracao das partidas do jogador em que a condicao daquele prefixo vale. Somam mais que 1,0 de proposito: um heroi carrega varias tags ao mesmo tempo.",
     "CENSURA": "So temos o TOP-3 de cada jogador. Tratar os outros cinco prefixos como 0% e vies de selecao puro — favorece prefixos que por acaso apareceram num top-3. O tratamento correto esta em engine/coach.ts: cota superior P(tag) <= min(media da liga, menor valor do top-3 daquele jogador). Ausente NAO e zero, e censurado.",
-    "porQueImporta": "O prefixo vale pros 5 jogadores, entao seu valor esperado depende de QUEM foi escolhido. O battlepass so ranqueia prefixo pela media da liga; calcular por escalacao e vantagem real."
+    "porQueImporta": "O prefixo vale pros 5 jogadores, entao seu valor esperado depende de QUEM foi escolhido. O battlepass so ranqueia prefixo pela media da liga; calcular por escalacao e vantagem real.",
+    "ENTRADA_VAZIA": "Objeto vazio ({}) significa 'jogador existe, nao temos o top-3 dele' — e diferente de nao estar no arquivo. O caso e o Topson, que entrou no LGD em 09/08 vindo de fora dos 16 classificados e por isso nao esta na tabela do Maroomm. Vazio cai na cota superior censurada de coach.ts, que e o tratamento certo pra ausencia; zero seria afirmar que ele nunca joga de heroi vermelho, e isso ninguem mediu. Ver rosterChanges.json."
   },
   "byPlayer": {
     "ysr04e":       { "otherworldly": 0.31, "emerald": 0.23, "golden": 0.23 },
@@ -49,7 +50,7 @@
     "bzm":          { "otherworldly": 0.38, "crimson": 0.32, "elemental": 0.29 },
     "noone":        { "otherworldly": 0.37, "crimson": 0.37, "elemental": 0.27 },
     "xm":           { "otherworldly": 0.44, "cerulean": 0.34, "crimson": 0.28 },
-    "tailung":      { "crimson": 0.26, "cerulean": 0.25, "otherworldly": 0.25 },
+    "topson":       {},
     "larl":         { "otherworldly": 0.36, "cerulean": 0.28, "crimson": 0.27 },
     "chirajunior":  { "elemental": 0.40, "otherworldly": 0.33, "royal": 0.23 },
     "rcy":          { "otherworldly": 0.51, "cerulean": 0.25, "crimson": 0.24 },

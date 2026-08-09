@@ -77,6 +77,12 @@ interface Strings {
   /** Opcao PADRAO do seletor de equipe: a regra geral, nao um caso. */
   readonly leagueAverage: string;
   readonly leagueAverageNote: string;
+  /**
+   * Selo de troca de elenco. Sem ele a tela mente por omissao: mostra numero de
+   * media da liga debaixo do nome de uma equipe, como se fosse dela.
+   */
+  readonly rosterChangeChip: string;
+  readonly rosterChangeNote: (out: string, entrou: string, date: string) => string;
   /** Selo de empate tecnico: N atributos do topo dentro de 10% um do outro. */
   readonly tieLabel: (n: number) => string;
   readonly guideColorAbsent: string;
@@ -203,6 +209,9 @@ const PT: Strings = {
   guideMeasuredOn: 'medido em',
   leagueAverage: 'MÉDIA DA LIGA',
   leagueAverageNote: '2.888 replays de 14 ligas — a regra geral, sem equipe nenhuma',
+  rosterChangeChip: 'SEM DADO PRÓPRIO',
+  rosterChangeNote: (out, entrou, date) =>
+    `${entrou} entrou no lugar de ${out} em ${date}. As duas fontes mediram ${out}, então os números desta função são a MÉDIA DA LIGA, não os desta equipe.`,
   tieLabel: (n) => `EMPATE ×${n}`,
   guideColorAbsent: 'Esta função não tem emblema desta cor no estandarte.',
   verdictLabel: { guardar: 'GUARDAR', aceitavel: 'ACEITÁVEL', rerolar: 'RENOVAR' },
@@ -323,6 +332,9 @@ const EN: Strings = {
   guideMeasuredOn: 'measured on',
   leagueAverage: 'LEAGUE AVERAGE',
   leagueAverageNote: '2,888 replays across 14 leagues — the general rule, no team involved',
+  rosterChangeChip: 'NO OWN DATA',
+  rosterChangeNote: (out, entrou, date) =>
+    `${entrou} replaced ${out} on ${date}. Both sources measured ${out}, so the numbers for this role are the LEAGUE AVERAGE, not this team\'s.`,
   tieLabel: (n) => `TIE ×${n}`,
   guideColorAbsent: 'This role has no emblem of this colour on its banner.',
   verdictLabel: { guardar: 'KEEP', aceitavel: 'ACCEPTABLE', rerolar: 'REROLL' },

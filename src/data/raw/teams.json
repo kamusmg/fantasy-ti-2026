@@ -164,7 +164,7 @@
       "id": "lgd", "name": "LGD Gaming", "tag": "LGD", "region": "SA 1",
       "players": [
         { "id": "yuma", "nick": "Yuma", "position": 1 },
-        { "id": "tailung", "nick": "TaiLung", "position": 2 },
+        { "id": "topson", "nick": "Topson", "position": 2 },
         { "id": "wisper", "nick": "Wisper", "position": 3 },
         { "id": "thiolicor", "nick": "Thiolicor", "position": 4 },
         { "id": "kj", "nick": "KJ", "position": 5 }

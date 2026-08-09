@@ -249,16 +249,29 @@ export function blend(input: BlendInput): BlendResult {
     const teamIds = Object.keys(teamRows);
     const league = battlepassLeague[slot];
 
+    /*
+      Time com a linha VAZIA (troca de elenco invalidou o dado) continua em
+      `teamIds` de proposito, pra nao sumir do ranking. Mas ele nao pode entrar
+      em NENHUMA conta de dispersao: sem dado, a amostra efetiva dele e um chute
+      no piso, e `meanSamplingVar` e uma media sobre todos os times — um piso ali
+      dentro infla o ruido amostral estimado, derruba `varBetween`, sobe o n0 e
+      encolhe TODO MUNDO na direcao da media da liga. Uma unidade cega mexeria
+      na estimativa dos outros quinze times.
+    */
+    const teamsWithData = teamIds.filter((t) =>
+      ALL_STAT_IDS.some((stat) => typeof teamRows[t][stat] === 'number'),
+    );
+
     // Amostra efetiva: contagem publicada quando existe, estimativa calibrada pela
     // razao top/average quando nao. Substitui o chute fixo de 60 mapas.
     const calibration = calibrateSampleSize(
-      teamIds
+      teamsWithData
         .filter((t) => sampleMaps[unitKey(t, slot)] !== undefined && topRatio[unitKey(t, slot)] !== undefined)
         .map((t) => ({ ratio: topRatio[unitKey(t, slot)], maps: sampleMaps[unitKey(t, slot)] })),
     );
     calibrations[slot] = calibration;
 
-    for (const t of teamIds) {
+    for (const t of teamsWithData) {
       const key = unitKey(t, slot);
       const published = sampleMaps[key];
       if (published !== undefined) {
@@ -329,7 +342,7 @@ export function blend(input: BlendInput): BlendResult {
           .map((v) => leagueMean + k * (v - redditLeagueMean[stat]));
         const observedVar = populationVariance(scaled);
         const meanSamplingVar = mean(
-          teamIds.map((t) => varWithin / effectiveMaps[unitKey(t, slot)]),
+          teamsWithData.map((t) => varWithin / effectiveMaps[unitKey(t, slot)]),
         );
         // Tira o ruido amostral da dispersao observada: sem isso, diferenca de time
         // que e puro ruido vira "sinal" e o encolhimento nunca acontece.

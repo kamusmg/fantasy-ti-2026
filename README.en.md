@@ -74,8 +74,19 @@ and treated the reigning EWC 2026 champion as an unknown.
 **Org ratings lie about the current roster.** Team Liquid's 1430 Elo comes from **3,132 games
 of org history**, not the five who will play. Iron Wing shows 1280 off 30 games, but the
 *players* are the ex-Tundra squad that won Birmingham and DreamLeague 29. And "Tundra Esports"
-today fields Topson and RAMZES666 — five different people. That's why the primary strength
-source is the **betting market**, which prices who actually walks on stage.
+is no longer the roster that won those titles — five different people. That's why the primary
+strength source is the **betting market**, which prices who actually walks on stage.
+
+**When a player leaves after the tables were published.** On 2026-08-09 TaiLung was banned
+from TI for match fixing and Topson took the LGD mid slot. Renaming him in `teams.json` would
+have removed his name from the screen and left **his statistics quietly recommending teams
+underneath** — both sources measured TaiLung. So a roster change is its own fact, in
+`rosterChanges.json`, and it *invalidates* that (team, role) pair: the pair stays selectable,
+but falls back to the league average with a `NO OWN DATA` badge and zero shrink weight. Topson
+appears in neither table — they cover the 16 qualified teams, and Tundra did not qualify — so
+the swap deletes a number rather than replacing one. LGD's mid goes from 6th to 7th of 16
+(−0.8%) and its best banner reverts from *Creep Score* to *Deaths*, like the other fifteen:
+the anomaly was the player, not the team. The site's recommendation does not change.
 
 ---
 

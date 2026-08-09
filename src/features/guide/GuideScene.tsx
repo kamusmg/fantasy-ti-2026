@@ -226,6 +226,18 @@ function RoleGuideCard({
       .join(` ${t.andWord} `)
     : t.leagueAverageNote;
 
+  /*
+    Sem este selo a tela mente por omissao. O seletor diz "LGD Gaming", o nome
+    embaixo diz "Topson", e os numeros ao lado sao os da MEDIA DA LIGA — quem
+    olha conclui que aquilo e o desempenho da LGD. O selo mora dentro da linha do
+    elenco de proposito: ela ja tem altura reservada, entao nada reflui.
+  */
+  const rosterChange = selected
+    ? data.rosterChanges.find(
+      (c) => c.invalidatesTeamData && c.teamId === selected.teamId && c.slot === slot,
+    )
+    : undefined;
+
   return (
     <div
       className="panel"
@@ -282,8 +294,24 @@ function RoleGuideCard({
         escalacao montada vem o nome dos JOGADORES ("Satanic e Noticed"). Quem
         confere as duas telas lado a lado precisa dos dois pra fechar.
       */}
-      <div style={{ fontSize: 15, color: 'var(--text-dim)', marginTop: 6, minHeight: 20, letterSpacing: '0.02em' }}>
-        {roster}
+      <div
+        style={{
+          fontSize: 15, color: 'var(--text-dim)', marginTop: 6, minHeight: 20,
+          letterSpacing: '0.02em', display: 'flex', alignItems: 'center', gap: 8,
+          whiteSpace: 'nowrap', overflow: 'hidden',
+        }}
+      >
+        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{roster}</span>
+        {rosterChange && (
+          <span
+            className="chip"
+            data-kind="league-mean-fallback"
+            title={t.rosterChangeNote(rosterChange.out.nick, rosterChange.in.nick, rosterChange.date)}
+            style={{ flexShrink: 0 }}
+          >
+            {t.rosterChangeChip}
+          </span>
+        )}
       </div>
 
 

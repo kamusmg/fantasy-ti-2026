@@ -46,7 +46,9 @@ export type WarningCode =
   | 'league-fallback'
   | 'scale-mismatch'
   | 'unverified-rule'
-  | 'no-team-data';
+  | 'no-team-data'
+  /** Elenco mudou depois da publicacao das tabelas: o dado de time nao vale mais. */
+  | 'roster-change';
 
 export interface DataWarning {
   readonly severity: 'info' | 'warn' | 'critical';

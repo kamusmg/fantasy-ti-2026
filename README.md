@@ -83,9 +83,34 @@ Tudo em [`src/data/raw/`](src/data/raw), cru e com procedência.
 | `prefixFrequency.json` | frequência de cor de herói dos 80 jogadores | Reddit, mesma base |
 | `teamStrength.json` | força de time para simular o Suíço | odds do Polymarket + Elo da OpenDota |
 | `teams.json` | os 16 elencos com posição | Liquipedia ×3 fontes |
+| `rosterChanges.json` | trocas de elenco posteriores à publicação das tabelas | notícia, com data e fonte |
 
 **As linhas de Core e Suporte do Reddit são SOMAS da dupla** — a nota da função é a
 média, então dividimos por 2 em `data/load.ts`. O arquivo cru fica intocado.
+
+### Quando um jogador sai depois de as tabelas serem publicadas
+
+Em 09/08 o **TaiLung foi banido do TI por 322** e o **Topson** entrou no Meio da LGD.
+A tentação era trocar o nome em `teams.json` e seguir. Isso teria tirado o nome da tela
+e deixado a **estatística dele recomendando equipe por baixo**, calada: as duas fontes
+mediram o TaiLung, e o motor continuaria usando a medida como se fosse do Topson.
+
+Por isso a troca é um **fato próprio**, em `rosterChanges.json`, e o efeito dela é
+apagar o dado de equipe daquele par (equipe, função). O par continua escolhível — some
+do ranking seria mentir por omissão —, mas passa a valer a **média da liga**, com selo
+`SEM DADO PRÓPRIO` na tela e peso de encolhimento zero.
+
+O Topson não está em **nenhuma** das duas tabelas: elas cobrem os 16 classificados, e a
+Tundra não classificou. Então a troca não substitui número, ela **apaga** número. O slot
+fica menos informativo depois dela, e isso é o certo — o contrário seria inventar
+estatística para um jogador que não está na base.
+
+Efeito medido: o Meio da LGD sai de 6º para 7º de 16 (−0,8%), e o melhor estandarte dele
+deixa de ser *Criaturas* e volta para *Mortes*, como os outros quinze. A anomalia era o
+jogador, não a equipe. **A recomendação do site não muda.**
+
+O arquivo cru do Reddit continua com o nome e os números dele, intocados. Ele é a prova
+de que a fonte dizia aquilo; nada dali chega na tela.
 
 ### Duas armadilhas de nome que custam caro
 
@@ -96,8 +121,9 @@ HULIGANI = **L1GA**. Eu errei essa e tratei a campeã do EWC 2026 como desconhec
 **Rating de organização mente sobre o elenco atual.** O Elo 1430 do Team Liquid vem de
 **3.132 partidas de histórico da org**, não dos cinco que vão jogar. O Iron Wing marca
 1280 com 30 jogos, mas os *jogadores* são a ex-Tundra que ganhou Birmingham e a DL29.
-E a "Tundra Esports" hoje tem Topson e RAMZES666 — cinco pessoas diferentes. Por isso a
-fonte primária é o **mercado de apostas**, que precifica quem entra em quadra.
+E a "Tundra Esports" não é mais o elenco que ganhou aqueles títulos — cinco pessoas
+diferentes. Por isso a fonte primária é o **mercado de apostas**, que precifica quem
+entra em quadra.
 
 ---
 

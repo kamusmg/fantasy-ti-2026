@@ -60,6 +60,17 @@ const norm = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
  * elenco atual time a time — nunca por adivinhacao, porque casar nome errado poe
  * a cara de outra pessoa na tela.
  */
+/**
+ * account_id fixado a mao, pra quem a OpenDota ainda nao poe no elenco do time.
+ *
+ * topson = 94054712: conferido em /api/players/94054712 (personaname "TOPSON",
+ * name "Topson", loccountrycode FI) e o CDN da Valve responde 200 nessa foto.
+ * Entrou no LGD em 09/08/2026 no lugar do TaiLung — ver rosterChanges.json.
+ */
+const ACCOUNT_ID_OVERRIDE = {
+  topson: 94054712,
+};
+
 const ALIASES = {
   kj: 'kingjungles',
   atf: 'ammarthef',
@@ -117,6 +128,24 @@ for (const team of teams) {
   }
 
   for (const player of team.players) {
+    /*
+      Troca de elenco recente: a OpenDota so atualiza o elenco de um time dias
+      depois, entao casar por elenco NAO acha quem acabou de chegar. O account_id
+      entra aqui a mao, conferido um a um — e o comentario diz de onde veio, pra
+      ninguem apagar achando que e chute.
+    */
+    const forcado = ACCOUNT_ID_OVERRIDE[player.id];
+    if (forcado !== undefined) {
+      const status = await download(
+        `https://cdn.cloudflare.steamstatic.com/apps/dota2/players/${forcado}.png`,
+        join(OUT_PLAYERS, `${player.id}.png`),
+      );
+      if (!status.startsWith('FALHOU')) manifest.players[player.id] = `/players/${player.id}.png`;
+      console.log(`  ${player.nick.padEnd(14)} ${String(forcado).padEnd(11)} ${status}  (account_id forcado)`);
+      await sleep(100);
+      continue;
+    }
+
     const wanted = ALIASES[norm(player.nick)] ?? norm(player.nick);
     const hit =
       roster.find((r) => r.name && norm(r.name) === wanted) ??
@@ -159,6 +188,6 @@ if (unmatched.length > 0) {
  * que aquilo E o jogador. A tela cai no monograma, que e o que o cliente do Dota
  * tambem faz com quem nao tem retrato.
  */
-const SEM_RETRATO_OFICIAL = ['Satanic (vision)', 'not me (spirit)', 'rue (spirit)', 'ssnovv1 (huligani)', 'TaiLung (lgd)'];
+const SEM_RETRATO_OFICIAL = ['Satanic (vision)', 'not me (spirit)', 'rue (spirit)', 'ssnovv1 (huligani)'];
 console.log(`\nSEM RETRATO OFICIAL NA VALVE (${SEM_RETRATO_OFICIAL.length}) — esperado, cai no monograma:`);
 for (const p of SEM_RETRATO_OFICIAL) console.log(`  ${p}`);

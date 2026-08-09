@@ -1,0 +1,22 @@
+{
+  "_meta": {
+    "proposito": "Trocas de elenco que aconteceram DEPOIS que as tabelas de stat foram publicadas. Uma troca nao muda o que as fontes mediram — muda A QUEM aquela medida se aplica. Por isso a invalidacao mora aqui, e nunca dentro do arquivo cru.",
+    "REGRA_INVIOLAVEL": "reddit.roleStats.json e battlepass.*.json ficam INTOCADOS, exatamente como foram publicados. Eles sao a auditoria. Editar numero cru pra 'consertar' a realidade apaga a prova de que a fonte dizia outra coisa, e ninguem consegue mais conferir o nosso trabalho contra o original.",
+    "efeitoNoMotor": "Cada troca invalida o dado de TIME daquele par (time, funcao). O slot continua existindo e continua escolhivel — ele so passa a valer a MEDIA DA LIGA, com selo visivel e peso de encolhimento zero. Nunca some do ranking: sumir do ranking seria mentir por omissao, e quem esta montando o fantasy precisa ver que aquele slot ficou cego.",
+    "porQueNaoEDeletar": "Deletar o jogador e so esconder. O motor precisa saber que existiu uma troca pra parar de USAR o numero antigo — senao o nome sai da tela mas a estatistica do banido continua recomendando time por baixo."
+  },
+  "changes": [
+    {
+      "teamId": "lgd",
+      "slot": "mid",
+      "date": "2026-08-09",
+      "out": { "id": "tailung", "nick": "TaiLung" },
+      "in": { "id": "topson", "nick": "Topson", "position": 2 },
+      "reasonPtBr": "TaiLung foi banido do TI 2026 por 322 (combinacao de resultado). Topson entrou no lugar.",
+      "source": "Informado pelo Kamus em 09/08/2026. NAO conferido por mim em fonte publica — se sair nota oficial da Valve ou da PGL, trocar este campo pelo link.",
+      "invalidatesTeamData": true,
+      "notaSobreOSubstituto": "O Topson nao aparece em NENHUMA das duas tabelas de fantasy: elas cobrem os 16 times classificados, e a Tundra nao classificou. Entao a troca nao substitui numero, ela APAGA numero. O slot fica MENOS informativo depois dela, e isso e o comportamento certo — o contrario seria inventar estatistica pra um jogador que nao esta na base.",
+      "notaSobre322": "Nao e so troca de elenco. 322 e combinacao de resultado, e as partidas dele estao dentro da janela das duas fontes (13 torneios Tier-1 de 2026 / 2.888 replays TI-relevantes). Isso levanta duvida sobre o dado do LGD INTEIRO, nao so do Meio, porque Principal e Suporte foram medidos nas MESMAS partidas. Investigacao pendente — ver AUDITORIA_LGD no README."
+    }
+  ]
+}
